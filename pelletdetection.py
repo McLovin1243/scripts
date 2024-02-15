@@ -1,7 +1,7 @@
 #https://github.com/BO24EH-02/scripts.git
 from jetson_inference import detectNet
 from jetson_utils import videoSource, videoOutput
-from jetson_inference import snap7
+from home import snap7
 
 IP = '192.168.0.1'  #PLC IP adress
 
