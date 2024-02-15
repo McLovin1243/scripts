@@ -13,7 +13,7 @@ SLOT = 0
 
 PLC = snap7.client.Client() 
 
-if PLC.connect(IP,RACK,SLOT): 
+if PLC.connect(IP,RACK,SLOT): #establish connections with Siemens PLC if ip is correct
     print(PLC.get_cpu_state())
 else:
     print("ERROR: PLC not connectet")    
