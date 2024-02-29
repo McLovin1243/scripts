@@ -9,3 +9,5 @@ plc.connect(IP, RACK, SLOT)
 
 print(plc.get_cpu_state())
 
+data = plc.dbCommunication(1, 0, 4)
+print(data)
