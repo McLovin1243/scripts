@@ -16,3 +16,7 @@ while display.IsStreaming():
     
     display.Render(img)
     display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
+
+    # Nisse
+
+    
