@@ -3,7 +3,7 @@ import snap7
 IP = '192.168.0.1'
 print(IP)
 RACK = 0
-SLOT = 0
+SLOT = 1
 plc = snap7.client.Client()
 plc.connect(IP, RACK, SLOT)
 
