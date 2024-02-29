@@ -46,7 +46,5 @@ print(plcStatus)
 
 while plcStatus == "S7CpuStatusRun":
     ReadBool(db_number2, start_offset2, bit_offset2)
-#    if input() == "y":
-#       WriteBool(db_number2, start_offset2, bit_offset2, value2)
     if ReadBool(db_number2, start_offset2, bit_offset2) == True:
        break
