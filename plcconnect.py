@@ -45,6 +45,6 @@ plcStatus = plc.get_cpu_state()
 print(plcStatus)
 
 while plcStatus == "S7CpuStatusRun":
-    ReadBool(db_number2, start_offset2, bit_offset2)
-    if ReadBool(db_number2, start_offset2, bit_offset2) == True:
+    ReadBool(2, 2, 1)
+    if ReadBool(2, 2, 1) == True:
        break
