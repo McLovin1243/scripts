@@ -21,17 +21,22 @@ print(IP)
 RACK = 0
 SLOT = 1
 
-# Bool 1
-db_number1 = 2
-start_offset1 = 2
-bit_offset1 = 0
-value1 = 0  # 1 = True & 0 = False
+# Static Bool - Run Process
+sbRunProcess_db_number = 2
+sbRunProcess_start_offset = 2
+sbRunProcess_bit_offset = 0
+sbRunProcess_value = 0  # 1 = True & 0 = False
 
-# Bool 2
-db_number2 = 2
-start_offset2 = 2
-bit_offset2 = 1
-value2 = 1  # 1 = True & 0 = False
+# Static Bool - Emergency Stop
+sbEMGStop_db_number = 2
+sbEMGStop_start_offset = 2
+sbEMGStop_bit_offset = 1
+sbEMGStop_value = 0  # 1 = True & 0 = False
+# Static Bool - Stop Process
+sbStopProcess_db_number = 2
+sbStopProcess_start_offset = 2
+sbStopProcess_bit_offset = 2
+sbStopProcess_value = 0  # 1 = True & 0 = False
 
 plc = snap7.client.Client()
 plc.connect(IP, RACK, SLOT)
