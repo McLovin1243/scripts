@@ -1,5 +1,6 @@
 import snap7
 import time
+import sys
 
 # Funksjon for å skrive ut boolsk verdi til PLS
 def WriteBool(db_number, start_offset, bit_offset, value):
@@ -13,7 +14,7 @@ def WriteBool(db_number, start_offset, bit_offset, value):
 def ReadBool(db_number, start_offset, bit_offset):
     reading =  plc.db_read(db_number, start_offset, 1)
     a = snap7.util.get_bool(reading, 0, bit_offset)
-    print('DB Number:' + str(db_number) + ' Bit: ' + str(start_offset) + '.' + str(bit_offset) + ' Value: ' + str(a))
+    # print('DB Number:' + str(db_number) + ' Bit: ' + str(start_offset) + '.' + str(bit_offset) + ' Value: ' + str(a))
     return a
 
 IP = '192.168.0.1'
@@ -21,30 +22,58 @@ print(IP)
 RACK = 0
 SLOT = 1
 
-# Static Bool - Run Process
-sbRunProcess_db_number = 2
-sbRunProcess_start_offset = 2
+
+outputOn = 1
+outputOff = 0
+
+# Adress from TIA Portal - dbCommunication
+db_number = 2
+start_offset = 2
+
+# Static Bool - Run/Stop Process
 sbRunProcess_bit_offset = 0
-sbRunProcess_value = 0  # 1 = True & 0 = False
 
 # Static Bool - Emergency Stop
-sbEMGStop_db_number = 2
-sbEMGStop_start_offset = 2
 sbEMGStop_bit_offset = 1
-sbEMGStop_value = 0  # 1 = True & 0 = False
-# Static Bool - Stop Process
-sbStopProcess_db_number = 2
-sbStopProcess_start_offset = 2
-sbStopProcess_bit_offset = 2
-sbStopProcess_value = 0  # 1 = True & 0 = False
 
+# Creating PLC client and connecting to registred info
 plc = snap7.client.Client()
 plc.connect(IP, RACK, SLOT)
 
 plcStatus = plc.get_cpu_state()
 print(plcStatus)
 
+
+stateNvidia = True
+
 while plcStatus == "S7CpuStatusRun":
-    ReadBool(2, 2, 1)
-    if ReadBool(2, 2, 1) == True:
-       break
+    time.sleep(1)
+    statePLC = ReadBool(db_number,start_offset, sbRunProcess_bit_offset)
+    EMGStopPLC = ReadBool(db_number,start_offset, sbEMGStop_bit_offset)
+
+    if stateNvidia == True:
+        WriteBool(db_number,start_offset, sbRunProcess_bit_offset, outputOn)
+        statePLC = ReadBool(db_number,start_offset, sbRunProcess_bit_offset)
+        
+    if stateNvidia == False:
+        WriteBool(db_number,start_offset, sbRunProcess_bit_offset,outputOff)
+        statePLC = ReadBool(db_number,start_offset, sbRunProcess_bit_offset)
+
+    if EMGStopPLC == True:
+        print("EMERGENCY STOP")
+        time.sleep(2)
+        print("3")
+        time.sleep(2)
+        print("2")
+        time.sleep(2)
+        print("1")
+        time.sleep(1)
+        print("SHUTDOWN")
+        time.sleep(1)
+        sys.exit()
+        break
+
+
+#WriteBool(db_number,start_offset, sbRunProcess_bit_offset, sbRunProcess_value)
+#WriteBool(sbEMGStop_db_number,sbEMGStop_start_offset, sbEMGStop_bit_offset, sbEMGStop_value)
+#WriteBool(sbStopProcess_db_number,sbStopProcess_start_offset, sbStopProcess_bit_offset, sbStopProcess_value)
