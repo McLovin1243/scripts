@@ -1,6 +1,10 @@
 import snap7
 import time
 import sys
+import socket
+import threading
+
+#This python program is the server program that proccess all the commmuncation.
 
 # Funksjon for å skrive ut boolsk verdi til PLS
 def WriteBool(db_number, start_offset, bit_offset, value):
@@ -17,8 +21,38 @@ def ReadBool(db_number, start_offset, bit_offset):
     # print('DB Number:' + str(db_number) + ' Bit: ' + str(start_offset) + '.' + str(bit_offset) + ' Value: ' + str(a))
     return a
 
-IP = '192.168.0.1'
-print(IP)
+def handle_client(conn,addr):
+    print("NVIDIA Object detecion software running")
+    connected = True
+    while connected:
+        msg_length=conn.recv(64).decode('utf-8')
+        msg_length = int(msg_length)
+        msg = conn.recv(msg_length).decode('utf-8')
+
+        if msg == "!DISCONNECT":
+            connected = False
+
+def start_client():
+    server.listen()
+    while True:
+        conn, addr = server.accept()
+        thread = threading.Thread(target=handle_client, args=(conn,addr))
+        thread.start()
+
+
+
+
+
+serverIP ='192.168.0.3' #NVIDIA JETSON LOCAL IP ADRESS
+Port = 5025 #PORT nvidia jetson
+
+server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+server.bind((serverIP,Port))
+
+
+
+PLCIP = '192.168.0.1'
+print(PLCIP)
 RACK = 0
 SLOT = 1
 
@@ -38,10 +72,11 @@ sbEMGStop_bit_offset = 1
 
 # Creating PLC client and connecting to registred info
 plc = snap7.client.Client()
-plc.connect(IP, RACK, SLOT)
+plc.connect(PLCIP, RACK, SLOT)
 
 plcStatus = plc.get_cpu_state()
 print(plcStatus)
+start_client() #Starting connection with docker container
 
 
 stateNvidia = True
