@@ -3,10 +3,14 @@ import time
 import sys
 import socket
 import threading
+import tkinter as tk
 
 # This python program is the server program that proccess all the commmuncation.
 # ----------------------------------------------------------------------------------------------------------------------------- #
 # FIELDS
+
+window = tk.Tk()
+
 PLCIP = '192.168.0.1'
 print(PLCIP)
 RACK = 0
