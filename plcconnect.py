@@ -8,13 +8,7 @@ import threading
 
 # FIELDS
 
-#serverIP = socket.gethostbyname(socket.gethostname())
-serverIP = "192.168.0.3"
-Port = 5151 #PORT nvidia jetson
-ADDR = (serverIP,Port)
 
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(ADDR)
 
 PLCIP = '192.168.0.1'
 print(PLCIP)
@@ -34,7 +28,19 @@ sbRunProcess_bit_offset = 0
 # Static Bool - Emergency Stop
 sbEMGStop_bit_offset = 1
 
+# Creating PLC connection
+plc = snap7.client.Client()
+plc.connect(PLCIP, RACK, SLOT)
+plcStatus = plc.get_cpu_state()
+print(plcStatus)
 
+#serverIP = socket.gethostbyname(socket.gethostname())
+serverIP = "192.168.0.3"
+Port = 5151 #PORT nvidia jetson
+ADDR = (serverIP,Port)
+
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind(ADDR)
 
 # FUNCTIONS
 
@@ -85,14 +91,9 @@ def start_client():
 
 # MAIN PROGRAM
         
-# Creating PLC client and connecting to registred info
-plc = snap7.client.Client()
-plc.connect(PLCIP, RACK, SLOT)
-plcStatus = plc.get_cpu_state()
-print(plcStatus)
 
-print("[Starting] server is starting...")
-start_client()
+
+
 
 
 stateNvidia = True
