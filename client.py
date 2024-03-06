@@ -1,4 +1,5 @@
 import socket
+import time
 HEADER = 64
 port =5151
 FORMAT = 'utf-8'
