@@ -72,9 +72,9 @@ def handle_client(conn, addr):
             if msg == "!DISCONNECT":
                 WriteBool(db_number, start_offset,sbEMGStop_bit_offset, outputOn)
                 connected = False
-            if msg == "True":
+            if msg == "true":
                 WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOn)
-            if msg == "False":
+            if msg == "false":
                 WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOff)
             
                 
