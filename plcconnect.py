@@ -94,6 +94,10 @@ def start_client():
 
 
 
+
+
+
+start_client()
 stateNvidia = True
 
 while plcStatus == "S7CpuStatusRun":
