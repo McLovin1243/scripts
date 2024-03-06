@@ -6,6 +6,18 @@ import threading
 
 #This python program is the server program that proccess all the commmuncation.
 
+# FIELDS
+
+#serverIP = socket.gethostbyname(socket.gethostname())
+serverIP = "192.168.0.3"
+Port = 5151 #PORT nvidia jetson
+ADDR = (serverIP,Port)
+
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind(ADDR)
+
+# FUNCTIONS
+
 # Funksjon for å skrive ut boolsk verdi til PLS
 def WriteBool(db_number, start_offset, bit_offset, value):
     reading = plc.db_read(db_number, start_offset,1 )
@@ -21,26 +33,33 @@ def ReadBool(db_number, start_offset, bit_offset):
     # print('DB Number:' + str(db_number) + ' Bit: ' + str(start_offset) + '.' + str(bit_offset) + ' Value: ' + str(a))
     return a
 
-def handle_client(conn,addr):
-    print("NVIDIA Object detecion software running")
+def handle_client(conn, addr):
+    print(f"NVIDIA Object detecion software running   {addr}")
     connected = True
     while connected:
         msg_length=conn.recv(64).decode('utf-8')
-        msg_length = int(msg_length)
-        msg = conn.recv(msg_length).decode('utf-8')
+        if msg_length:
+            msg_length = int(msg_length)
+            msg = conn.recv(msg_length).decode('utf-8')
+            print(f"{msg}")
+            
+            if msg == "!DISCONNECT":
+                connected = False
 
-        if msg == "!DISCONNECT":
-            connected = False
 
 def start_client():
+    print(f"[Listening] server is listening on {serverIP}")
     server.listen()
     while True:
         conn, addr = server.accept()
-        thread = threading.Thread(target=handle_client, args=(conn,addr))
+        thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
 
 
+# MAIN PROGRAM
 
+print("[Starting] server is starting...")
+start_client()
 
 
 serverIP ='192.168.0.3' #NVIDIA JETSON LOCAL IP ADRESS
