@@ -15,4 +15,6 @@ def send(msg):
     client.send(send_length)
     client.send(message)
 
-send("True")
+while True:
+    send(input())
+
