@@ -13,14 +13,14 @@ import threading
 
 # PLC
 plcIP = '192.168.0.1'
-rack = "0"
-slot = "1"
+rack = 0
+slot = 1
 
 # Server
 serverIP = "192.168.0.3"
 plc = snap7.client.Client()
 #serverIP = socket.gethostbyname(socket.gethostname())
-port = "5151" # PORT nvidia jetson
+port = 5151 # PORT nvidia jetson
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Adress from TIA Portal - dbCommunication
