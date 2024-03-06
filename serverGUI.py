@@ -1,4 +1,4 @@
-import snap7
+# import snap7
 import time
 import sys
 import socket
@@ -11,13 +11,12 @@ import tkinter.font as tkFont
 
 # PLC
 plcIP = '192.168.0.1'
-print(plcIP)
 rack = 0
 slot = 1
 
 # Server
 serverIP = "192.168.0.3"
-plc = snap7.client.Client()
+# plc = snap7.client.Client()
 #serverIP = socket.gethostbyname(socket.gethostname())
 port = 5151 # PORT nvidia jetson
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -37,19 +36,19 @@ outputOff = 0
 # FUNCTIONS
 
 # Funksjon for å skrive ut boolsk verdi til PLS
-def WriteBool(db_number, start_offset, bit_offset, value):
-    reading = plc.db_read(db_number, start_offset,1 )
-    snap7.util.set_bool(reading, 0, bit_offset, value)
-    plc.db_write(db_number, start_offset, reading)
-    return None
+#def WriteBool(db_number, start_offset, bit_offset, value):
+ #   reading = plc.db_read(db_number, start_offset,1 )
+  #  snap7.util.set_bool(reading, 0, bit_offset, value)
+   # plc.db_write(db_number, start_offset, reading)
+    #return None
 
 
 # Funksjon for å lese ut boolsk verdi fra PLS
-def ReadBool(db_number, start_offset, bit_offset):
-    reading =  plc.db_read(db_number, start_offset, 1)
-    a = snap7.util.get_bool(reading, 0, bit_offset)
+#def ReadBool(db_number, start_offset, bit_offset):
+  #   reading =  plc.db_read(db_number, start_offset, 1)
+   # a = snap7.util.get_bool(reading, 0, bit_offset)
     # print('DB Number:' + str(db_number) + ' Bit: ' + str(start_offset) + '.' + str(bit_offset) + ' Value: ' + str(a))
-    return a
+    # return a
 
 def handle_client(conn, addr):
     print(f"NVIDIA Object detecion software running   {addr}")
@@ -133,7 +132,7 @@ class App:
         GLabel_584["fg"] = "#333333"
         GLabel_584["justify"] = "center"
         GLabel_584["text"] = "IP"
-        GLabel_584.place(x=50,y=110,width=70,height=25)
+        GLabel_584.place(x=50,y=105,width=70,height=25)
 
         # Label - PLC Rack
         GLabel_769=tk.Label(root)
@@ -160,7 +159,7 @@ class App:
         GLabel_528["fg"] = "#333333"
         GLabel_528["justify"] = "center"
         GLabel_528["text"] = "IP"
-        GLabel_528.place(x=170,y=110,width=70,height=25)
+        GLabel_528.place(x=170,y=105,width=70,height=25)
 
         # Label - Port Server
         GLabel_811=tk.Label(root)
@@ -198,6 +197,10 @@ class App:
         GLineEdit_166["justify"] = "center"
         GLineEdit_166["text"] = ""
         GLineEdit_166.place(x=30,y=190,width=112,height=30)
+        GLineEdit_166.insert(0,rack)
+        def update_rack(*args):
+            rack = GLineEdit_166.get()
+        GLineEdit_166.bind("<KeyRelease>", update_rack)
 
         # Entry - Slot
         GLineEdit_886=tk.Entry(root)
@@ -208,6 +211,10 @@ class App:
         GLineEdit_886["justify"] = "center"
         GLineEdit_886["text"] = ""
         GLineEdit_886.place(x=30,y=250,width=112,height=30)
+        GLineEdit_886.insert(0,slot)
+        def update_slot(*args):
+            slot = GLineEdit_886.get()
+        GLineEdit_886.bind("<KeyRelease>", update_slot)
 
         # Entry - Server IP
         GLineEdit_57=tk.Entry(root)
@@ -218,6 +225,10 @@ class App:
         GLineEdit_57["justify"] = "center"
         GLineEdit_57["text"] = ""
         GLineEdit_57.place(x=150,y=130,width=113,height=30)
+        GLineEdit_57.insert(0,serverIP)
+        def update_serverIP(*args):
+            serverIP = GLineEdit_57.get()
+        GLineEdit_57.bind("<KeyRelease>", update_serverIP)
 
         # Entry - Server Port
         GLineEdit_512=tk.Entry(root)
@@ -228,6 +239,10 @@ class App:
         GLineEdit_512["justify"] = "center"
         GLineEdit_512["text"] = ""
         GLineEdit_512.place(x=150,y=190,width=111,height=30)
+        GLineEdit_512.insert(0,port)
+        def update_port(*args):
+            port = GLineEdit_57.get()
+        GLineEdit_57.bind("<KeyRelease>", update_port)
 
         # Listbox - Terminal
         GListBox_705=tk.Listbox(root)
@@ -249,15 +264,16 @@ class App:
 
     def GButton_984_command(self):
         # Creating PLC connection
-        plc.connect(plcIP, rack, slot)
-        plcStatus = plc.get_cpu_state()
-        print(plcStatus)
+      #  plc.connect(plcIP, rack, slot)
+       # plcStatus = plc.get_cpu_state()
+        #print(plcStatus)
 
-        ADDR = (serverIP,port)
-        server.bind(ADDR)
-        print("Server started")
-
-        start_client()
+       # ADDR = (serverIP,port)
+       # server.bind(ADDR)
+        #print("Server started")
+        #print(f"PLC IP:{plcIP}")
+        #start_client()
+        print(port)
 
 # IF changes in the input entries: 
 
