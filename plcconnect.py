@@ -5,7 +5,7 @@ import socket
 import threading
 
 # This python program is the server program that proccess all the commmuncation.
-
+# ----------------------------------------------------------------------------------------------------------------------------- #
 # FIELDS
 PLCIP = '192.168.0.1'
 print(PLCIP)
@@ -24,7 +24,6 @@ sbRunProcess_bit_offset = 0
 
 # Static Bool - Emergency Stop
 sbEMGStop_bit_offset = 1
-
 
 # ----------------------------------------------------------------------------------------------------------------------------- #
 
@@ -63,9 +62,6 @@ def handle_client(conn, addr):
             if msg == "false":
                 WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOff)
             
-                
-
-
 def start_client():
     print(f"[Listening] server is listening on {serverIP}")
     server.listen()
@@ -92,11 +88,9 @@ server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
 print("Server started")
 
-
 start_client()
 
-
-
+# ----------------------------------------------------------------------------------------------------------------------------- #
 # WriteBool(db_number,start_offset, sbRunProcess_bit_offset, sbRunProcess_value)
 # WriteBool(sbEMGStop_db_number,sbEMGStop_start_offset, sbEMGStop_bit_offset, sbEMGStop_value)
 # WriteBool(sbStopProcess_db_number,sbStopProcess_start_offset, sbStopProcess_bit_offset, sbStopProcess_value)
