@@ -242,7 +242,7 @@ class App:
         GLineEdit_512.insert(0,port)
         def update_port(*args):
             port = GLineEdit_57.get()
-        GLineEdit_57.bind("<KeyRelease>", update_port)
+        GLineEdit_57.bind("<Key>", update_port)
 
         # Listbox - Terminal
         GListBox_705=tk.Listbox(root)
