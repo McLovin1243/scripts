@@ -83,7 +83,7 @@ def start_client():
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
 
-class ListboxRedirector:
+#class ListboxRedirector:
     def __init__(self, listbox):
         self.listbox = listbox
 
@@ -276,8 +276,8 @@ class App:
         GListBox_705.place(x=380,y=80,width=211,height=341)
 
         # Redirect standard output to Listbox
-        listbox_redirector = ListboxRedirector(GListBox_705)
-        sys.stdout = listbox_redirector
+        # listbox_redirector = ListboxRedirector(GListBox_705)
+        # sys.stdout = listbox_redirector
 
         # Label - Terminal 
         GLabel_864=tk.Label(root)
