@@ -4,12 +4,9 @@ import sys
 import socket
 import threading
 
-#This python program is the server program that proccess all the commmuncation.
+# This python program is the server program that proccess all the commmuncation.
 
 # FIELDS
-
-
-
 PLCIP = '192.168.0.1'
 print(PLCIP)
 RACK = 0
@@ -41,6 +38,7 @@ ADDR = (serverIP,Port)
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
+print("Server started")
 
 # FUNCTIONS
 
