@@ -9,26 +9,29 @@ import tkinter.font as tkFont
 # ----------------------------------------------------------------------------------------------------------------------------- #
 # FIELDS
 
-window = tk.Tk()
+# PLC
+plcIP = '192.168.0.1'
+print(plcIP)
+rack = 0
+slot = 1
 
-PLCIP = '192.168.0.1'
-print(PLCIP)
-RACK = 0
-SLOT = 1
-
-outputOn = 1
-outputOff = 0
+# Server
+serverIP = "192.168.0.3"
+plc = snap7.client.Client()
+#serverIP = socket.gethostbyname(socket.gethostname())
+port = 5151 # PORT nvidia jetson
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Adress from TIA Portal - dbCommunication
 db_number = 2
 start_offset = 0
-
 # Static Bool - Run/Stop Process
 sbRunProcess_bit_offset = 0
-
 # Static Bool - Emergency Stop
 sbEMGStop_bit_offset = 1
 
+outputOn = 1
+outputOff = 0
 # ----------------------------------------------------------------------------------------------------------------------------- #
 
 # FUNCTIONS
@@ -88,6 +91,8 @@ class App:
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
 
+
+        # Label - Server
         GLabel_637=tk.Label(root)
         ft = tkFont.Font(family='Times',size=38)
         GLabel_637["font"] = ft
@@ -96,6 +101,7 @@ class App:
         GLabel_637["text"] = "Server"
         GLabel_637.place(x=100,y=20,width=400,height=36)
 
+        # Entry - IP PLC
         GLineEdit_305=tk.Entry(root)
         GLineEdit_305["borderwidth"] = "1px"
         ft = tkFont.Font(family='Times',size=10)
@@ -105,6 +111,7 @@ class App:
         GLineEdit_305["text"] = ""
         GLineEdit_305.place(x=30,y=130,width=112,height=30)
 
+        # Button - Start server
         GButton_984=tk.Button(root)
         GButton_984["bg"] = "#f0f0f0"
         ft = tkFont.Font(family='Times',size=10)
@@ -115,6 +122,7 @@ class App:
         GButton_984.place(x=520,y=430,width=70,height=25)
         GButton_984["command"] = self.GButton_984_command
 
+        # Label - IP PLC
         GLabel_584=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
         GLabel_584["font"] = ft
@@ -123,6 +131,7 @@ class App:
         GLabel_584["text"] = "IP"
         GLabel_584.place(x=50,y=110,width=70,height=25)
 
+        # Label - PLC Rack
         GLabel_769=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
         GLabel_769["font"] = ft
@@ -131,6 +140,7 @@ class App:
         GLabel_769["text"] = "Rack"
         GLabel_769.place(x=50,y=170,width=70,height=25)
 
+        # Label - PLC Slot
         GLabel_187=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
         GLabel_187["font"] = ft
@@ -139,6 +149,7 @@ class App:
         GLabel_187["text"] = "Slot"
         GLabel_187.place(x=50,y=230,width=70,height=25)
 
+        # Label - IP Server
         GLabel_528=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
         GLabel_528["font"] = ft
@@ -147,6 +158,7 @@ class App:
         GLabel_528["text"] = "IP"
         GLabel_528.place(x=170,y=110,width=70,height=25)
 
+        # Label - Port Server
         GLabel_811=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
         GLabel_811["font"] = ft
@@ -155,6 +167,7 @@ class App:
         GLabel_811["text"] = "Port"
         GLabel_811.place(x=170,y=170,width=70,height=25)
 
+        # Label - PLC
         GLabel_267=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
         GLabel_267["font"] = ft
@@ -163,6 +176,7 @@ class App:
         GLabel_267["text"] = "PLC"
         GLabel_267.place(x=50,y=70,width=70,height=25)
 
+        # Label - Server
         GLabel_414=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
         GLabel_414["font"] = ft
@@ -171,6 +185,7 @@ class App:
         GLabel_414["text"] = "Server"
         GLabel_414.place(x=170,y=70,width=70,height=25)
 
+        # Entry - Rack
         GLineEdit_166=tk.Entry(root)
         GLineEdit_166["borderwidth"] = "1px"
         ft = tkFont.Font(family='Times',size=10)
@@ -180,6 +195,7 @@ class App:
         GLineEdit_166["text"] = ""
         GLineEdit_166.place(x=30,y=190,width=112,height=30)
 
+        # Entry - Slot
         GLineEdit_886=tk.Entry(root)
         GLineEdit_886["borderwidth"] = "1px"
         ft = tkFont.Font(family='Times',size=10)
@@ -189,6 +205,7 @@ class App:
         GLineEdit_886["text"] = ""
         GLineEdit_886.place(x=30,y=250,width=112,height=30)
 
+        # Entry - Server IP
         GLineEdit_57=tk.Entry(root)
         GLineEdit_57["borderwidth"] = "1px"
         ft = tkFont.Font(family='Times',size=10)
@@ -198,6 +215,7 @@ class App:
         GLineEdit_57["text"] = ""
         GLineEdit_57.place(x=150,y=130,width=113,height=30)
 
+        # Entry - Server Port
         GLineEdit_512=tk.Entry(root)
         GLineEdit_512["borderwidth"] = "1px"
         ft = tkFont.Font(family='Times',size=10)
@@ -207,6 +225,7 @@ class App:
         GLineEdit_512["text"] = ""
         GLineEdit_512.place(x=150,y=190,width=111,height=30)
 
+        # Listbox - Terminal
         GListBox_705=tk.Listbox(root)
         GListBox_705["borderwidth"] = "1px"
         ft = tkFont.Font(family='Times',size=10)
@@ -215,6 +234,7 @@ class App:
         GListBox_705["justify"] = "center"
         GListBox_705.place(x=380,y=80,width=211,height=341)
 
+        # Label - Terminal 
         GLabel_864=tk.Label(root)
         ft = tkFont.Font(family='Times',size=16)
         GLabel_864["font"] = ft
@@ -225,21 +245,15 @@ class App:
 
     def GButton_984_command(self):
         # Creating PLC connection
-        plc = snap7.client.Client()
-        plc.connect(PLCIP, RACK, SLOT)
+        plc.connect(plcIP, rack, slot)
         plcStatus = plc.get_cpu_state()
         print(plcStatus)
 
-        #serverIP = socket.gethostbyname(socket.gethostname())
-        serverIP = "192.168.0.3"
-        Port = 5151 #PORT nvidia jetson
-        ADDR = (serverIP,Port)
-        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        ADDR = (serverIP,port)
         server.bind(ADDR)
         print("Server started")
 
         start_client()
-
 
 if __name__ == "__main__":
     root = tk.Tk()
