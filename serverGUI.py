@@ -290,11 +290,11 @@ class App:
 
     def GButton_984_command(self):
 
-        print("PLC IP: " + plcIP)
-        print("RACK: " + rack)
-        print("SLOT: " + slot)
-        print("SERVER IP: " + serverIP)
-        print("SERVER PORT: " + port)
+        print(f"PLC IP: {plcIP}")
+        print(f"RACK: {rack}")
+        print(f"SLOT: {slot}")
+        print(f"SERVER IP: {serverIP}")
+        print(f"SERVER PORT: {port}")
         print("----------------------------------------------------")
         # Creating PLC connection
         plc.connect(plcIP, rack, slot)
