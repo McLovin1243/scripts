@@ -77,19 +77,12 @@ def start_client():
         conn, addr = server.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
-class ListboxRedirector:
-    def __init__(self, listbox):
-        self.listbox = listbox
-
-    def write(self, message):
-        self.listbox.insert(tk.END, message)
-        self.listbox.see(tk.END)  # Auto-scroll to the bottom of the Listbox
 
 class App:
     def __init__(self, root):
-        #setting title
+        # Setting title
         root.title("Server-oversikt")
-        #setting window size
+        # Setting window size
         width=595
         height=465
         screenwidth = root.winfo_screenwidth()
@@ -261,17 +254,13 @@ class App:
         GLineEdit_512.bind("<KeyRelease>", update_port)
 
         # Listbox - Terminal
-        GListBox_705=tk.Listbox(root)
-        GListBox_705["borderwidth"] = "1px"
+        self.GListBox_705=tk.Listbox(root)
+        self.GListBox_705["borderwidth"] = "1px"
         ft = tkFont.Font(family='Arial',size=8)
-        GListBox_705["font"] = ft
-        GListBox_705["fg"] = "#333333"
-        GListBox_705["justify"] = "left"
-        GListBox_705.place(x=380,y=80,width=211,height=341)
-
-        # Redirect standard output to Listbox
-        listbox_redirector = ListboxRedirector(GListBox_705)
-        sys.stdout = listbox_redirector
+        self.GListBox_705["font"] = ft
+        self.GListBox_705["fg"] = "#333333"
+        self.GListBox_705["justify"] = "left"
+        self.GListBox_705.place(x=380,y=80,width=211,height=341)
 
         # Label - Terminal 
         GLabel_864=tk.Label(root)
@@ -290,6 +279,18 @@ class App:
         print(f"SERVER IP: {serverIP}")
         print(f"SERVER PORT: {port}")
         print("----------------------------------------------------")
+
+        def append_to_terminal(message):
+            self.GListBox_705.insert(tk.END, message + "\n")
+            self.GListBox_705.yview(tk.END)
+
+        append_to_terminal(f"PLC IP: {plcIP}")
+        append_to_terminal(f"RACK: {rack}")
+        append_to_terminal(f"SLOT: {slot}")
+        append_to_terminal(f"SERVER IP: {serverIP}")
+        append_to_terminal(f"SERVER PORT: {port}")
+        append_to_terminal("----------------------------------------------------")
+
         # Creating PLC connection
         plc.connect(plcIP, rack, slot)
         plcStatus = plc.get_cpu_state()
@@ -299,6 +300,9 @@ class App:
         server.bind(ADDR)
         print("Server started")
         print(f"PLC IP:{plcIP}")
+        append_to_terminal("Server started")
+        append_to_terminal(f"PLC IP:{plcIP}")
+
         start_client()
 
 
