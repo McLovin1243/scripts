@@ -62,14 +62,6 @@ print("[Starting] server is starting...")
 start_client()
 
 
-serverIP ='192.168.0.3' #NVIDIA JETSON LOCAL IP ADRESS
-Port = 5025 #PORT nvidia jetson
-
-server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-server.bind((serverIP,Port))
-
-
-
 PLCIP = '192.168.0.1'
 print(PLCIP)
 RACK = 0
