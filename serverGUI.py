@@ -4,6 +4,7 @@ import sys
 import socket
 import tkinter as tk
 import tkinter.font as tkFont
+import threading
 
 
 # This python program is the server program that proccess all the commmuncation.
@@ -17,7 +18,7 @@ slot = "1"
 
 # Server
 serverIP = "192.168.0.3"
-# plc = snap7.client.Client()
+plc = snap7.client.Client()
 #serverIP = socket.gethostbyname(socket.gethostname())
 port = "5151" # PORT nvidia jetson
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
