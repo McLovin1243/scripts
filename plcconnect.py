@@ -25,7 +25,6 @@ sbRunProcess_bit_offset = 0
 # Static Bool - Emergency Stop
 sbEMGStop_bit_offset = 1
 
-
 # Creating PLC connection
 plc = snap7.client.Client()
 plc.connect(PLCIP, RACK, SLOT)
@@ -36,7 +35,6 @@ print(plcStatus)
 serverIP = "192.168.0.3"
 Port = 5151 #PORT nvidia jetson
 ADDR = (serverIP,Port)
-
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
 print("Server started")
