@@ -2,7 +2,7 @@ import socket
 import threading
 # serverIP = socket.gethostbyname(socket.gethostname())
 serverIP = "192.168.0.3"
-Port = 5050 #PORT nvidia jetson
+Port = 5151 #PORT nvidia jetson
 ADDR = (serverIP,Port)
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
