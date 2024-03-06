@@ -25,20 +25,7 @@ sbRunProcess_bit_offset = 0
 # Static Bool - Emergency Stop
 sbEMGStop_bit_offset = 1
 
-# Creating PLC connection
-plc = snap7.client.Client()
-plc.connect(PLCIP, RACK, SLOT)
-plcStatus = plc.get_cpu_state()
-print(plcStatus)
-
-#serverIP = socket.gethostbyname(socket.gethostname())
-serverIP = "192.168.0.3"
-Port = 5151 #PORT nvidia jetson
-ADDR = (serverIP,Port)
-
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(ADDR)
-print("Server started")
+# ----------------------------------------------------------------------------------------------------------------------------- #
 
 # FUNCTIONS
 
@@ -86,48 +73,31 @@ def start_client():
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
 
+# ----------------------------------------------------------------------------------------------------------------------------- #
 
 # MAIN PROGRAM
         
+# Creating PLC connection
+plc = snap7.client.Client()
+plc.connect(PLCIP, RACK, SLOT)
+plcStatus = plc.get_cpu_state()
+print(plcStatus)
 
+#serverIP = socket.gethostbyname(socket.gethostname())
+serverIP = "192.168.0.3"
+Port = 5151 #PORT nvidia jetson
+ADDR = (serverIP,Port)
 
-
-
-
-
-
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind(ADDR)
+print("Server started")
 
 start_client()
-stateNvidia = True
-
-while plcStatus == "S7CpuStatusRun":
-    time.sleep(1)
-    statePLC = ReadBool(db_number,start_offset, sbRunProcess_bit_offset)
-    EMGStopPLC = ReadBool(db_number,start_offset, sbEMGStop_bit_offset)
-
-    if stateNvidia == True:
-        WriteBool(db_number,start_offset, sbRunProcess_bit_offset, outputOn)
-        statePLC = ReadBool(db_number,start_offset, sbRunProcess_bit_offset)
-        
-    if stateNvidia == False:
-        WriteBool(db_number,start_offset, sbRunProcess_bit_offset,outputOff)
-        statePLC = ReadBool(db_number,start_offset, sbRunProcess_bit_offset)
-
-    if EMGStopPLC == True:
-        print("EMERGENCY STOP")
-        time.sleep(2)
-        print("3")
-        time.sleep(2)
-        print("2")
-        time.sleep(2)
-        print("1")
-        time.sleep(1)
-        print("SHUTDOWN")
-        time.sleep(1)
-        sys.exit()
-        break
 
 
-#WriteBool(db_number,start_offset, sbRunProcess_bit_offset, sbRunProcess_value)
-#WriteBool(sbEMGStop_db_number,sbEMGStop_start_offset, sbEMGStop_bit_offset, sbEMGStop_value)
-#WriteBool(sbStopProcess_db_number,sbStopProcess_start_offset, sbStopProcess_bit_offset, sbStopProcess_value)
+
+# WriteBool(db_number,start_offset, sbRunProcess_bit_offset, sbRunProcess_value)
+# WriteBool(sbEMGStop_db_number,sbEMGStop_start_offset, sbEMGStop_bit_offset, sbEMGStop_value)
+# WriteBool(sbStopProcess_db_number,sbStopProcess_start_offset, sbStopProcess_bit_offset, sbStopProcess_value)
+    
+# EMGStopPLC = ReadBool(db_number,start_offset, sbEMGStop_bit_offset)
