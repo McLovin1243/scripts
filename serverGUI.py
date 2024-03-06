@@ -18,7 +18,7 @@ slot = 1
 
 # Server
 serverIP = "192.168.0.3"
-plc = snap7.client.Client()
+#plc = snap7.client.Client()
 #serverIP = socket.gethostbyname(socket.gethostname())
 port = 5151 # PORT nvidia jetson
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -82,8 +82,7 @@ def start_client():
         conn, addr = server.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
-
-#class ListboxRedirector:
+class ListboxRedirector:
     def __init__(self, listbox):
         self.listbox = listbox
 
@@ -276,8 +275,8 @@ class App:
         GListBox_705.place(x=380,y=80,width=211,height=341)
 
         # Redirect standard output to Listbox
-        # listbox_redirector = ListboxRedirector(GListBox_705)
-        # sys.stdout = listbox_redirector
+        listbox_redirector = ListboxRedirector(GListBox_705)
+        sys.stdout = listbox_redirector
 
         # Label - Terminal 
         GLabel_864=tk.Label(root)
