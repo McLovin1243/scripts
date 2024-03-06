@@ -92,7 +92,7 @@ class ListboxRedirector:
 class App:
     def __init__(self, root):
         #setting title
-        root.title("undefined")
+        root.title("Server-oversikt")
         #setting window size
         width=595
         height=465
@@ -102,8 +102,7 @@ class App:
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
 
-        # Load and display the background image
-        background_image = tk.PhotoImage(file="flammer.jpg")
+        background_image = tk.PhotoImage(file="./test.png")
         background_label = tk.Label(root, image=background_image)
         background_label.place(relwidth=1, relheight=1)
 
