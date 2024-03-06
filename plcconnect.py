@@ -34,12 +34,7 @@ sbRunProcess_bit_offset = 0
 # Static Bool - Emergency Stop
 sbEMGStop_bit_offset = 1
 
-# Creating PLC client and connecting to registred info
-plc = snap7.client.Client()
-plc.connect(PLCIP, RACK, SLOT)
 
-plcStatus = plc.get_cpu_state()
-print(plcStatus)
 
 # FUNCTIONS
 
@@ -67,6 +62,13 @@ def handle_client(conn, addr):
             msg_length = int(msg_length)
             msg = conn.recv(msg_length).decode('utf-8')
             print(f"{msg}")
+
+            # Creating PLC client and connecting to registred info
+            plc = snap7.client.Client()
+            plc.connect(PLCIP, RACK, SLOT)
+
+            plcStatus = plc.get_cpu_state()
+            print(plcStatus)
             
             if msg == "!DISCONNECT":
                 WriteBool(db_number, start_offset,sbEMGStop_bit_offset, outputOn)
@@ -75,6 +77,7 @@ def handle_client(conn, addr):
                 WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOn)
             if msg == "False":
                 WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOff)
+            
                 
 
 
