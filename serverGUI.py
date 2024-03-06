@@ -1,9 +1,10 @@
-# import snap7
+import snap7
 import time
 import sys
 import socket
 import tkinter as tk
 import tkinter.font as tkFont
+
 
 # This python program is the server program that proccess all the commmuncation.
 # ----------------------------------------------------------------------------------------------------------------------------- #
@@ -41,19 +42,19 @@ outputOff = 0
 # FUNCTIONS
 
 # Funksjon for å skrive ut boolsk verdi til PLS
-#def WriteBool(db_number, start_offset, bit_offset, value):
- #   reading = plc.db_read(db_number, start_offset,1 )
-  #  snap7.util.set_bool(reading, 0, bit_offset, value)
-   # plc.db_write(db_number, start_offset, reading)
-    #return None
+def WriteBool(db_number, start_offset, bit_offset, value):
+    reading = plc.db_read(db_number, start_offset,1 )
+    snap7.util.set_bool(reading, 0, bit_offset, value)
+    plc.db_write(db_number, start_offset, reading)
+    return None
 
 
 # Funksjon for å lese ut boolsk verdi fra PLS
-#def ReadBool(db_number, start_offset, bit_offset):
-  #   reading =  plc.db_read(db_number, start_offset, 1)
-   # a = snap7.util.get_bool(reading, 0, bit_offset)
-    # print('DB Number:' + str(db_number) + ' Bit: ' + str(start_offset) + '.' + str(bit_offset) + ' Value: ' + str(a))
-    # return a
+def ReadBool(db_number, start_offset, bit_offset):
+    reading =  plc.db_read(db_number, start_offset, 1)
+    a = snap7.util.get_bool(reading, 0, bit_offset)
+    print('DB Number:' + str(db_number) + ' Bit: ' + str(start_offset) + '.' + str(bit_offset) + ' Value: ' + str(a))
+    return a
 
 def handle_client(conn, addr):
     print(f"NVIDIA Object detecion software running   {addr}")
@@ -101,11 +102,6 @@ class App:
         alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
-
-        background_image = tk.PhotoImage(file="./test.png")
-        background_label = tk.Label(root, image=background_image)
-        background_label.place(relwidth=1, relheight=1)
-
 
         # Label - Server
         GLabel_637=tk.Label(root)
@@ -195,6 +191,8 @@ class App:
         GLabel_267["justify"] = "center"
         GLabel_267["text"] = "PLC"
         GLabel_267.place(x=50,y=70,width=70,height=25)
+        GLabel_267["bd"] = 1  # Adjust the border width as needed
+        GLabel_267["relief"] = tk.SOLID  # Solid border
 
         # Label - Server
         GLabel_414=tk.Label(root)
@@ -204,6 +202,8 @@ class App:
         GLabel_414["justify"] = "center"
         GLabel_414["text"] = "Server"
         GLabel_414.place(x=170,y=70,width=70,height=25)
+        GLabel_414["bd"] = 1  # Adjust the border width as needed
+        GLabel_414["relief"] = tk.SOLID  # Solid border        
 
         # Entry - Rack
         GLineEdit_166=tk.Entry(root)
@@ -294,17 +294,17 @@ class App:
         print("SLOT: " + slot)
         print("SERVER IP: " + serverIP)
         print("SERVER PORT: " + port)
-        print("--------------------------")
+        print("----------------------------------------------------")
         # Creating PLC connection
-        #  plc.connect(plcIP, rack, slot)
-       # plcStatus = plc.get_cpu_state()
-        #print(plcStatus)
+        plc.connect(plcIP, rack, slot)
+        plcStatus = plc.get_cpu_state()
+        print(plcStatus)
 
-       # ADDR = (serverIP,port)
-       # server.bind(ADDR)
-        #print("Server started")
-        #print(f"PLC IP:{plcIP}")
-        #start_client()
+        ADDR = (serverIP,port)
+        server.bind(ADDR)
+        print("Server started")
+        print(f"PLC IP:{plcIP}")
+        start_client()
 
 
 if __name__ == "__main__":
