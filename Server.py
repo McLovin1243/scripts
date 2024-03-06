@@ -1,6 +1,6 @@
 import socket
 import threading
-# serverIP = socket.gethostbyname(socket.gethostname())
+#serverIP = socket.gethostbyname(socket.gethostname())
 serverIP = "192.168.0.3"
 Port = 5050 #PORT nvidia jetson
 ADDR = (serverIP,Port)
@@ -8,11 +8,6 @@ ADDR = (serverIP,Port)
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
 serverIP = socket.gethostbyname(socket.gethostname())
-Port = 5050 #PORT nvidia jetson
-ADDR = (serverIP,Port)
-
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(ADDR)
 
 
 def handle_client(conn, addr):
