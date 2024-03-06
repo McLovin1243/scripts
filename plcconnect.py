@@ -17,7 +17,7 @@ outputOff = 0
 
 # Adress from TIA Portal - dbCommunication
 db_number = 2
-start_offset = 2
+start_offset = 0
 
 # Static Bool - Run/Stop Process
 sbRunProcess_bit_offset = 0
