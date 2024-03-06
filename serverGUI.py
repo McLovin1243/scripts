@@ -110,6 +110,10 @@ class App:
         GLineEdit_305["justify"] = "center"
         GLineEdit_305["text"] = ""
         GLineEdit_305.place(x=30,y=130,width=112,height=30)
+        GLineEdit_305.insert(0,plcIP)
+        def update_plcIP(*args):
+            plcIP = GLineEdit_305.get()
+        GLineEdit_305.bind("<KeyRelease>", update_plcIP)
 
         # Button - Start server
         GButton_984=tk.Button(root)
@@ -254,6 +258,9 @@ class App:
         print("Server started")
 
         start_client()
+
+# IF changes in the input entries: 
+
 
 if __name__ == "__main__":
     root = tk.Tk()
