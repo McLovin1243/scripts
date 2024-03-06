@@ -7,13 +7,6 @@ ADDR = (serverIP,Port)
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind(ADDR)
-serverIP = socket.gethostbyname(socket.gethostname())
-Port = 5050 #PORT nvidia jetson
-ADDR = (serverIP,Port)
-
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(ADDR)
-
 
 
 def handle_client(conn, addr):
