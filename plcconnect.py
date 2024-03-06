@@ -45,6 +45,11 @@ def handle_client(conn, addr):
             
             if msg == "!DISCONNECT":
                 connected = False
+            if msg == "True":
+                WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOn)
+            if msg == "False":
+                WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOff)
+                
 
 
 def start_client():
