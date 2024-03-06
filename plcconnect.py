@@ -62,13 +62,6 @@ def handle_client(conn, addr):
             msg_length = int(msg_length)
             msg = conn.recv(msg_length).decode('utf-8')
             print(f"{msg}")
-
-            # Creating PLC client and connecting to registred info
-            plc = snap7.client.Client()
-            plc.connect(PLCIP, RACK, SLOT)
-
-            plcStatus = plc.get_cpu_state()
-            print(plcStatus)
             
             if msg == "!DISCONNECT":
                 WriteBool(db_number, start_offset,sbEMGStop_bit_offset, outputOn)
@@ -91,13 +84,15 @@ def start_client():
 
 
 # MAIN PROGRAM
+        
+# Creating PLC client and connecting to registred info
+plc = snap7.client.Client()
+plc.connect(PLCIP, RACK, SLOT)
+plcStatus = plc.get_cpu_state()
+print(plcStatus)
 
 print("[Starting] server is starting...")
 start_client()
-
-
-
-start_client() #Starting connection with docker container
 
 
 stateNvidia = True
