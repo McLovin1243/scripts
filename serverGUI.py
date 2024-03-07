@@ -83,13 +83,15 @@ class App:
         # Setting title
         root.title("Server-oversikt")
         # Setting window size
-        width=595
-        height=465
+        width=1000
+        height=600
         screenwidth = root.winfo_screenwidth()
         screenheight = root.winfo_screenheight()
         alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
+
+        # LABELS
 
         # Label - Server
         GLabel_637=tk.Label(root)
@@ -99,32 +101,6 @@ class App:
         GLabel_637["justify"] = "center"
         GLabel_637["text"] = "Server"
         GLabel_637.place(x=100,y=20,width=420,height=40)
-
-        # Entry - IP PLC
-        GLineEdit_305=tk.Entry(root)
-        GLineEdit_305["borderwidth"] = "1px"
-        ft = tkFont.Font(family='Arial',size=10)
-        GLineEdit_305["font"] = ft
-        GLineEdit_305["fg"] = "#333333"
-        GLineEdit_305["justify"] = "center"
-        GLineEdit_305["text"] = ""
-        GLineEdit_305.place(x=30,y=130,width=112,height=30)
-        GLineEdit_305.insert(0,plcIP)
-        def update_plcIP(event):
-            global plcIP
-            plcIP = GLineEdit_305.get()
-        GLineEdit_305.bind("<KeyRelease>", update_plcIP)
-
-        # Button - Start server
-        GButton_984=tk.Button(root)
-        GButton_984["bg"] = "#f0f0f0"
-        ft = tkFont.Font(family='Arial',size=10)
-        GButton_984["font"] = ft
-        GButton_984["fg"] = "#000000"
-        GButton_984["justify"] = "center"
-        GButton_984["text"] = "Start server"
-        GButton_984.place(x=520,y=430,width=70,height=25)
-        GButton_984["command"] = self.GButton_984_command
 
         # Label - IP PLC
         GLabel_584=tk.Label(root)
@@ -191,7 +167,51 @@ class App:
         GLabel_414["text"] = "Server"
         GLabel_414.place(x=170,y=70,width=70,height=25)
         GLabel_414["bd"] = 1  # Adjust the border width as needed
-        GLabel_414["relief"] = tk.SOLID  # Solid border        
+        GLabel_414["relief"] = tk.SOLID  # Solid border       
+
+        # Label under the green button - "Foring PÅ"
+        label_green_button = tk.Label(root)
+        ft = tkFont.Font(family='Arial', size=10)
+        label_green_button["font"] = ft
+        label_green_button["fg"] = "#000000"
+        label_green_button["justify"] = "center"
+        label_green_button["text"] = "Foring PÅ"
+        label_green_button.place(x=920, y=590, width=70, height=25)
+
+        # Label under the yellow button - "Foring AV"
+        label_yellow_button = tk.Label(root)
+        ft = tkFont.Font(family='Arial', size=10)
+        label_yellow_button["font"] = ft
+        label_yellow_button["fg"] = "#000000"
+        label_yellow_button["justify"] = "center"
+        label_yellow_button["text"] = "Foring AV"
+        label_yellow_button.place(x=820, y=590, width=70, height=25)
+
+        # Label under the red button - "Nødstopp"
+        label_red_button = tk.Label(root)
+        ft = tkFont.Font(family='Arial', size=10)
+        label_red_button["font"] = ft
+        label_red_button["fg"] = "#000000"
+        label_red_button["justify"] = "center"
+        label_red_button["text"] = "Nødstopp"
+        label_red_button.place(x=720, y=590, width=70, height=25)
+
+        # ENTRIES
+
+        # Entry - IP PLC
+        GLineEdit_305=tk.Entry(root)
+        GLineEdit_305["borderwidth"] = "1px"
+        ft = tkFont.Font(family='Arial',size=10)
+        GLineEdit_305["font"] = ft
+        GLineEdit_305["fg"] = "#333333"
+        GLineEdit_305["justify"] = "center"
+        GLineEdit_305["text"] = ""
+        GLineEdit_305.place(x=30,y=130,width=112,height=30)
+        GLineEdit_305.insert(0,plcIP)
+        def update_plcIP(event):
+            global plcIP
+            plcIP = GLineEdit_305.get()
+        GLineEdit_305.bind("<KeyRelease>", update_plcIP)
 
         # Entry - Rack
         GLineEdit_166=tk.Entry(root)
@@ -253,23 +273,32 @@ class App:
             port = GLineEdit_512.get()
         GLineEdit_512.bind("<KeyRelease>", update_port)
 
-        # Listbox - Terminal
-        self.GListBox_705=tk.Listbox(root)
-        self.GListBox_705["borderwidth"] = "1px"
-        ft = tkFont.Font(family='Arial',size=8)
-        self.GListBox_705["font"] = ft
-        self.GListBox_705["fg"] = "#333333"
-        self.GListBox_705["justify"] = "left"
-        self.GListBox_705.place(x=380,y=80,width=211,height=341)
+        # INDICATOR LIGHTS
 
-        # Label - Terminal 
-        GLabel_864=tk.Label(root)
-        ft = tkFont.Font(family='Arial',size=16)
-        GLabel_864["font"] = ft
-        GLabel_864["fg"] = "#333333"
-        GLabel_864["justify"] = "center"
-        GLabel_864["text"] = "Terminal"
-        GLabel_864.place(x=390,y=50,width=80,height=30)
+        self.canvas = tk.Canvas(root, width=200, height=100)
+        self.canvas.place(x=100, y=400)
+
+        # Green light
+        self.green_light = self.canvas.create_oval(10, 10, 60, 60, fill="gray")
+
+        # Yellow light
+        self.yellow_light = self.canvas.create_oval(80, 10, 130, 60, fill="gray")
+
+        # Red light
+        self.red_light = self.canvas.create_oval(150, 10, 200, 60, fill="gray")
+
+        # BUTTONS
+
+        # Button - Start server
+        GButton_984=tk.Button(root)
+        GButton_984["bg"] = "#f0f0f0"
+        ft = tkFont.Font(family='Arial',size=10)
+        GButton_984["font"] = ft
+        GButton_984["fg"] = "#000000"
+        GButton_984["justify"] = "center"
+        GButton_984["text"] = "Start server"
+        GButton_984.place(x=920,y=560,width=70,height=25)
+        GButton_984["command"] = self.GButton_984_command
 
     def GButton_984_command(self):
 
@@ -280,17 +309,6 @@ class App:
         print(f"SERVER PORT: {port}")
         print("----------------------------------------------------")
 
-        def append_to_terminal(message):
-            self.GListBox_705.insert(tk.END, message + "\n")
-            self.GListBox_705.yview(tk.END)
-
-        append_to_terminal(f"PLC IP: {plcIP}")
-        append_to_terminal(f"RACK: {rack}")
-        append_to_terminal(f"SLOT: {slot}")
-        append_to_terminal(f"SERVER IP: {serverIP}")
-        append_to_terminal(f"SERVER PORT: {port}")
-        append_to_terminal("----------------------------------------------------")
-
         # Creating PLC connection
         plc.connect(plcIP, rack, slot)
         plcStatus = plc.get_cpu_state()
@@ -300,11 +318,8 @@ class App:
         server.bind(ADDR)
         print("Server started")
         print(f"PLC IP:{plcIP}")
-        append_to_terminal("Server started")
-        append_to_terminal(f"PLC IP:{plcIP}")
 
         start_client()
-
 
 if __name__ == "__main__":
     root = tk.Tk()
