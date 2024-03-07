@@ -34,7 +34,7 @@ outputOn = 1
 outputOff = 0
 
 detectedPellets = 0
-feedingstatus = 1
+feedingstatus = 0
 EMGStatus = 0
 
 # ----------------------------------------------------------------------------------------------------------------------------- #
