@@ -65,7 +65,7 @@ def handle_client(conn, addr):
             msg_length = int(msg_length)
             msg = conn.recv(msg_length).decode('utf-8')
             print(f"{msg}")
-            
+                
             if msg == "!DISCONNECT":
                 WriteBool(db_number, start_offset,sbEMGStop_bit_offset, outputOn)
                 connected = False
@@ -350,14 +350,14 @@ class App:
     # FUNCTION LIGHT-CHANGING
     def update_lights(self):
         if EMGStatus == 0:
-            self.canvas.itemconfig(self.red_light_light, fill="gray") 
+            self.canvas.itemconfig(self.red_light, fill="gray") 
         else:
             self.canvas.itemconfig(self.red_light, fill="red") 
         if feedingstatus == 1:
-            self.canvas.itemconfig(self.green_light_light, fill="green") 
+            self.canvas.itemconfig(self.green_light, fill="green") 
             self.canvas.itemconfig(self.yellow_light, fill="grey") 
         else:
-            self.canvas.itemconfig(self.green_light_light, fill="grey") 
+            self.canvas.itemconfig(self.green_light, fill="grey") 
             self.canvas.itemconfig(self.yellow_light, fill="yellow") 
 
 
@@ -384,9 +384,7 @@ class App:
         print(f"PLC IP:{plcIP}")
 
         start_client()
-        while True:
-            self.update_lights()
-
+        self.update_lights()
         
         
     # FUNCTION EXIT APPLICATION
