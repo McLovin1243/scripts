@@ -33,6 +33,10 @@ sbEMGStop_bit_offset = 1
 outputOn = 1
 outputOff = 0
 
+detectedPellets = 0
+feedingstatus = 1
+EMGStatus = 0
+
 # ----------------------------------------------------------------------------------------------------------------------------- #
 
 # FUNCTIONS
@@ -65,10 +69,13 @@ def handle_client(conn, addr):
             if msg == "!DISCONNECT":
                 WriteBool(db_number, start_offset,sbEMGStop_bit_offset, outputOn)
                 connected = False
+                EMGStatus = 1
             if msg == "true":
                 WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOn)
+                feedingstatus = outputOn
             if msg == "false":
                 WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOff)
+                feedingstatus = outputOff
             
 def start_client():
     print(f"[Listening] server is listening on {serverIP}")
@@ -93,14 +100,14 @@ class App:
 
         # LABELS
 
-        # Label - Server
+        # Label - TITLE SERVER
         GLabel_637=tk.Label(root)
         ft = tkFont.Font(family='Arial',size=38)
         GLabel_637["font"] = ft
         GLabel_637["fg"] = "#333333"
         GLabel_637["justify"] = "center"
         GLabel_637["text"] = "Server"
-        GLabel_637.place(x=100,y=20,width=420,height=40)
+        GLabel_637.place(x=300,y=20,width=420,height=40)
 
         # Label - IP PLC
         GLabel_584=tk.Label(root)
@@ -154,7 +161,7 @@ class App:
         GLabel_267["fg"] = "#333333"
         GLabel_267["justify"] = "center"
         GLabel_267["text"] = "PLC"
-        GLabel_267.place(x=50,y=70,width=70,height=25)
+        GLabel_267.place(x=50,y=80,width=70,height=25)
         GLabel_267["bd"] = 1  # Adjust the border width as needed
         GLabel_267["relief"] = tk.SOLID  # Solid border
 
@@ -165,36 +172,65 @@ class App:
         GLabel_414["fg"] = "#333333"
         GLabel_414["justify"] = "center"
         GLabel_414["text"] = "Server"
-        GLabel_414.place(x=170,y=70,width=70,height=25)
+        GLabel_414.place(x=170,y=80,width=70,height=25)
         GLabel_414["bd"] = 1  # Adjust the border width as needed
-        GLabel_414["relief"] = tk.SOLID  # Solid border       
+        GLabel_414["relief"] = tk.SOLID  # Solid border     
+
+        # Label - Pellets detected
+        labelPelletsDetected=tk.Label(root)
+        ft = tkFont.Font(family='Arial',size=10)
+        labelPelletsDetected["font"] = ft
+        labelPelletsDetected["fg"] = "#333333"
+        labelPelletsDetected["justify"] = "center"
+        labelPelletsDetected["text"] = "Pellets detected"
+        labelPelletsDetected.place(x=37,y=320,width=100,height=25)
+        labelPelletsDetected["bd"] = 1  # Adjust the border width as needed
+        labelPelletsDetected["relief"] = tk.SOLID  # Solid border 
+
+        # Label - Pellets detected input
+        lbPelletsDetected=tk.Listbox(root)
+        ft = tkFont.Font(family='Arial',size=10)
+        lbPelletsDetected["font"] = ft
+        lbPelletsDetected["fg"] = "#333333"
+        lbPelletsDetected["justify"] = "center"
+        lbPelletsDetected.place(x=37,y=350,width=100,height=25)
+        lbPelletsDetected["bd"] = 1  # Adjust the border width as needed
+        lbPelletsDetected["relief"] = tk.SOLID  # Solid border 
+        lbPelletsDetected.insert(0, detectedPellets)
+
 
         # Label under the green button - "Foring PÅ"
         label_green_button = tk.Label(root)
         ft = tkFont.Font(family='Arial', size=10)
+        label_green_button["bd"] = 1  # Adjust the border width as needed
+        label_green_button["relief"] = tk.SOLID  # Solid border 
         label_green_button["font"] = ft
-        label_green_button["fg"] = "#000000"
+        label_green_button["fg"] = "#333333"
         label_green_button["justify"] = "center"
         label_green_button["text"] = "Foring PÅ"
-        label_green_button.place(x=920, y=590, width=70, height=25)
+        label_green_button.place(x=49, y=560, width=70, height=25)
 
         # Label under the yellow button - "Foring AV"
         label_yellow_button = tk.Label(root)
         ft = tkFont.Font(family='Arial', size=10)
+        label_yellow_button["bd"] = 1  # Adjust the border width as needed
+        label_yellow_button["relief"] = tk.SOLID  # Solid border 
         label_yellow_button["font"] = ft
-        label_yellow_button["fg"] = "#000000"
+        label_yellow_button["fg"] = "#333333"
         label_yellow_button["justify"] = "center"
         label_yellow_button["text"] = "Foring AV"
-        label_yellow_button.place(x=820, y=590, width=70, height=25)
+        label_yellow_button.place(x=120, y=560, width=70, height=25)
 
         # Label under the red button - "Nødstopp"
         label_red_button = tk.Label(root)
         ft = tkFont.Font(family='Arial', size=10)
+        label_red_button["bd"] = 1  # Adjust the border width as needed
+        label_red_button["relief"] = tk.SOLID  # Solid border 
         label_red_button["font"] = ft
-        label_red_button["fg"] = "#000000"
+        label_red_button["fg"] = "#333333"
         label_red_button["justify"] = "center"
         label_red_button["text"] = "Nødstopp"
-        label_red_button.place(x=720, y=590, width=70, height=25)
+        label_red_button.place(x=191, y=560, width=70, height=25)
 
         # ENTRIES
 
@@ -275,8 +311,8 @@ class App:
 
         # INDICATOR LIGHTS
 
-        self.canvas = tk.Canvas(root, width=200, height=100)
-        self.canvas.place(x=100, y=400)
+        self.canvas = tk.Canvas(root, width=200, height=60)
+        self.canvas.place(x=50, y=480)
 
         # Green light
         self.green_light = self.canvas.create_oval(10, 10, 60, 60, fill="gray")
@@ -297,9 +333,36 @@ class App:
         GButton_984["fg"] = "#000000"
         GButton_984["justify"] = "center"
         GButton_984["text"] = "Start server"
-        GButton_984.place(x=920,y=560,width=70,height=25)
+        GButton_984.place(x=830,y=560,width=75,height=25)
         GButton_984["command"] = self.GButton_984_command
 
+        # Button - Exit server
+        btnAvslutt=tk.Button(root)
+        btnAvslutt["bg"] = "#f0f0f0"
+        ft = tkFont.Font(family='Arial',size=10)
+        btnAvslutt["font"] = ft
+        btnAvslutt["fg"] = "#000000"
+        btnAvslutt["justify"] = "center"
+        btnAvslutt["text"] = "Avslutt server"
+        btnAvslutt.place(x=907,y=560,width=85,height=25)
+        btnAvslutt["command"] = self.btnAvslutt
+
+    # FUNCTION LIGHT-CHANGING
+    def update_lights(self):
+        if EMGStatus == 0:
+            self.canvas.itemconfig(self.red_light_light, fill="gray") 
+        else:
+            self.canvas.itemconfig(self.red_light, fill="red") 
+        if feedingstatus == 1:
+            self.canvas.itemconfig(self.green_light_light, fill="green") 
+            self.canvas.itemconfig(self.yellow_light, fill="grey") 
+        else:
+            self.canvas.itemconfig(self.green_light_light, fill="grey") 
+            self.canvas.itemconfig(self.yellow_light, fill="yellow") 
+
+
+
+    # FUNCTION START SERVER
     def GButton_984_command(self):
 
         print(f"PLC IP: {plcIP}")
@@ -314,12 +377,21 @@ class App:
         plcStatus = plc.get_cpu_state()
         print(plcStatus)
 
+        # Starting up server
         ADDR = (serverIP,port)
         server.bind(ADDR)
         print("Server started")
         print(f"PLC IP:{plcIP}")
 
         start_client()
+        while True:
+            self.update_lights()
+
+        
+        
+    # FUNCTION EXIT APPLICATION
+    def btnAvslutt(self):
+         sys.exit()
 
 if __name__ == "__main__":
     root = tk.Tk()
