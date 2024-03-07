@@ -34,7 +34,7 @@ outputOn = 1
 outputOff = 0
 
 detectedPellets = 0
-feedingstatus = 1
+feedingstatus = 0
 EMGStatus = 0
 
 # ----------------------------------------------------------------------------------------------------------------------------- #
@@ -350,46 +350,26 @@ class App:
     # FUNCTION LIGHT-CHANGING
     def update_lights(self):
         if EMGStatus == 0:
-            self.canvas.itemconfig(self.red_light, fill="gray")
-            if feedingstatus == 1:
-                self.canvas.itemconfig(self.green_light, fill="green") 
-                self.canvas.itemconfig(self.yellow_light, fill="grey") 
-            else:
-                self.canvas.itemconfig(self.green_light, fill="grey") 
-                self.canvas.itemconfig(self.yellow_light, fill="yellow") 
+            self.canvas.itemconfig(self.red_light, fill="gray") 
         else:
             self.canvas.itemconfig(self.red_light, fill="red") 
+        if feedingstatus == 1:
+            self.canvas.itemconfig(self.green_light, fill="green") 
+            self.canvas.itemconfig(self.yellow_light, fill="grey") 
+        else:
             self.canvas.itemconfig(self.green_light, fill="grey") 
-            self.canvas.itemconfig(self.yellow_light, fill="grey")
-
+            self.canvas.itemconfig(self.yellow_light, fill="yellow") 
 
 
 
     # FUNCTION START SERVER
     def GButton_984_command(self):
-        self.update_lights()
-        print(f"PLC IP: {plcIP}")
-        print(f"RACK: {rack}")
-        print(f"SLOT: {slot}")
-        print(f"SERVER IP: {serverIP}")
-        print(f"SERVER PORT: {port}")
-        print("----------------------------------------------------")
 
         # Creating PLC connection
-        plc.connect(plcIP, rack, slot)
-        plcStatus = plc.get_cpu_state()
-        print(plcStatus)
 
         # Starting up server
-        ADDR = (serverIP,port)
-        server.bind(ADDR)
-        print("Server started")
-        print(f"PLC IP:{plcIP}")
 
-
-        start_client()
-
-        
+        self.update_lights()
         
     # FUNCTION EXIT APPLICATION
     def btnAvslutt(self):
