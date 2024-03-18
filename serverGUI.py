@@ -310,20 +310,6 @@ class App:
             port = GLineEdit_512.get()
         GLineEdit_512.bind("<KeyRelease>", update_port)
 
-        # INDICATOR LIGHTS
-
-        canvas = tk.Canvas(root, width=200, height=60)
-        canvas.place(x=50, y=480)
-
-        # Green light
-        green_light = canvas.create_oval(10, 10, 60, 60, fill="gray")
-
-        # Yellow light
-        yellow_light = canvas.create_oval(80, 10, 130, 60, fill="gray")
-
-        # Red light
-        red_light = canvas.create_oval(150, 10, 200, 60, fill="gray")
-
         # BUTTONS
 
         # Button - Start server
@@ -348,20 +334,6 @@ class App:
         btnAvslutt.place(x=907,y=560,width=85,height=25)
         btnAvslutt["command"] = self.btnAvslutt
 
-    # FUNCTION LIGHT-CHANGING
-    def update_lights(self):
-        if EMGStatus == 0:
-            self.canvas.itemconfig(self.red_light, fill="gray")
-            if feedingstatus == 1:
-                self.canvas.itemconfig(self.green_light, fill="green") 
-                self.canvas.itemconfig(self.yellow_light, fill="grey") 
-            else:
-                self.canvas.itemconfig(self.green_light, fill="grey") 
-                self.canvas.itemconfig(self.yellow_light, fill="yellow") 
-        else:
-            self.canvas.itemconfig(self.red_light, fill="red") 
-            self.canvas.itemconfig(self.green_light, fill="grey") 
-
     # FUNCTION START SERVER
     def GButton_984_command(self):
         print(f"PLC IP: {plcIP}")
@@ -382,7 +354,7 @@ class App:
         print("Server started")
         print(f"PLC IP:{plcIP}")
         start_client()
-
+        
         
         
     # FUNCTION EXIT APPLICATION
