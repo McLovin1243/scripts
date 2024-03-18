@@ -70,16 +70,14 @@ def handle_client(conn, addr):
             if msg == "!DISCONNECT":
                 WriteBool(db_number, start_offset,sbEMGStop_bit_offset, outputOn)
                 connected = False
-                EMGStatus = 1
                 print(EMGStatus)
             if msg == "true":
                 WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOn)
                 feedingstatus = outputOn
-                print(feedingstatus)
             if msg == "false":
                 WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOff)
                 feedingstatus = outputOff
-                print(feedingstatus)
+
 
 def start_client():
     print(f"[Listening] server is listening on {serverIP}")
@@ -367,7 +365,7 @@ class App:
 
     # FUNCTION START SERVER
     def GButton_984_command(self):
-
+        self.
         print(f"PLC IP: {plcIP}")
         print(f"RACK: {rack}")
         print(f"SLOT: {slot}")
@@ -385,8 +383,6 @@ class App:
         server.bind(ADDR)
         print("Server started")
         print(f"PLC IP:{plcIP}")
-
-        self.update_lights()
         start_client()
 
         
