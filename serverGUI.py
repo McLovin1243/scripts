@@ -34,7 +34,7 @@ outputOn = 1
 outputOff = 0
 
 detectedPellets = 0
-feedingstatus = 1
+feedingstatus = 0
 EMGStatus = 0
 
 # ----------------------------------------------------------------------------------------------------------------------------- #
@@ -56,6 +56,7 @@ def ReadBool(db_number, start_offset, bit_offset):
     print('DB Number:' + str(db_number) + ' Bit: ' + str(start_offset) + '.' + str(bit_offset) + ' Value: ' + str(a))
     return a
 
+
 def handle_client(conn, addr):
     print(f"NVIDIA Object detecion software running   {addr}")
     connected = True
@@ -70,13 +71,16 @@ def handle_client(conn, addr):
                 WriteBool(db_number, start_offset,sbEMGStop_bit_offset, outputOn)
                 connected = False
                 EMGStatus = 1
+                print(EMGStatus)
             if msg == "true":
                 WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOn)
                 feedingstatus = outputOn
+                print(feedingstatus)
             if msg == "false":
                 WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOff)
                 feedingstatus = outputOff
-            
+                print(feedingstatus)
+
 def start_client():
     print(f"[Listening] server is listening on {serverIP}")
     server.listen()
@@ -197,7 +201,6 @@ class App:
         lbPelletsDetected["bd"] = 1  # Adjust the border width as needed
         lbPelletsDetected["relief"] = tk.SOLID  # Solid border 
         lbPelletsDetected.insert(0, detectedPellets)
-
 
         # Label under the green button - "Foring PÅ"
         label_green_button = tk.Label(root)
@@ -362,12 +365,9 @@ class App:
             self.canvas.itemconfig(self.green_light, fill="grey") 
             self.canvas.itemconfig(self.yellow_light, fill="grey")
 
-
-
-
     # FUNCTION START SERVER
     def GButton_984_command(self):
-        self.update_lights()
+
         print(f"PLC IP: {plcIP}")
         print(f"RACK: {rack}")
         print(f"SLOT: {slot}")
@@ -386,7 +386,7 @@ class App:
         print("Server started")
         print(f"PLC IP:{plcIP}")
 
-
+        self.update_lights()
         start_client()
 
         
