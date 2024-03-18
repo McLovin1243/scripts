@@ -312,17 +312,17 @@ class App:
 
         # INDICATOR LIGHTS
 
-        self.canvas = tk.Canvas(root, width=200, height=60)
-        self.canvas.place(x=50, y=480)
+        canvas = tk.Canvas(root, width=200, height=60)
+        canvas.place(x=50, y=480)
 
         # Green light
-        self.green_light = self.canvas.create_oval(10, 10, 60, 60, fill="gray")
+        green_light = canvas.create_oval(10, 10, 60, 60, fill="gray")
 
         # Yellow light
-        self.yellow_light = self.canvas.create_oval(80, 10, 130, 60, fill="gray")
+        yellow_light = canvas.create_oval(80, 10, 130, 60, fill="gray")
 
         # Red light
-        self.red_light = self.canvas.create_oval(150, 10, 200, 60, fill="gray")
+        red_light = canvas.create_oval(150, 10, 200, 60, fill="gray")
 
         # BUTTONS
 
@@ -361,11 +361,9 @@ class App:
         else:
             self.canvas.itemconfig(self.red_light, fill="red") 
             self.canvas.itemconfig(self.green_light, fill="grey") 
-            self.canvas.itemconfig(self.yellow_light, fill="grey")
 
     # FUNCTION START SERVER
     def GButton_984_command(self):
-        self.
         print(f"PLC IP: {plcIP}")
         print(f"RACK: {rack}")
         print(f"SLOT: {slot}")
