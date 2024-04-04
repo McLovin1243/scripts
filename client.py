@@ -21,7 +21,7 @@ def send(msg):
 
 
 
-net = detectNet("ssd-mobilenet-rev", threshold=0.5)
+net = detectNet("ssd-mobilenet-v2", threshold=0.5)
 camera = videoSource("/dev/video0")      # '/dev/video0' for V4L2
 display = videoOutput() # 'my_video.mp4' for file
 
