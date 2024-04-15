@@ -338,7 +338,8 @@ class App:
 
         # FUNCTION START CLIENT
     def btnClient(self):
-        subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', "cd jetson inference"])
+        command1 = "cd jetson-inference && read -p 'Press Enter to continue..."
+        subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', "cd jetson-inference"])
         
           
     # FUNCTION EXIT APPLICATION
