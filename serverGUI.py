@@ -1,7 +1,6 @@
 import snap7
 import time
 import sys
-import subprocess
 import socket
 import tkinter as tk
 import tkinter.font as tkFont
@@ -306,6 +305,7 @@ class App:
 
     # FUNCTION START SERVER
     def btnStartServer(self):
+        global server_running
         print(f"PLC IP: {plcIP}")
         print(f"RACK: {rack}")
         print(f"SLOT: {slot}")

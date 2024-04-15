@@ -18,9 +18,6 @@ def send(msg):
     client.send(send_length)
     client.send(message)
 
-
-
-
 net = detectNet("ssd-mobilenet-v2", threshold=0.5)
 camera = videoSource("/dev/video0")      # '/dev/video0' for V4L2
 display = videoOutput() # 'my_video.mp4' for file
@@ -36,7 +33,6 @@ while display.IsStreaming():
     	send('true')
     else:
     	send('false')
-    
     
     display.Render(img)
     display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
