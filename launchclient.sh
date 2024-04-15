@@ -1,10 +1,10 @@
 #!/usr/bin/expect -f
 
 spawn bash
-send "cd jetson-inference/\r"
+send "cd jetson-inference\r"
 expect "$ "
-send "$ "
-expect "Password:"
+send "./docker/run.sh\r"
+expect "$"
 send "hvl\r"
 expect "$ "
 interact
