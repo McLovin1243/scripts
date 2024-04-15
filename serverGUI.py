@@ -7,6 +7,7 @@ import tkinter as tk
 import tkinter.font as tkFont
 import threading
 
+
 # This python program is the server program that proccess all the commmuncation.
 # ----------------------------------------------------------------------------------------------------------------------------- #
 # FIELDS
@@ -339,7 +340,7 @@ class App:
         # FUNCTION START CLIENT
     def btnClient(self):
         # Open a new terminal window and execute the command
-        subprocess.Popen(['gnome-terminal', '-e', './launchclient.sh'])
+        subprocess.Popen(['gnome-terminal', '--', './launchclient.sh'])
     
           
     # FUNCTION EXIT APPLICATION
