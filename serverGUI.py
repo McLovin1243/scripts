@@ -338,8 +338,11 @@ class App:
 
         # FUNCTION START CLIENT
     def btnClient(self):
-        command1 = "cd jetson-inference && read -p 'Press Enter to continue..."
-        subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', command1], stdin=subprocess.PIPE)
+        # Command to change directory and then run docker/run.sh
+        command = "cd jetson-inference/ && ./docker/run.sh"
+        
+        # Open a new terminal window and execute the command
+        subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', command])
     
           
     # FUNCTION EXIT APPLICATION
