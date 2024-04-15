@@ -339,7 +339,7 @@ class App:
         # FUNCTION START CLIENT
     def btnClient(self):
         # Command to change directory and then run docker/run.sh
-        command = "cd jetson-inference/ && ./docker/run.sh"
+        command = "cd jetson-inference/ && ./docker/run.sh && sleep 10"
         
         # Open a new terminal window and execute the command
         subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', command])
