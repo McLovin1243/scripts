@@ -80,7 +80,6 @@ def handle_client(conn, addr):
                 WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOff)
                 feedingstatus = outputOff
 
-
 def start_client():
     print(f"[Listening] server is listening on {serverIP}")
     server.listen()
@@ -105,82 +104,82 @@ class App:
         # LABELS
 
         # Label - TITLE SERVER
-        GLabel_637=tk.Label(root)
+        lblServerTitle=tk.Label(root)
         ft = tkFont.Font(family='Arial',size=38)
-        GLabel_637["font"] = ft
-        GLabel_637["fg"] = "#333333"
-        GLabel_637["justify"] = "center"
-        GLabel_637["text"] = "Server"
-        GLabel_637.place(relx=0.5, y=30, anchor=tk.CENTER)
+        lblServerTitle["font"] = ft
+        lblServerTitle["fg"] = "#333333"
+        lblServerTitle["justify"] = "center"
+        lblServerTitle["text"] = "Server"
+        lblServerTitle.place(relx=0.5, y=30, anchor=tk.CENTER)
 
 
 
         # Label - IP PLC
-        GLabel_584=tk.Label(root)
+        lblPLCIP=tk.Label(root)
         ft = tkFont.Font(family='Arial',size=10)
-        GLabel_584["font"] = ft
-        GLabel_584["fg"] = "#333333"
-        GLabel_584["justify"] = "center"
-        GLabel_584["text"] = "IP"
-        GLabel_584.place(x=50,y=105,width=70,height=25)
+        lblPLCIP["font"] = ft
+        lblPLCIP["fg"] = "#333333"
+        lblPLCIP["justify"] = "center"
+        lblPLCIP["text"] = "IP"
+        lblPLCIP.place(x=50,y=105,width=70,height=25)
 
         # Label - PLC Rack
-        GLabel_769=tk.Label(root)
+        lblPLCRack=tk.Label(root)
         ft = tkFont.Font(family='Arial',size=10)
-        GLabel_769["font"] = ft
-        GLabel_769["fg"] = "#333333"
-        GLabel_769["justify"] = "center"
-        GLabel_769["text"] = "Rack"
-        GLabel_769.place(x=50,y=170,width=70,height=25)
+        lblPLCRack["font"] = ft
+        lblPLCRack["fg"] = "#333333"
+        lblPLCRack["justify"] = "center"
+        lblPLCRack["text"] = "Rack"
+        lblPLCRack.place(x=50,y=170,width=70,height=25)
 
         # Label - PLC Slot
-        GLabel_187=tk.Label(root)
+        lblPLCSlot=tk.Label(root)
         ft = tkFont.Font(family='Arial',size=10)
-        GLabel_187["font"] = ft
-        GLabel_187["fg"] = "#333333"
-        GLabel_187["justify"] = "center"
-        GLabel_187["text"] = "Slot"
-        GLabel_187.place(x=50,y=230,width=70,height=25)
+        lblPLCSlot["font"] = ft
+        lblPLCSlot["fg"] = "#333333"
+        lblPLCSlot["justify"] = "center"
+        lblPLCSlot["text"] = "Slot"
+        lblPLCSlot.place(x=50,y=230,width=70,height=25)
 
         # Label - IP Server
-        GLabel_528=tk.Label(root)
+        lblIPServer=tk.Label(root)
         ft = tkFont.Font(family='Arial',size=10)
-        GLabel_528["font"] = ft
-        GLabel_528["fg"] = "#333333"
-        GLabel_528["justify"] = "center"
-        GLabel_528["text"] = "IP"
-        GLabel_528.place(x=170,y=105,width=70,height=25)
+        lblIPServer["font"] = ft
+        lblIPServer["fg"] = "#333333"
+        lblIPServer["justify"] = "center"
+        lblIPServer["text"] = "IP"
+        lblIPServer.place(x=170,y=105,width=70,height=25)
 
         # Label - Port Server
-        GLabel_811=tk.Label(root)
+        lblServerPort=tk.Label(root)
         ft = tkFont.Font(family='Arial',size=10)
-        GLabel_811["font"] = ft
-        GLabel_811["fg"] = "#333333"
-        GLabel_811["justify"] = "center"
-        GLabel_811["text"] = "Port"
-        GLabel_811.place(x=170,y=170,width=70,height=25)
+        lblServerPort["font"] = ft
+        lblServerPort["fg"] = "#333333"
+        lblServerPort["justify"] = "center"
+        lblServerPort["text"] = "Port"
+        lblServerPort.place(x=170,y=170,width=70,height=25)
 
         # Label - PLC
-        GLabel_267=tk.Label(root)
+        lblPLC=tk.Label(root)
         ft = tkFont.Font(family='Arial',size=10)
-        GLabel_267["font"] = ft
-        GLabel_267["fg"] = "#333333"
-        GLabel_267["justify"] = "center"
-        GLabel_267["text"] = "PLC"
-        GLabel_267.place(x=50,y=80,width=70,height=25)
-        GLabel_267["bd"] = 1  # Adjust the border width as needed
-        GLabel_267["relief"] = tk.SOLID  # Solid border
+        lblPLC["font"] = ft
+        lblPLC["fg"] = "#333333"
+        lblPLC["justify"] = "center"
+        lblPLC["text"] = "PLC"
+        lblPLC.place(x=50,y=80,width=70,height=25)
+        lblPLC["bd"] = 1  # Adjust the border width as needed
+        lblPLC["relief"] = tk.SOLID  # Solid border
 
         # Label - Server
-        GLabel_414=tk.Label(root)
+        lblServer=tk.Label(root)
         ft = tkFont.Font(family='Arial',size=10)
-        GLabel_414["font"] = ft
-        GLabel_414["fg"] = "#333333"
-        GLabel_414["justify"] = "center"
-        GLabel_414["text"] = "Server"
-        GLabel_414.place(x=170,y=80,width=70,height=25)
-        GLabel_414["bd"] = 1  # Adjust the border width as needed
-        GLabel_414["relief"] = tk.SOLID  # Solid border     
+        lblServer["font"] = ft
+        lblServer["fg"] = "#333333"
+        lblServer["justify"] = "center"
+        lblServer["text"] = "Server"
+        lblServer.place(x=170,y=80,width=70,height=25)
+        lblServer["bd"] = 1  # Adjust the border width as needed
+        lblServer["relief"] = tk.SOLID  # Solid border     
 
         # Label - Pellets detected
         labelPelletsDetected=tk.Label(root)
@@ -207,79 +206,79 @@ class App:
         # ENTRIES
 
         # Entry - IP PLC
-        GLineEdit_305=tk.Entry(root)
-        GLineEdit_305["borderwidth"] = "1px"
+        entryPLCIP=tk.Entry(root)
+        entryPLCIP["borderwidth"] = "1px"
         ft = tkFont.Font(family='Arial',size=10)
-        GLineEdit_305["font"] = ft
-        GLineEdit_305["fg"] = "#333333"
-        GLineEdit_305["justify"] = "center"
-        GLineEdit_305["text"] = ""
-        GLineEdit_305.place(x=30,y=130,width=112,height=30)
-        GLineEdit_305.insert(0,plcIP)
+        entryPLCIP["font"] = ft
+        entryPLCIP["fg"] = "#333333"
+        entryPLCIP["justify"] = "center"
+        entryPLCIP["text"] = ""
+        entryPLCIP.place(x=30,y=130,width=112,height=30)
+        entryPLCIP.insert(0,plcIP)
         def update_plcIP(event):
             global plcIP
-            plcIP = GLineEdit_305.get()
-        GLineEdit_305.bind("<KeyRelease>", update_plcIP)
+            plcIP = entryPLCIP.get()
+        entryPLCIP.bind("<KeyRelease>", update_plcIP)
 
         # Entry - Rack
-        GLineEdit_166=tk.Entry(root)
-        GLineEdit_166["borderwidth"] = "1px"
+        entryRack=tk.Entry(root)
+        entryRack["borderwidth"] = "1px"
         ft = tkFont.Font(family='Arial',size=10)
-        GLineEdit_166["font"] = ft
-        GLineEdit_166["fg"] = "#333333"
-        GLineEdit_166["justify"] = "center"
-        GLineEdit_166["text"] = ""
-        GLineEdit_166.place(x=30,y=190,width=112,height=30)
-        GLineEdit_166.insert(0,rack)
+        entryRack["font"] = ft
+        entryRack["fg"] = "#333333"
+        entryRack["justify"] = "center"
+        entryRack["text"] = ""
+        entryRack.place(x=30,y=190,width=112,height=30)
+        entryRack.insert(0,rack)
         def update_rack(event):
             global rack
-            rack = GLineEdit_166.get()
-        GLineEdit_166.bind("<KeyRelease>", update_rack)
+            rack = entryRack.get()
+        entryRack.bind("<KeyRelease>", update_rack)
 
         # Entry - Slot
-        GLineEdit_886=tk.Entry(root)
-        GLineEdit_886["borderwidth"] = "1px"
+        entrySlot=tk.Entry(root)
+        entrySlot["borderwidth"] = "1px"
         ft = tkFont.Font(family='Arial',size=10)
-        GLineEdit_886["font"] = ft
-        GLineEdit_886["fg"] = "#333333"
-        GLineEdit_886["justify"] = "center"
-        GLineEdit_886["text"] = ""
-        GLineEdit_886.place(x=30,y=250,width=112,height=30)
-        GLineEdit_886.insert(0,slot)
+        entrySlot["font"] = ft
+        entrySlot["fg"] = "#333333"
+        entrySlot["justify"] = "center"
+        entrySlot["text"] = ""
+        entrySlot.place(x=30,y=250,width=112,height=30)
+        entrySlot.insert(0,slot)
         def update_slot(event):
             global slot
-            slot = GLineEdit_886.get()
-        GLineEdit_886.bind("<KeyRelease>", update_slot)
+            slot = entrySlot.get()
+        entrySlot.bind("<KeyRelease>", update_slot)
 
         # Entry - Server IP
-        GLineEdit_57=tk.Entry(root)
-        GLineEdit_57["borderwidth"] = "1px"
+        entryServerIP=tk.Entry(root)
+        entryServerIP["borderwidth"] = "1px"
         ft = tkFont.Font(family='Arial',size=10)
-        GLineEdit_57["font"] = ft
-        GLineEdit_57["fg"] = "#333333"
-        GLineEdit_57["justify"] = "center"
-        GLineEdit_57["text"] = ""
-        GLineEdit_57.place(x=150,y=130,width=113,height=30)
-        GLineEdit_57.insert(0,serverIP)
+        entryServerIP["font"] = ft
+        entryServerIP["fg"] = "#333333"
+        entryServerIP["justify"] = "center"
+        entryServerIP["text"] = ""
+        entryServerIP.place(x=150,y=130,width=113,height=30)
+        entryServerIP.insert(0,serverIP)
         def update_serverIP(event):
             global serverIP
-            serverIP = GLineEdit_57.get()
-        GLineEdit_57.bind("<KeyRelease>", update_serverIP)
+            serverIP = entryServerIP.get()
+        entryServerIP.bind("<KeyRelease>", update_serverIP)
 
         # Entry - Server Port
-        GLineEdit_512=tk.Entry(root)
-        GLineEdit_512["borderwidth"] = "1px"
+        entryServerPort=tk.Entry(root)
+        entryServerPort["borderwidth"] = "1px"
         ft = tkFont.Font(family='Arial',size=10)
-        GLineEdit_512["font"] = ft
-        GLineEdit_512["fg"] = "#333333"
-        GLineEdit_512["justify"] = "center"
-        GLineEdit_512["text"] = ""
-        GLineEdit_512.place(x=150,y=190,width=111,height=30)
-        GLineEdit_512.insert(0,port)
+        entryServerPort["font"] = ft
+        entryServerPort["fg"] = "#333333"
+        entryServerPort["justify"] = "center"
+        entryServerPort["text"] = ""
+        entryServerPort.place(x=150,y=190,width=111,height=30)
+        entryServerPort.insert(0,port)
         def update_port(event):
             global port
-            port = GLineEdit_512.get()
-        GLineEdit_512.bind("<KeyRelease>", update_port)
+            port = entryServerPort.get()
+        entryServerPort.bind("<KeyRelease>", update_port)
 
         # BUTTONS
 
@@ -293,7 +292,6 @@ class App:
         btnStartServer["text"] = "Start server"
         btnStartServer.place(relx=0.95, rely=0.85, anchor=tk.SE)
         btnStartServer["command"] = self.btnStartServer
-
 
         # Button - Exit server
         btnAvslutt=tk.Button(root)
