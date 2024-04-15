@@ -289,21 +289,11 @@ class App:
         ft = tkFont.Font(family='Arial',size=10)
         btnStartServer["font"] = ft
         btnStartServer["fg"] = "#000000"
-        btnStartServer["justify"] = "center"
+        btnStartServer["justify"] = "left"
         btnStartServer["text"] = "Start server"
-        btnStartServer.place(relx=0.95, rely=0.75, anchor=tk.SE)
+        btnStartServer.place(relx=0.95, rely=0.85, anchor=tk.SE)
         btnStartServer["command"] = self.btnStartServer
 
-        # Button - Start client
-        btnClient=tk.Button(root)
-        btnClient["bg"] = "#f0f0f0"
-        ft = tkFont.Font(family='Arial',size=10)
-        btnClient["font"] = ft
-        btnClient["fg"] = "#000000"
-        btnClient["justify"] = "center"
-        btnClient["text"] = "Start NVIDIA klient"
-        btnClient.place(relx=0.95, rely=0.85, anchor=tk.SE)
-        btnClient["command"] = self.btnClient
 
         # Button - Exit server
         btnAvslutt=tk.Button(root)
@@ -311,7 +301,7 @@ class App:
         ft = tkFont.Font(family='Arial',size=10)
         btnAvslutt["font"] = ft
         btnAvslutt["fg"] = "#000000"
-        btnAvslutt["justify"] = "center"
+        btnAvslutt["justify"] = "left"
         btnAvslutt["text"] = "Avslutt server"
         btnAvslutt.place(relx=0.95, rely=0.95, anchor=tk.SE)
         btnAvslutt["command"] = self.btnAvslutt
@@ -336,12 +326,6 @@ class App:
         print("Server started")
         print(f"PLC IP:{plcIP}")
         start_client()
-
-        # FUNCTION START CLIENT
-    def btnClient(self):
-        # Open a new terminal window and execute the command
-        subprocess.Popen(['gnome-terminal', '--', './launchclient.sh'])
-    
           
     # FUNCTION EXIT APPLICATION
     def btnAvslutt(self):
