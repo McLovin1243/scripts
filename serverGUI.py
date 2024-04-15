@@ -1,6 +1,7 @@
 import snap7
 import time
 import sys
+import subprocess
 import socket
 import tkinter as tk
 import tkinter.font as tkFont
@@ -92,8 +93,8 @@ class App:
         # Setting title
         root.title("Server-oversikt")
         # Setting window size
-        width=1000
-        height=600
+        width=600
+        height=400
         screenwidth = root.winfo_screenwidth()
         screenheight = root.winfo_screenheight()
         alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
@@ -109,7 +110,9 @@ class App:
         GLabel_637["fg"] = "#333333"
         GLabel_637["justify"] = "center"
         GLabel_637["text"] = "Server"
-        GLabel_637.place(x=300,y=20,width=420,height=40)
+        GLabel_637.place(relx=0.5, y=30, anchor=tk.CENTER)
+
+
 
         # Label - IP PLC
         GLabel_584=tk.Label(root)
@@ -200,39 +203,6 @@ class App:
         lbPelletsDetected["relief"] = tk.SOLID  # Solid border 
         lbPelletsDetected.insert(0, detectedPellets)
 
-        # Label under the green button - "Foring PÅ"
-        label_green_button = tk.Label(root)
-        ft = tkFont.Font(family='Arial', size=10)
-        label_green_button["bd"] = 1  # Adjust the border width as needed
-        label_green_button["relief"] = tk.SOLID  # Solid border 
-        label_green_button["font"] = ft
-        label_green_button["fg"] = "#333333"
-        label_green_button["justify"] = "center"
-        label_green_button["text"] = "Foring PÅ"
-        label_green_button.place(x=49, y=560, width=70, height=25)
-
-        # Label under the yellow button - "Foring AV"
-        label_yellow_button = tk.Label(root)
-        ft = tkFont.Font(family='Arial', size=10)
-        label_yellow_button["bd"] = 1  # Adjust the border width as needed
-        label_yellow_button["relief"] = tk.SOLID  # Solid border 
-        label_yellow_button["font"] = ft
-        label_yellow_button["fg"] = "#333333"
-        label_yellow_button["justify"] = "center"
-        label_yellow_button["text"] = "Foring AV"
-        label_yellow_button.place(x=120, y=560, width=70, height=25)
-
-        # Label under the red button - "Nødstopp"
-        label_red_button = tk.Label(root)
-        ft = tkFont.Font(family='Arial', size=10)
-        label_red_button["bd"] = 1  # Adjust the border width as needed
-        label_red_button["relief"] = tk.SOLID  # Solid border 
-        label_red_button["font"] = ft
-        label_red_button["fg"] = "#333333"
-        label_red_button["justify"] = "center"
-        label_red_button["text"] = "Nødstopp"
-        label_red_button.place(x=191, y=560, width=70, height=25)
-
         # ENTRIES
 
         # Entry - IP PLC
@@ -313,15 +283,26 @@ class App:
         # BUTTONS
 
         # Button - Start server
-        GButton_984=tk.Button(root)
-        GButton_984["bg"] = "#f0f0f0"
+        btnStartServer=tk.Button(root)
+        btnStartServer["bg"] = "#f0f0f0"
         ft = tkFont.Font(family='Arial',size=10)
-        GButton_984["font"] = ft
-        GButton_984["fg"] = "#000000"
-        GButton_984["justify"] = "center"
-        GButton_984["text"] = "Start server"
-        GButton_984.place(x=830,y=560,width=75,height=25)
-        GButton_984["command"] = self.GButton_984_command
+        btnStartServer["font"] = ft
+        btnStartServer["fg"] = "#000000"
+        btnStartServer["justify"] = "center"
+        btnStartServer["text"] = "Start server"
+        btnStartServer.place(relx=0.95, rely=0.75, anchor=tk.SE)
+        btnStartServer["command"] = self.btnStartServer
+
+        # Button - Start client
+        btnClient=tk.Button(root)
+        btnClient["bg"] = "#f0f0f0"
+        ft = tkFont.Font(family='Arial',size=10)
+        btnClient["font"] = ft
+        btnClient["fg"] = "#000000"
+        btnClient["justify"] = "center"
+        btnClient["text"] = "Start NVIDIA klient"
+        btnClient.place(relx=0.95, rely=0.85, anchor=tk.SE)
+        btnClient["command"] = self.btnClient
 
         # Button - Exit server
         btnAvslutt=tk.Button(root)
@@ -331,11 +312,11 @@ class App:
         btnAvslutt["fg"] = "#000000"
         btnAvslutt["justify"] = "center"
         btnAvslutt["text"] = "Avslutt server"
-        btnAvslutt.place(x=907,y=560,width=85,height=25)
+        btnAvslutt.place(relx=0.95, rely=0.95, anchor=tk.SE)
         btnAvslutt["command"] = self.btnAvslutt
 
     # FUNCTION START SERVER
-    def GButton_984_command(self):
+    def btnStartServer(self):
         print(f"PLC IP: {plcIP}")
         print(f"RACK: {rack}")
         print(f"SLOT: {slot}")
@@ -354,9 +335,12 @@ class App:
         print("Server started")
         print(f"PLC IP:{plcIP}")
         start_client()
+
+        # FUNCTION START CLIENT
+    def btnClient(self):
+        subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', "cd jetson inference"])
         
-        
-        
+          
     # FUNCTION EXIT APPLICATION
     def btnAvslutt(self):
          sys.exit()
