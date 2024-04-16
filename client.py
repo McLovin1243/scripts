@@ -18,8 +18,18 @@ def send(msg):
     client.send(send_length)
     client.send(message)
 
-net = detectNet("ssd-mobilenet-v2", threshold=0.5)
-camera = videoSource("/dev/video0")      # '/dev/video0' for V4L2
+
+
+
+net = detectNet(argv=['--model=models/rev10/ssd-mobilenet.onnx', '--labels=models/rev10/labels.txt', '--input-blob=input_0', '--output-cvg=scores', '--output-bbox=boxes', '--threshold=0.3'])
+print('********************* CHOOSE FILE OR WEBCAM *********************')
+print('enter f/w f is mp4 file and w is webcam')
+a = input()
+if a == 'w' :
+    camera = videoSource('/dev/video0')
+if a == 'f':
+    camera = videoSource('foring3.mp4')
+    
 display = videoOutput() # 'my_video.mp4' for file
 
 while display.IsStreaming():
@@ -34,7 +44,7 @@ while display.IsStreaming():
     else:
     	send('false')
     
+    
     display.Render(img)
     display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
-
 
