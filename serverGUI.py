@@ -86,8 +86,7 @@ def start_client():
         conn, addr = server.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
-        threadGUI = threading.Thread(target=handle_client)
-        threadGUI.start()
+        
 
 class App:
     def __init__(self, root):
@@ -331,10 +330,12 @@ class App:
     def btnAvslutt(self):
          sys.exit()
 
+threadGUI = threading.Thread(target=handle_client)
+threadGUI.start()
 
 def gui():
-    if __name__ == "__main__":
-        root = tk.Tk()
-        app = App(root)
-        root.mainloop()
+    #if __name__ == "__main__":
+    root = tk.Tk()
+    app = App(root)
+    root.mainloop()
 
