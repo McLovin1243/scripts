@@ -53,7 +53,8 @@ if a == 'w' :
 #Programkode for å kjøre eget treningsett med pellet deteksjon
 
 if a == 'f':
-    net = detectNet(argv=['--model=models/rev11/ssd-mobilenet.onnx', '--labels=models/rev11/labels.txt', '--input-blob=input_0', '--output-cvg=scores', '--output-bbox=boxes', '--threshold=0.5'])
+    net = detectNet(argv=['--model=models/rev11/ssd-mobilenet.onnx', '--labels=models/rev11/labels.txt', '--input-blob=input_0', '--output-cvg=scores', '--output-bbox=boxes', '--threshold=0.3'])
+    
     print("**************************Choose test file ***************************")
     print("1. Klippet.MP4")
     print("2. foring.MP4")
@@ -67,18 +68,22 @@ if a == 'f':
     elif(b == '2'):
     	source = "klippet.mp4"
     elif(b == '3'):
-    	source = "klippet.mp4" 
+    	source = "foring3.mp4" 
     elif(b == '4'):
     	source = "testF.mp4"
     else: 
-    	source = "klippet.mp4" 
-    camera = videoSource('foring3.mp4') 
+    	source = "klippet.mp4"  	 
+    
+    camera = videoSource(source) 
     display = videoOutput() # 'my_video.mp4' for file
+    
+    forIndikator = 0
+    state = "true"
 
     while display.IsStreaming():
         img = camera.Capture()
         counter = 0
-        state = "true"
+        
 
         if img is None: # capture timeout
             continue
@@ -90,14 +95,19 @@ if a == 'f':
             confidence = detection.Confidence
         
     
-            if class_name == "pellet" and confidence > 0.5:
+            if class_name == "pellet" and confidence > 0.9:
                 print("PELLETS:")
                 print(center)
                 counter +=1
                 if counter > 5:
-            	    state='false'   
-            elif counter < 5 and class_name == "salmon":
-                state='true'
+            	    state='false'
+            	      
+            if counter < 5 and class_name == "salmon":
+                forIndikator += 1
+                print(forIndikator)
+            if forIndikator > 100:
+            	 forIndikator = 0
+            	 state='true'
 
     
         print(counter)
@@ -107,11 +117,6 @@ if a == 'f':
     
         display.Render(img)
         display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
-    
-
-    
-        
-
 
 
 
