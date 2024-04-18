@@ -329,7 +329,12 @@ class App:
     def btnAvslutt(self):
          sys.exit()
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = App(root)
-    root.mainloop()
+
+def gui():
+    if __name__ == "__main__":
+        root = tk.Tk()
+        app = App(root)
+        root.mainloop()
+
+threadGUI = threading.Thread(target=handle_client)
+threadGUI.start()
