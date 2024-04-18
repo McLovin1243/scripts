@@ -86,6 +86,8 @@ def start_client():
         conn, addr = server.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
+        threadGUI = threading.Thread(target=handle_client)
+        threadGUI.start()
 
 class App:
     def __init__(self, root):
@@ -336,5 +338,3 @@ def gui():
         app = App(root)
         root.mainloop()
 
-threadGUI = threading.Thread(target=handle_client)
-threadGUI.start()
