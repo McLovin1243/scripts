@@ -79,16 +79,13 @@ def handle_client(conn, addr):
                 WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOff)
                 feedingstatus = outputOff
 
-
 def start_client():
-        print(f"[Listening] server is listening on {serverIP}")
-        server.listen()
-        while True :
-            conn, addr = server.accept()
-            thread = threading.Thread(target=handle_client, args=(conn, addr))
-            thread.start()
-            thread.join()
-        
+    print(f"[Listening] server is listening on {serverIP}")
+    server.listen()
+    while True:
+        conn, addr = server.accept()
+        thread = threading.Thread(target=handle_client, args=(conn, addr))
+        thread.start()
 
 class App:
     def __init__(self, root):
@@ -332,23 +329,7 @@ class App:
     def btnAvslutt(self):
          sys.exit()
 
-    
-
-    def run(self):
-
-        threadGUI = threading.Thread(target = self.__init__)
-        threadSTOP = threading.Thread(target = self.btnAvslutt)
-        threadServer = threading.Thread(target=start_client)
-        threadGUI.start()
-        threadSTOP.start()
-        threadServer.start()
-        threadGUI.join()
-        threadSTOP.join()
-        threadServer.join()
-
 if __name__ == "__main__":
     root = tk.Tk()
     app = App(root)
     root.mainloop()
-    app.run()
-
