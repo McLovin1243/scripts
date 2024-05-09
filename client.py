@@ -2,6 +2,7 @@ import socket
 import time
 from jetson_inference import detectNet
 from jetson_utils import videoSource, videoOutput
+
 HEADER = 64
 port =5151
 FORMAT = 'utf-8'
@@ -20,25 +21,112 @@ def send(msg):
 
 
 
+print('********************* CHOOSE FILE OR WEBCAM *********************')
+print('           enter f/w f is MP4 File and w is Webcam')
+a = input()
 
-net = detectNet("ssd-mobilenet-v2", threshold=0.5)
-camera = videoSource("/dev/video0")      # '/dev/video0' for V4L2
-display = videoOutput() # 'my_video.mp4' for file
 
-while display.IsStreaming():
-    img = camera.Capture()
+#Programkode for å kjøre eksisterende objektdetekterings sett.
+if a == 'w' :
+    net = detectNet("ssd-mobilenet-v2", threshold =0.5)
+    camera = videoSource('/dev/video0')
+    display = videoOutput()
 
-    if img is None: # capture timeout
-        continue
+    while display.IsStreaming():
+        img =camera.Capture()
 
-    detections = net.Detect(img)
-    if detections:
-    	send('true')
-    else:
-    	send('false')
+        if img is None:
+            continue
+
+        detections =net.Detect(img)
+
+        if detections:
+            send("true")
+        else:
+            send("false")
+
+        display.Render(img)
+        display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
+        
+
+
+#Programkode for å kjøre eget treningsett med pellet deteksjon
+
+if a == 'f':
+    net = detectNet(argv=['--model=models/rev11/ssd-mobilenet.onnx', '--labels=models/rev11/labels.txt', '--input-blob=input_0', '--output-cvg=scores', '--output-bbox=boxes', '--threshold=0.3'])
     
+    print("**************************Choose test file ***************************")
+    print("1. Klippet.MP4")
+    print("2. foring.MP4")
+    print("3. foring2.MP4")
+    print("4. foring3.MP4")
+    b = input()
+    source = "klippet.mp4"
     
-    display.Render(img)
-    display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
+    if(b == '1'):
+    	source = "klippet.mp4"
+    elif(b == '2'):
+    	source = "klippet.mp4"
+    elif(b == '3'):
+    	source = "foring3.mp4" 
+    elif(b == '4'):
+    	source = "testF.mp4"
+    else: 
+    	source = "klippet.mp4"  	 
+    
+    camera = videoSource(source) 
+    display = videoOutput() # 'my_video.mp4' for file
+    
+    forIndikator = 0
+    state = "true"
+
+    while display.IsStreaming():
+        img = camera.Capture()
+        counter = 0
+        
+
+        if img is None: # capture timeout
+            continue
+        detections = net.Detect(img)
+    
+        for detection in detections:
+            class_name = net.GetClassDesc(detection.ClassID)
+            center = detection.Center
+            confidence = detection.Confidence
+        
+    
+            if class_name == "pellet" and confidence > 0.9:
+                print("PELLETS:")
+                print(center)
+                counter +=1
+                if counter > 5:
+            	    state='false'
+            	      
+            if counter < 5 and class_name == "salmon":
+                forIndikator += 1
+                print(forIndikator)
+            if forIndikator > 100:
+            	 forIndikator = 0
+            	 state='true'
+
+    
+        print(counter)
+        send(state)
+  
+
+    
+        display.Render(img)
+        display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
+
+
+
+
+
+
+
+
+
+
+
 
 
