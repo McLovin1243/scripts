@@ -28,10 +28,10 @@ def send(msg): #funksjon som sender melding via socket kommunikasjon
     client.send(message)
 
 # ----------------------------------------------------------------------------------------------------------------------------- #
-### --- Kode --- ###
+### --- KODE --- ###
 
 print('********************* CHOOSE FILE OR WEBCAM *********************')
-print('           enter f/w f is MP4 File and w is Webcam')
+print('           Enter f/w f is MP4 File and w is Webcam')
 a = input()
 
 # Programkode for å kjøre eksisterende objektdetekterings sett.
