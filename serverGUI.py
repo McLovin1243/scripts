@@ -6,7 +6,6 @@ import tkinter as tk
 import tkinter.font as tkFont
 import threading
 
-
 # This python program is the server program that proccess all the commmuncation.
 # ----------------------------------------------------------------------------------------------------------------------------- #
 # FIELDS

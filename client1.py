@@ -3,7 +3,6 @@ import time
 from jetson_inference import detectNet
 from jetson_utils import videoSource, videoOutput
 
-#definerer variabler og setter opp socket kommunikasjon
 HEADER = 64
 port =5151
 FORMAT = 'utf-8'
@@ -12,7 +11,7 @@ ADDR = (SERVER,port)
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(ADDR)
 
-def send(msg): #funksjon som sender melding via socket kommunikasjon
+def send(msg):
     message = msg.encode(FORMAT)
     msg_length = len(message)
     send_length =str(msg_length).encode(FORMAT)
@@ -54,32 +53,32 @@ if a == 'w' :
 #Programkode for å kjøre eget treningsett med pellet deteksjon
 
 if a == 'f':
-    net = detectNet(argv=['--model=models/REV2.0/ssd-mobilenet.onnx', '--labels=models/REV2.0/labels.txt', '--input-blob=input_0', '--output-cvg=scores', '--output-bbox=boxes', '--threshold=0.4'])
+    net = detectNet(argv=['--model=models/rev11/ssd-mobilenet.onnx', '--labels=models/rev11/labels.txt', '--input-blob=input_0', '--output-cvg=scores', '--output-bbox=boxes', '--threshold=0.3'])
     
     print("**************************Choose test file ***************************")
-    print("1. test.MP4")
-    print("2. test2.MP4")
-    print("3. foring3.MP4")
-    print("4. testF.MP4")
+    print("1. Klippet.MP4")
+    print("2. foring.MP4")
+    print("3. foring2.MP4")
+    print("4. foring3.MP4")
     b = input()
     source = "klippet.mp4"
     
     if(b == '1'):
-    	source = "test.mp4"
+    	source = "klippet.mp4"
     elif(b == '2'):
-    	source = "Testvideo2.mp4"
+    	source = "klippet.mp4"
     elif(b == '3'):
     	source = "foring3.mp4" 
     elif(b == '4'):
     	source = "testF.mp4"
     else: 
     	source = "klippet.mp4"  	 
-    	
+    
     camera = videoSource(source) 
-    display = videoOutput() # 'my_video.mp4' for fil for sekvens av bilder image 'img_%i.jpg'
+    display = videoOutput() # 'my_video.mp4' for file
     
     forIndikator = 0
-    state = "true" # for foring pågår
+    state = "true"
 
     while display.IsStreaming():
         img = camera.Capture()
@@ -95,16 +94,39 @@ if a == 'f':
             center = detection.Center
             confidence = detection.Confidence
         
-    		
-            if class_name == "pellet" and confidence > 0.5: #counter av pellets med sikkerhet over 80%
+    
+            if class_name == "pellet" and confidence > 0.9:
                 print("PELLETS:")
                 print(center)
                 counter +=1
-                
-                if counter > 10: #dersom mer enn 10 pellets send false som er gult lys
+                if counter > 5:
             	    state='false'
             	      
+            if counter < 5 and class_name == "salmon":
+                forIndikator += 1
+                print(forIndikator)
+            if forIndikator > 100:
+            	 forIndikator = 0
+            	 state='true'
+
+    
+        print(counter)
         send(state)
   
+
+    
         display.Render(img)
         display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
+
+
+
+
+
+
+
+
+
+
+
+
+
