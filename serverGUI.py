@@ -8,7 +8,7 @@ import threading
 
 # This python program is the server program that proccess all the commmuncation.
 # ----------------------------------------------------------------------------------------------------------------------------- #
-# FIELDS
+### --- FIELDS --- ###
 
 # PLC
 plcIP = '192.168.0.1'
@@ -39,7 +39,7 @@ EMGStatus = 0
 
 # ----------------------------------------------------------------------------------------------------------------------------- #
 
-# FUNCTIONS
+### --- FUNCTIONS --- ###
 
 # Funksjon for å skrive ut boolsk verdi til PLS
 def WriteBool(db_number, start_offset, bit_offset, value):
@@ -48,7 +48,6 @@ def WriteBool(db_number, start_offset, bit_offset, value):
     plc.db_write(db_number, start_offset, reading)
     return None
 
-
 # Funksjon for å lese ut boolsk verdi fra PLS
 def ReadBool(db_number, start_offset, bit_offset):
     reading =  plc.db_read(db_number, start_offset, 1)
@@ -56,7 +55,7 @@ def ReadBool(db_number, start_offset, bit_offset):
     print('DB Number:' + str(db_number) + ' Bit: ' + str(start_offset) + '.' + str(bit_offset) + ' Value: ' + str(a))
     return a
 
-
+# Funksjon for å håndtere klient etter tilkobling
 def handle_client(conn, addr):
     print(f"NVIDIA Object detecion software running   {addr}")
     connected = True
@@ -78,6 +77,7 @@ def handle_client(conn, addr):
                 WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOff)
                 feedingstatus = outputOff
 
+# Funksjon for å starte opp server og koble til PLS og klient
 def start_client():
     print(f"[Listening] server is listening on {serverIP}")
     server.listen()
@@ -85,6 +85,8 @@ def start_client():
         conn, addr = server.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
+
+### --- GUI KODE --- ###
 
 class App:
     def __init__(self, root):
@@ -99,7 +101,7 @@ class App:
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
 
-        # LABELS
+        ### --- LABELS --- ###
 
         # Label - TITLE SERVER
         lblServerTitle=tk.Label(root)
@@ -109,8 +111,6 @@ class App:
         lblServerTitle["justify"] = "center"
         lblServerTitle["text"] = "Server"
         lblServerTitle.place(relx=0.5, y=30, anchor=tk.CENTER)
-
-
 
         # Label - IP PLC
         lblPLCIP=tk.Label(root)
@@ -201,7 +201,7 @@ class App:
         lbPelletsDetected["relief"] = tk.SOLID  # Solid border 
         lbPelletsDetected.insert(0, detectedPellets)
 
-        # ENTRIES
+        ### --- ENTRIES --- ###
 
         # Entry - IP PLC
         entryPLCIP=tk.Entry(root)
@@ -278,7 +278,7 @@ class App:
             port = entryServerPort.get()
         entryServerPort.bind("<KeyRelease>", update_port)
 
-        # BUTTONS
+        ### --- BUTTONS --- ###
 
         # Button - Start server
         btnStartServer=tk.Button(root)
