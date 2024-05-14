@@ -6,7 +6,7 @@ import tkinter as tk
 import tkinter.font as tkFont
 import threading
 
-# This python program is the server program that proccess all the commmuncation.
+# Dette programmet kommuniserer med både Client.py inne i dockeren, samtidig som den sender boolsk verdi ut til PLS.
 # ----------------------------------------------------------------------------------------------------------------------------- #
 ### --- FIELDS --- ###
 
@@ -18,8 +18,7 @@ slot = 1
 # Server
 serverIP = "192.168.0.3"
 plc = snap7.client.Client()
-#serverIP = socket.gethostbyname(socket.gethostname())
-port = 5151 # PORT nvidia jetson
+port = 5151 # PORT NVIDIA jetson
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Adress from TIA Portal - dbCommunication
