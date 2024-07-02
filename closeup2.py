@@ -66,7 +66,7 @@ camgradient = 30 #For å skille de som er nærme kamera og langt borte.
 
 	## FUNKSJONER ##
 def log_parking_status(detections):
-    global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, P2_slettes_etter_5_min, P2_starttimer, P3_slettes_etter_5_min, P3_starttimer
+    global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, P2_slettes_etter_5_min, P2_starttimer, P3_slettes_etter_5_min, P3_starttimer, P1_sistlogg, P2_sistlogg, P3_sistlogg
 
 
     current_time = datetime.datetime.now()
@@ -105,7 +105,7 @@ def log_parking_status(detections):
                 P1_sistlogg = timestamp
                 position = "Parkering nr.1"  # Posisjon av båten (x,y)
                 lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
-                length = lengthpixel/camavstand - detection.Bottom/(0.5*(90-camgradient))
+                length = lengthpixel/camavstand - detection.Bottom/(0.1*(90-camgradient))
                 P1["Bredde"] = length
                 boat_data = {
                     "timestamp": timestamp,
@@ -165,7 +165,7 @@ def log_parking_status(detections):
                 P3_sistlogg = timestamp
                 position = "Parkering nr.3"  # Posisjon av båten (x,y)
                 lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
-                length = lengthpixel/camavstand - detection.Bottom/(0.5*(90-camgradient))
+                length = lengthpixel/camavstand - detection.Bottom/(0.1*(90-camgradient))
                 P1["Bredde"] = length
                 boat_data = {
                     "timestamp": timestamp,
