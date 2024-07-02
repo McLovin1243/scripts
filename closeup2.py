@@ -73,6 +73,8 @@ def log_parking_status(detections):
     for detection in detections:
         class_name = net.GetClassDesc(detection.ClassID)
         
+        if class_name == "Boat":
+            class_name = "boat"
         if class_name == "boat": #Gjør det IKKE dersom den detekterer "person" eller "motorcycle"
             #Deteksjonsinfo oppdateres hver deteksjon
             boat_bottom = detection.Bottom
@@ -90,8 +92,8 @@ def log_parking_status(detections):
                     P1["Ledig"] = False 
                     print("P1 ble nå opptatt")
                     boat_count += 1 # En ny båt i parkeringssystemet
-                #elif (current_time.total_seconds() < P1_sistlogg.total_seconds() + 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
-                    #break
+                elif (current_time.total_seconds() < (P1_sistlogg.total_seconds() + 5)): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
+                    break
                 elif (totimertimer.total_seconds() < totimer):
                     print("Oppdaterer P1 aktiv")
                 else:
@@ -120,7 +122,7 @@ def log_parking_status(detections):
                     P2["Ledig"] = False
                     print("P2 ble nå opptatt")
                     boat_count += 1 # En ny båt i parkeringssystemet
-                elif (current_time.total_seconds() < P2_sistlogg.total_seconds() + 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
+                elif (current_time.total_seconds() < (P2_sistlogg.total_seconds() + 5)): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
                     break
                 elif (totimertimer.total_seconds() < totimer):
                     print("Oppdaterer P2 aktiv")
@@ -130,7 +132,7 @@ def log_parking_status(detections):
                 P2_sistlogg = timestamp
                 position = "Parkering nr.2"  # Posisjon av båten (x,y)
                 lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
-                length = lengthpixel/camavstand - detection.Bottom/(0.5*(90-camgradient))
+                length = lengthpixel/camavstand - detection.Bottom/(0.1*(90-camgradient))
                 P2["Bredde"] = length
                 boat_data = {
                     "timestamp": timestamp,
@@ -149,8 +151,8 @@ def log_parking_status(detections):
                     P3["Ledig"] = False 
                     print("P3 ble nå opptatt")
                     boat_count += 1 # En ny båt i parkeringssystemet
-                #elif (current_time.total_seconds() < P3_sistlogg.total_seconds() + 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
-                    #break
+                elif (current_time.total_seconds() < (P3_sistlogg.total_seconds() + 5)): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
+                    break
                 elif (totimertimer.total_seconds() < totimer):
                     print("Oppdaterer P3 aktiv")
                 else:
@@ -216,7 +218,7 @@ def rapporttid():
                 writer.writerow([f"Parkering 1 ble opptatt {P1_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P1_bredde} meter lang.", f"AVGIFTSBELAGT", f"vedkommende skal betale:", f"{pris}", f"kr"])
             else:
                 writer.writerow([f"Parkering 1 ble opptatt {P1_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P1_bredde} meter lang",])
-        
+
 
 
     P2_timedifference = current_time - P2_slettes_etter_5_min
@@ -316,7 +318,7 @@ if a == 's':
         # Print detection information. Nyttig for testing.
         for detection in detections:
       	    print(f"ClassID: {detection.ClassID}, Confidence: {detection.Confidence}, BBox:{detection.Bottom} {detection.Area} {detection.Left}")
-	"""
+	    """
 	
         display.Render(img)
         display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
