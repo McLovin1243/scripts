@@ -102,7 +102,7 @@ def log_parking_status(detections):
                         
                 # Uansett om den er ny eller ikke, så lagrer vi dataen og skriver til excel.
                 timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                P1_sistlogg = timestamp
+                P1_sistlogg = datetime.datetime.now()
                 position = "Parkering nr.1"  # Posisjon av båten (x,y)
                 lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
                 length = lengthpixel/camavstand - detection.Bottom/(0.1*(90-camgradient))
@@ -131,7 +131,7 @@ def log_parking_status(detections):
                 else:
                     print("P-plass 2 har vært opptatt i 2 timer.") # Kan legge til noe mer alarm.
                 timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                P2_sistlogg = timestamp
+                P2_sistlogg = datetime.datetime.now()
                 position = "Parkering nr.2"  # Posisjon av båten (x,y)
                 lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
                 length = lengthpixel/camavstand - detection.Bottom/(0.1*(90-camgradient))
@@ -162,7 +162,7 @@ def log_parking_status(detections):
                         
                 # Uansett om den er ny eller ikke, så lagrer vi dataen og skriver til excel.
                 timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                P3_sistlogg = timestamp
+                P3_sistlogg = datetime.datetime.now()
                 position = "Parkering nr.3"  # Posisjon av båten (x,y)
                 lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
                 length = lengthpixel/camavstand - detection.Bottom/(0.1*(90-camgradient))
