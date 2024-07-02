@@ -61,8 +61,6 @@ ytolerance = 60
 areatolerance = 5000
 timefordelete = 10 # 5 min er 300.
 totimer = 50 # skal være 7200 (2 timer)
-camavstand = 20
-camgradient = 30 #For å skille de som er nærme kamera og langt borte.
 
 	## FUNKSJONER ##
 def log_parking_status(detections):
@@ -105,7 +103,7 @@ def log_parking_status(detections):
                 P1_sistlogg = datetime.datetime.now()
                 position = "Parkering nr.1"  # Posisjon av båten (x,y)
                 lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
-                length = lengthpixel/camavstand - detection.Bottom/(0.1*(90-camgradient))
+                length = lengthpixel/30 - detection.Bottom/100
                 P1["Bredde"] = length
                 boat_data = {
                     "timestamp": timestamp,
@@ -134,7 +132,7 @@ def log_parking_status(detections):
                 P2_sistlogg = datetime.datetime.now()
                 position = "Parkering nr.2"  # Posisjon av båten (x,y)
                 lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
-                length = lengthpixel/camavstand - detection.Bottom/(0.1*(90-camgradient))
+                length = lengthpixel/30 - detection.Bottom/100 # lengthpixel er i x-aksen, som kan være en del større enn bottom (y-aksen). detection.bottom/100 utgjør lite.
                 P2["Bredde"] = length
                 boat_data = {
                     "timestamp": timestamp,
@@ -165,7 +163,7 @@ def log_parking_status(detections):
                 P3_sistlogg = datetime.datetime.now()
                 position = "Parkering nr.3"  # Posisjon av båten (x,y)
                 lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
-                length = lengthpixel/camavstand - detection.Bottom/(0.1*(90-camgradient))
+                length = lengthpixel/30 - detection.Bottom/100
                 P1["Bredde"] = length
                 boat_data = {
                     "timestamp": timestamp,
