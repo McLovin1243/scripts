@@ -6,6 +6,7 @@ from jetson_inference import detectNet
 from jetson_utils import videoSource, videoOutput
 
 
+
 # Oppretter CSV-fil og skriver headeren hvis den ikke allerede finnes
 try:
     with open('boat_data.csv', mode='x', newline='') as file:
@@ -80,7 +81,7 @@ def log_parking_status(detections):
             boat_area = detection.Area
             boat_left = detection.Left
             # Kriteriene for å være på parkeringsplass 1.
-	    
+	
 	    # P1
             if (abs(boat_bottom - P1["Bottom"]) <= ytolerance and abs(boat_left - P1["Left"]) <= xtolerance):
 
