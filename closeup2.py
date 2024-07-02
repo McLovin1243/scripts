@@ -71,9 +71,8 @@ def log_parking_status(detections):
     for detection in detections:
         class_name = net.GetClassDesc(detection.ClassID)
         
-        if class_name == "Boat":
-            class_name = "boat"
-        if class_name == "boat": #Gjør det IKKE dersom den detekterer "person" eller "motorcycle"
+
+        if class_name == "boat" or class_name == "Boat": #Gjør det IKKE dersom den detekterer "person" eller "motorcycle"
             #Deteksjonsinfo oppdateres hver deteksjon
             boat_bottom = detection.Bottom
             boat_area = detection.Area
@@ -87,11 +86,11 @@ def log_parking_status(detections):
                 totimertimer = current_time - P1_starttimer
                 P1_slettes_etter_5_min = datetime.datetime.now() # Oppdaterer at P1 er aktiv
                 if P1["Ledig"]: #Hvis P1 er ledig (true)
-                    P1_starttimer = current_time #Gjøres kun første gang
+                    P1_starttimer = current_time # Gjøres kun første gang
                     P1["Ledig"] = False 
                     print("P1 ble nå opptatt")
                     boat_count += 1 # En ny båt i parkeringssystemet
-                elif (P1_loggpause.total_seconds()  > 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
+                elif (P1_loggpause.total_seconds() > 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
                     break
                 elif (totimertimer.total_seconds() < totimer):
                     print("Oppdaterer P1 aktiv")
@@ -103,7 +102,7 @@ def log_parking_status(detections):
                 P1_sistlogg = datetime.datetime.now()
                 position = "Parkering nr.1"  # Posisjon av båten (x,y)
                 lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
-                length = lengthpixel/30 - detection.Bottom/100
+                length = lengthpixel/30 - detection.Bottom/200
                 P1["Bredde"] = length
                 boat_data = {
                     "timestamp": timestamp,
@@ -132,7 +131,7 @@ def log_parking_status(detections):
                 P2_sistlogg = datetime.datetime.now()
                 position = "Parkering nr.2"  # Posisjon av båten (x,y)
                 lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
-                length = lengthpixel/30 - detection.Bottom/100 # lengthpixel er i x-aksen, som kan være en del større enn bottom (y-aksen). detection.bottom/100 utgjør lite.
+                length = lengthpixel/30 - detection.Bottom/200 # lengthpixel er i x-aksen, som kan være en del større enn bottom (y-aksen). detection.bottom/100 utgjør lite.
                 P2["Bredde"] = length
                 boat_data = {
                     "timestamp": timestamp,
@@ -157,13 +156,13 @@ def log_parking_status(detections):
                     print("Oppdaterer P3 aktiv")
                 else:
                     print("P-plass 3 har vært opptatt i 2 timer.") # Kan legge til noe mer alarm.
-                        
+                
                 # Uansett om den er ny eller ikke, så lagrer vi dataen og skriver til excel.
                 timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 P3_sistlogg = datetime.datetime.now()
                 position = "Parkering nr.3"  # Posisjon av båten (x,y)
                 lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
-                length = lengthpixel/30 - detection.Bottom/100
+                length = lengthpixel/30 - detection.Bottom/200
                 P1["Bredde"] = length
                 boat_data = {
                     "timestamp": timestamp,
@@ -184,11 +183,13 @@ def write_to_csv(data):
 
 #Denne funksjonen sletter parkeringer som har vært inaktive, og lagrer rapporten over hvor lenge den stod.
 def rapporttid(): 
-    global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, 		P2_slettes_etter_5_min, P2_starttimer, current_time  #Tror global i functions er nødvendig
+    global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, P2_slettes_etter_5_min, P2_starttimer, current_time  #Tror global i functions er nødvendig
     
-    
+    current_time = datetime.datetime.now()
     P1_timedifference = current_time - P1_slettes_etter_5_min
     P1_totaltid = current_time - P1_starttimer
+
+    print(f"Skjekker om P1_timedifference er mer enn 50, for da skal den slettes. P1_timedifference = {P1_timedifference}")
     if ((P1_timedifference.total_seconds() >= timefordelete) and P1["Ledig"]==False):
         P1["Ledig"] = True
         boat_count-= 1
@@ -203,8 +204,6 @@ def rapporttid():
             tid_format = f"{(P1_totaltid.total_seconds()-timefordelete)/60:.2f} minutter"
         else:
             tid_format = f"{(P1_totaltid.total_seconds()-timefordelete):.2f} sekunder"
-
-
         # Bredde og pris
         if (P1["Bredde"] > 9.5):
             pris = 300
