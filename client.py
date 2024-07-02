@@ -6,7 +6,7 @@ from jetson_utils import videoSource, videoOutput
 # Dette programmet kjører bildedeteksjonsmodellen og behandler denne dataen. Sender så ut en boolsk verdi til ServerGUI.py.
 # ----------------------------------------------------------------------------------------------------------------------------- #
 ### --- FIELDS --- ###
-
+# Oppdatere Git - eksempel
 # Definerer variabler og setter opp socket kommunikasjon
 HEADER = 64
 port =5151
