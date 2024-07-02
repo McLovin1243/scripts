@@ -85,7 +85,7 @@ def log_parking_status(detections):
 	    # P1
             if (abs(boat_bottom - P1["Bottom"]) <= ytolerance and abs(boat_left - P1["Left"]) <= xtolerance):
 
-                P1_sist = P1_sistlogg.total_seconds() + 5
+
                 totimertimer = current_time - P1_starttimer
                 P1_slettes_etter_5_min = datetime.datetime.now() # Oppdaterer at P1 er aktiv
                 if P1["Ledig"]: #Hvis P1 er ledig (true)
@@ -93,7 +93,7 @@ def log_parking_status(detections):
                     P1["Ledig"] = False 
                     print("P1 ble nå opptatt")
                     boat_count += 1 # En ny båt i parkeringssystemet
-                elif (current_time.total_seconds() < P1_sist): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
+                elif ((current_time - P1_sistlogg).total_seconds() > 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
                     break
                 elif (totimertimer.total_seconds() < totimer):
                     print("Oppdaterer P1 aktiv")
@@ -116,7 +116,6 @@ def log_parking_status(detections):
             
             # P2
             elif (abs(boat_bottom - P2["Bottom"]) <= ytolerance and abs(boat_left - P2["Left"]) <= xtolerance and abs(boat_area-P2["Area"]<areatolerance)):
-                P2_sist = P2_sistlogg.total_seconds() + 5
                 totimertimer = current_time - P2_starttimer
                 P2_slettes_etter_5_min = current_time # Oppdaterer at P2 er aktiv
                 if P2["Ledig"]: # Hvis P2 er ledig (true)
@@ -124,7 +123,7 @@ def log_parking_status(detections):
                     P2["Ledig"] = False
                     print("P2 ble nå opptatt")
                     boat_count += 1 # En ny båt i parkeringssystemet
-                elif (current_time.total_seconds() < P2_sist): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
+                elif ((current_time - P2_sistlogg).total_seconds() > 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
                     break
                 elif (totimertimer.total_seconds() < totimer):
                     print("Oppdaterer P2 aktiv")
@@ -153,7 +152,7 @@ def log_parking_status(detections):
                     P3["Ledig"] = False 
                     print("P3 ble nå opptatt")
                     boat_count += 1 # En ny båt i parkeringssystemet
-                elif (current_time.total_seconds() < P3_sist): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
+                elif ((current_time - P3_sistlogg).total_seconds() > 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
                     break
                 elif (totimertimer.total_seconds() < totimer):
                     print("Oppdaterer P3 aktiv")
