@@ -55,6 +55,7 @@ def log_parking_status(detections): # Log
                 if P1["Ledig"]: #Hvis P1 er ledig (true)
                     P1_starttimer = current_time # Gjøres kun første gang
                     P1["Ledig"] = False 
+                    state_P1 = True
                     print("P1 ble nå opptatt")
                     boat_count += 1 # En ny båt i parkeringssystemet
                 elif (P1_loggpause.total_seconds() < 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
@@ -116,6 +117,7 @@ def log_parking_status(detections): # Log
                 if P3["Ledig"]: #Hvis P3 er ledig (true)
                     P3_starttimer = current_time #Gjøres kun første gang
                     P3["Ledig"] = False 
+                    state_P3 = True
                     print("P3 ble nå opptatt")
                     boat_count += 1 # En ny båt i parkeringssystemet
                 elif (P3_loggpause.total_seconds() < 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
@@ -162,6 +164,7 @@ def rapporttid(): # Rapport
         boat_count-= 1
         alarm = False
         P1_bredde = P1["Bredde"]
+        state_P1 = False
         
         # Tidsformat
         if P1_totaltid.total_seconds() > 7200:
@@ -361,27 +364,19 @@ elif a == 'e':
 
         detections = net.Detect(img)
         
-        log_parking_status(detections)       
-        
+        log_parking_status(detections)     
+
+        rapporttid()
 
         # Print detection information
         #for detection in detections:
             #print(f"TrackID: {detection.TrackID}")
-        #send(state_P1)
+        send(state_P1)
         #send(state_P2)
         #send(state_P3)
 
         display.Render(img)
         display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
         
-        current_time = datetime.datetime.now()    
-        # Må sette P1 til True etter 5 min inaktiv. slik at vi skriver ut rapport og nye kan komme.
-        
-        rapporttid()
-
-        # time.sleep(2)
-
-        
-
 else:
     print("Ugyldig valg. Vennligst velg 's' for standardmodell eller 'e' for egen modell.")
