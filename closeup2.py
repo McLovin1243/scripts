@@ -27,10 +27,7 @@ except FileExistsError:
     pass
 
 
-        
-        
-        
-        
+
 	## VARIABLER ##
 boat_count = 0
 # Definisjon av parkeringsplasser (MÅ VITE PIKSLENES KOORDINATER)
