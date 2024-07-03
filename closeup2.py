@@ -55,7 +55,7 @@ def log_parking_status(detections): # Log
                 if P1["Ledig"]: #Hvis P1 er ledig (true)
                     P1_starttimer = current_time # Gjøres kun første gang
                     P1["Ledig"] = False 
-                    state_P1 = True
+                    state_P1 = "true"
                     print("P1 ble nå opptatt")
                     boat_count += 1 # En ny båt i parkeringssystemet
                 elif (P1_loggpause.total_seconds() < 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
@@ -87,7 +87,7 @@ def log_parking_status(detections): # Log
                 if P2["Ledig"]: # Hvis P2 er ledig (true)
                     P2_starttimer = current_time
                     P2["Ledig"] = False
-                    state_P2 = True
+                    state_P2 = 'true'
                     print("P2 ble nå opptatt")
                     boat_count += 1 # En ny båt i parkeringssystemet
                 elif (P2_loggpause.total_seconds() < 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
@@ -117,7 +117,7 @@ def log_parking_status(detections): # Log
                 if P3["Ledig"]: #Hvis P3 er ledig (true)
                     P3_starttimer = current_time #Gjøres kun første gang
                     P3["Ledig"] = False 
-                    state_P3 = True
+                    state_P3 = "true"
                     print("P3 ble nå opptatt")
                     boat_count += 1 # En ny båt i parkeringssystemet
                 elif (P3_loggpause.total_seconds() < 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
@@ -153,7 +153,7 @@ def write_to_csv(data):
 
 #Denne funksjonen sletter parkeringer som har vært inaktive, og lagrer rapporten over hvor lenge den stod.
 def rapporttid(): # Rapport
-    global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, P2_slettes_etter_5_min, P2_starttimer, current_time  #Tror global i functions er nødvendig
+    global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, P2_slettes_etter_5_min, P2_starttimer, current_time, state_P1, state_P2, state_P3  #Tror global i functions er nødvendig
     
     current_time = datetime.datetime.now()
     P1_timedifference = current_time - P1_slettes_etter_5_min
@@ -164,7 +164,7 @@ def rapporttid(): # Rapport
         boat_count-= 1
         alarm = False
         P1_bredde = P1["Bredde"]
-        state_P1 = False
+        state_P1 = 'false'
         
         # Tidsformat
         if P1_totaltid.total_seconds() > 7200:
@@ -197,6 +197,7 @@ def rapporttid(): # Rapport
         boat_count-= 1
         alarm = False
         P2_bredde = P2["Bredde"]
+        state_P2 = 'false'
         
         # Tidsformat
         if P2_totaltid.total_seconds() > 7200:
@@ -229,6 +230,7 @@ def rapporttid(): # Rapport
         boat_count-= 1
         alarm = False
         P3_bredde = P3["Bredde"]
+        state_P3 = "false"
         
         # Tidsformat
         if P3_totaltid.total_seconds() > 7200:
@@ -309,6 +311,9 @@ ytolerance = 60
 areatolerance = 5000
 timefordelete = 10 # 5 min er 300.
 totimer = 50 # skal være 7200 (2 timer)
+state_P1 = "false"
+state_P2 = "false"
+state_P3 = "false"
 
 
 print('********************* VELG BILDEDETEKSJONSMODELL *********************')
@@ -353,9 +358,7 @@ elif a == 'e':
     source = "Main.mp4" 
     camera = videoSource(source) 
     display = videoOutput()  # 'my_video.mp4' for file, or sequence of images 'img_%i.jpg'
-    state_P1 = False
-    state_P2 = False
-    state_P3 = False
+
     
     while display.IsStreaming():
         img = camera.Capture()
@@ -371,8 +374,8 @@ elif a == 'e':
         # Print detection information
         #for detection in detections:
             #print(f"TrackID: {detection.TrackID}")
-        send(state_P1)
-        #send(state_P2)
+        #send(state_P1)
+        send(state_P2)
         #send(state_P3)
 
         display.Render(img)
