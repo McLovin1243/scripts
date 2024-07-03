@@ -196,7 +196,7 @@ def rapporttid():
         P1_bredde = P1["Bredde"]
         
         # Tidsformat
-        if P1_totaltid.total_seconds() > totimer:
+        if P1_totaltid.total_seconds() > 7200:
             tid_format = f"{(P1_totaltid.total_seconds()-timefordelete)/3600:.2f} timer"
             alarm = True
         elif P1_totaltid.total_seconds() > 60:
