@@ -313,7 +313,7 @@ if a == 's':
         log_parking_status(detections)
 
         """
-        # Print detection information. Nyttig for testing.
+        # Print detection information.
         for detection in detections:
       	    print(f"ClassID: {detection.ClassID}, Confidence: {detection.Confidence}, BBox:{detection.Bottom} {detection.Area} {detection.Left}")
 	    """
