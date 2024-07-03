@@ -5,66 +5,33 @@ import csv
 from jetson_inference import detectNet
 from jetson_utils import videoSource, videoOutput
 
+# Dette programmet kjører bildedeteksjonsmodellen og behandler denne dataen. Sender så ut en boolsk verdi til ServerGUI.py.
+# ----------------------------------------------------------------------------------------------------------------------------- #
+### --- FIELDS --- ###
+
+# Definerer variabler og setter opp socket kommunikasjon
+HEADER = 64
+port =5151
+FORMAT = 'utf-8'
+SERVER =  '192.168.0.3'
+ADDR = (SERVER,port)
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect(ADDR)
+
+# ----------------------------------------------------------------------------------------------------------------------------- #
+### --- FUNCTIONS --- ###
+
+def send(msg): #funksjon som sender melding via socket kommunikasjon
+    message = msg.encode(FORMAT)
+    msg_length = len(message)
+    send_length =str(msg_length).encode(FORMAT)
+    send_length += b' '*(HEADER-len(send_length))
+    client.send(send_length)
+    client.send(message)
 
 
-# Oppretter CSV-fil og skriver headeren hvis den ikke allerede finnes
-try:
-    with open('boat_data.csv', mode='x', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(["Tidspunkt", "Parkeringsplass", "Bredde", "Antall båter nå"])
-except FileExistsError:
-    # Filen eksisterer allerede, Du kan vurdere å ha ingenting gjøres
-    with open('boat_data.csv', mode='a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(["Tidspunkt", "Parkeringsplass", "Bredde", "Antall båter nå"])
-
-try:
-    with open('rapport.csv', mode='x', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(["Rapport over båter som har forlatt kaien.\n"])
-except FileExistsError:
-    # Filen eksisterer allerede, Du kan vurdere å ha ingenting gjøres
-    pass
-
-
-        
-        
-        
-        
-	## VARIABLER ##
-boat_count = 0
-# Definisjon av parkeringsplasser (MÅ VITE PIKSLENES KOORDINATER)
-parking_spots = [
-    {"Id": (1), "Left": (45), "Right": (1080), "Bottom": (604), "Top": None, "Area": (296000), "Ledig": (True), "Bredde": 0, },
-    {"Id": (2), "Left": (1150), "Right": (1445), "Bottom": (772), "Top": None, "Area": (100000), "Ledig": (True), "Bredde": 0, },
-    {"Id": (3), "Left": (1305), "Right": (1870), "Bottom": (623), "Top": None, "Area": (170000), "Ledig": (True), "Bredde": 0, },
-    # Legg til flere parkeringsplasser etter behov
-]
-
-redningsleider_piksler = [(1240, 129)] # Vi har bare en som et eksempel.
-redningsleider_tidtaker = None  # Timer for blocking detection (skal ikke gi alarm med en gang)
-
-# Verdiene kan hentes slik: P1["Left"]
-P1, P2, P3 = parking_spots[0], parking_spots[1], parking_spots[2]
-# Timere er enklere å ha som egne variabler.
-P1_starttimer = datetime.datetime.now() 
-P2_starttimer = datetime.datetime.now()
-P3_starttimer = datetime.datetime.now()
-P1_slettes_etter_5_min = datetime.datetime.now()
-P2_slettes_etter_5_min = datetime.datetime.now()
-P3_slettes_etter_5_min = datetime.datetime.now()
-P1_sistlogg = datetime.datetime.now()
-P2_sistlogg = datetime.datetime.now()
-P3_sistlogg = datetime.datetime.now()
-xtolerance = 70  # Disse toleranseverdiene kan legges i parking_spots og ha unike toleranser for hver P-plass.
-ytolerance = 60
-areatolerance = 5000
-timefordelete = 10 # 5 min er 300.
-totimer = 50 # skal være 7200 (2 timer)
-
-	## FUNKSJONER ##
-def log_parking_status(detections):
-    global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, P2_slettes_etter_5_min, P2_starttimer, P3_slettes_etter_5_min, P3_starttimer, P1_sistlogg, P2_sistlogg, P3_sistlogg
+def log_parking_status(detections): # Log
+    global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, P2_slettes_etter_5_min, P2_starttimer, P3_slettes_etter_5_min, P3_starttimer, P1_sistlogg, P2_sistlogg, P3_sistlogg, state_P1, state_P2, state_P3
 
 
     current_time = datetime.datetime.now()
@@ -119,6 +86,7 @@ def log_parking_status(detections):
                 if P2["Ledig"]: # Hvis P2 er ledig (true)
                     P2_starttimer = current_time
                     P2["Ledig"] = False
+                    state_P2 = True
                     print("P2 ble nå opptatt")
                     boat_count += 1 # En ny båt i parkeringssystemet
                 elif (P2_loggpause.total_seconds() < 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
@@ -182,7 +150,7 @@ def write_to_csv(data):
         writer.writerow([data["timestamp"], data["position"], data["length"], boat_count]) # Boat count må vi tenke mer på hvordan vi vil ha
 
 #Denne funksjonen sletter parkeringer som har vært inaktive, og lagrer rapporten over hvor lenge den stod.
-def rapporttid(): 
+def rapporttid(): # Rapport
     global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, P2_slettes_etter_5_min, P2_starttimer, current_time  #Tror global i functions er nødvendig
     
     current_time = datetime.datetime.now()
@@ -283,11 +251,61 @@ def rapporttid():
             else:
                 writer.writerow([f"Parkering 3 ble opptatt {P3_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P3_bredde} meter lang",])
         
+# ----------------------------------------------------------------------------------------------------------------------------- #
+### --- KODE --- ###
 
+# Oppretter CSV-fil og skriver headeren hvis den ikke allerede finnes
+try:
+    with open('boat_data.csv', mode='x', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Tidspunkt", "Parkeringsplass", "Bredde", "Antall båter nå"])
+except FileExistsError:
+    # Filen eksisterer allerede, Du kan vurdere å ha ingenting gjøres
+    with open('boat_data.csv', mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Tidspunkt", "Parkeringsplass", "Bredde", "Antall båter nå"])
 
+try:
+    with open('rapport.csv', mode='x', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Rapport over båter som har forlatt kaien.\n"])
+except FileExistsError:
+    # Filen eksisterer allerede, Du kan vurdere å ha ingenting gjøres
+    pass
 
+   
+        
+        
+	## VARIABLER ##
+boat_count = 0
+# Definisjon av parkeringsplasser (MÅ VITE PIKSLENES KOORDINATER)
+parking_spots = [
+    {"Id": (1), "Left": (45), "Right": (1080), "Bottom": (604), "Top": None, "Area": (296000), "Ledig": (True), "Bredde": 0, },
+    {"Id": (2), "Left": (1150), "Right": (1445), "Bottom": (772), "Top": None, "Area": (100000), "Ledig": (True), "Bredde": 0, },
+    {"Id": (3), "Left": (1305), "Right": (1870), "Bottom": (623), "Top": None, "Area": (170000), "Ledig": (True), "Bredde": 0, },
+    # Legg til flere parkeringsplasser etter behov
+]
 
+redningsleider_piksler = [(1240, 129)] # Vi har bare en som et eksempel.
+redningsleider_tidtaker = None  # Timer for blocking detection (skal ikke gi alarm med en gang)
 
+# Verdiene kan hentes slik: P1["Left"]
+P1, P2, P3 = parking_spots[0], parking_spots[1], parking_spots[2]
+# Timere er enklere å ha som egne variabler.
+P1_starttimer = datetime.datetime.now() 
+P2_starttimer = datetime.datetime.now()
+P3_starttimer = datetime.datetime.now()
+P1_slettes_etter_5_min = datetime.datetime.now()
+P2_slettes_etter_5_min = datetime.datetime.now()
+P3_slettes_etter_5_min = datetime.datetime.now()
+P1_sistlogg = datetime.datetime.now()
+P2_sistlogg = datetime.datetime.now()
+P3_sistlogg = datetime.datetime.now()
+xtolerance = 70  # Disse toleranseverdiene kan legges i parking_spots og ha unike toleranser for hver P-plass.
+ytolerance = 60
+areatolerance = 5000
+timefordelete = 10 # 5 min er 300.
+totimer = 50 # skal være 7200 (2 timer)
 
 
 print('********************* VELG BILDEDETEKSJONSMODELL *********************')
@@ -332,7 +350,9 @@ elif a == 'e':
     source = "Main.mp4" 
     camera = videoSource(source) 
     display = videoOutput()  # 'my_video.mp4' for file, or sequence of images 'img_%i.jpg'
-
+    state_P1 = False
+    state_P2 = False
+    state_P3 = False
     
     while display.IsStreaming():
         img = camera.Capture()
@@ -347,6 +367,9 @@ elif a == 'e':
         # Print detection information
         #for detection in detections:
             #print(f"TrackID: {detection.TrackID}")
+        #send(state_P1)
+        #send(state_P2)
+        #send(state_P3)
 
         display.Render(img)
         display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
@@ -357,6 +380,8 @@ elif a == 'e':
         rapporttid()
 
         # time.sleep(2)
+
+        
 
 else:
     print("Ugyldig valg. Vennligst velg 's' for standardmodell eller 'e' for egen modell.")
