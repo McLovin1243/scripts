@@ -189,7 +189,6 @@ def rapporttid():
     P1_timedifference = current_time - P1_slettes_etter_5_min
     P1_totaltid = current_time - P1_starttimer
 
-    print(f"Skjekker om P1_timedifference er mer enn 50, for da skal den slettes. P1_timedifference = {P1_timedifference}")
     if ((P1_timedifference.total_seconds() >= timefordelete) and P1["Ledig"]==False):
         P1["Ledig"] = True
         boat_count-= 1
