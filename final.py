@@ -5,7 +5,7 @@ import datetime
 import csv
 from jetson_inference import detectNet
 from jetson_utils import videoSource, videoOutput
-os.environ['GST_DEBUG'] = '*:3'
+os.environ['GST_DEBUG'] = '*:3' # Supresses bitrate updates
 
 # Dette programmet kjører bildedeteksjonsmodellen og behandler denne dataen. Sender så ut en boolsk verdi til ServerGUI.py.
 # ----------------------------------------------------------------------------------------------------------------------------- #
