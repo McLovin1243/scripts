@@ -71,7 +71,9 @@ def log_parking_status(detections): # Log
                 P1_sistlogg = datetime.datetime.now()
                 position = "Parkering nr.1"  # Posisjon av båten (x,y)
                 lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
-                length = lengthpixel/30 - detection.Bottom/200
+                length = lengthpixel/35
+                print(length)
+                
                 P1["Bredde"] = length
                 boat_data = {
                     "timestamp": timestamp,
