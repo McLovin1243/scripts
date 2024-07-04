@@ -49,17 +49,20 @@ def log_parking_status(detections): # Logg
             boat_area = detection.Area
             boat_left = detection.Left
 
-            # Kriteriene for å være på parkeringsplass 1.
+            # Logg ###  P1  ###
             if (abs(boat_bottom - P1["Bottom"]) <= ytolerance and abs(boat_left - P1["Left"]) <= xtolerance):
                 P1_loggpause = current_time - P1_sistlogg
                 totimertimer = current_time - P1_starttimer
-                P1_slettes_etter_5_min = datetime.datetime.now() # Oppdaterer at P1 er aktiv
+                P1_slettes_etter_5_min = datetime.datetime.now() # Oppdaterer at P1 er aktiv               
                 if P1["Ledig"]: #Hvis P1 er ledig (true)
                     P1_starttimer = current_time # Gjøres kun første gang
                     P1["Ledig"] = False 
                     state_P1 = "true"
                     print("P1 ble nå opptatt")
                     boat_count += 1 # En ny båt i parkeringssystemet
+                    with open('boat_data.csv', mode='a', newline='') as file:
+                        writer = csv.writer(file)
+                        writer.writerow([f"{current_time}", "P1 BLE OPPTATT"]) 
                 elif (P1_loggpause.total_seconds() < 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
                     break
                 elif (totimertimer.total_seconds() < totimer):
@@ -77,7 +80,7 @@ def log_parking_status(detections): # Logg
                 boat_data = {"timestamp": timestamp, "position": position, "length": length}
                 write_to_csv(boat_data)
             
-            # P2
+            # Logg ###  P2  ###
             elif (abs(boat_bottom - P2["Bottom"]) <= ytolerance and abs(boat_left - P2["Left"]) <= xtolerance and abs(boat_area-P2["Area"]<areatolerance)):
                 P2_loggpause = current_time - P2_sistlogg
                 totimertimer = current_time - P2_starttimer
@@ -88,6 +91,9 @@ def log_parking_status(detections): # Logg
                     state_P2 = 'true'
                     print("P2 ble nå opptatt")
                     boat_count += 1
+                    with open('boat_data.csv', mode='a', newline='') as file:
+                        writer = csv.writer(file)
+                        writer.writerow([f"{current_time}", "P2 BLE OPPTATT"]) 
                 elif (P2_loggpause.total_seconds() < 5): # Skal ikke Write til csv dersom mindre enn 5 sekund siden sist
                     break
                 elif (totimertimer.total_seconds() < totimer):
@@ -104,7 +110,7 @@ def log_parking_status(detections): # Logg
                 boat_data = {"timestamp": timestamp, "position": position, "length": length}
                 write_to_csv(boat_data)
             
-             # P3
+             # Logg ###  P3  ###
             elif (abs(boat_bottom - P3["Bottom"]) <= ytolerance and abs(boat_left - P3["Left"]) <= xtolerance):
                 P3_loggpause = current_time - P3_sistlogg
                 totimertimer = current_time - P3_starttimer
@@ -115,6 +121,9 @@ def log_parking_status(detections): # Logg
                     state_P3 = "true"
                     print("P3 ble nå opptatt")
                     boat_count += 1
+                    with open('boat_data.csv', mode='a', newline='') as file:
+                        writer = csv.writer(file)
+                        writer.writerow([f"{current_time}", "P3 BLE OPPTATT"]) 
                 elif (P3_loggpause.total_seconds() < 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
                     break
                 elif (totimertimer.total_seconds() < totimer):
@@ -143,13 +152,13 @@ def write_to_csv(data):
         writer.writerow([data["timestamp"], data["position"], data["length"], boat_count])
 
 #Denne funksjonen sletter parkeringer som har vært inaktive, og lagrer rapporten over hvor lenge den stod.
-def rapporttid(): # Rapport
+def rapporttid():
     global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, P2_slettes_etter_5_min, P2_starttimer, current_time, state_P1, state_P2, state_P3  #Tror global i functions er nødvendig
     
+    # RAPPORT ###  P1  ###
     current_time = datetime.datetime.now()
     P1_timedifference = current_time - P1_slettes_etter_5_min
     P1_totaltid = current_time - P1_starttimer
-
     if ((P1_timedifference.total_seconds() >= timefordelete) and not P1["Ledig"]):
         P1["Ledig"] = True
         boat_count-= 1
@@ -157,7 +166,6 @@ def rapporttid(): # Rapport
         P1_bredde = P1["Bredde"]
         state_P1 = 'false'
         
-        # Tidsformat
         if P1_totaltid.total_seconds() > 7200:
             tid_format = f"{(P1_totaltid.total_seconds()-timefordelete)/3600:.2f} timer"
             alarm = True
@@ -170,17 +178,19 @@ def rapporttid(): # Rapport
             pris = 300
         else:
             pris = 250 
-
-        print(f"Parkering 1 var opptatt fra {P1_starttimer.strftime('%Y-%m-%d %H:%M:%S')} UTC og stod der i {tid_format}")
-        with open('rapport.csv', mode='a', newline='') as file:
-            writer = csv.writer(file, delimiter = ',')
-            if alarm:
-                writer.writerow([f"Parkering 1 ble opptatt {P1_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P1_bredde} meter lang.", f"AVGIFTSBELAGT", f"vedkommende skal betale:", f"{pris}", f"kr"])
-            else:
-                writer.writerow([f"Parkering 1 ble opptatt {P1_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P1_bredde} meter lang",])
-
-
-
+        with open('boat_data.csv', mode='a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([f"{current_time}", "P1 BLE FORLATT"])
+        if (P1_totaltid.total_seconds()-timefordelete > 5): # Ikke Rapporter hvis stått under et visst antall sekunder.
+            print(f"Parkering 1 var opptatt fra {P1_starttimer.strftime('%Y-%m-%d %H:%M:%S')} UTC og stod der i {tid_format}")
+            with open('rapport.csv', mode='a', newline='') as file:
+                writer = csv.writer(file, delimiter = ',')
+                if alarm:
+                    writer.writerow([f"Parkering 1 ble opptatt {P1_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P1_bredde} meter lang.", f"AVGIFTSBELAGT", f"vedkommende skal betale:", f"{pris}", f"kr"])
+                else:
+                    writer.writerow([f"Parkering 1 ble opptatt {P1_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P1_bredde} meter lang",])
+    
+    # RAPPORT ###  P2  ###
     P2_timedifference = current_time - P2_slettes_etter_5_min
     P2_totaltid = current_time - P2_starttimer
     if ((P2_timedifference.total_seconds() >= timefordelete) and not P2["Ledig"]):
@@ -199,21 +209,24 @@ def rapporttid(): # Rapport
         else:
             tid_format = f"{(P2_totaltid.total_seconds()-timefordelete):.2f} sekunder"
 
-	
         # Bredde og pris
         if (P2["Bredde"] > 9.5):
             pris = 300
         else:
             pris = 250 
-
-        print(f"Parkering 2 var opptatt fra {P2_starttimer.strftime('%Y-%m-%d %H:%M:%S')} UTC og stod der i {tid_format}")
-        with open('rapport.csv', mode='a', newline='') as file:
+        with open('boat_data.csv', mode='a', newline='') as file:
             writer = csv.writer(file)
-            if alarm:
-                writer.writerow([f"Parkering 2 ble opptatt {P2_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P2_bredde} meter lang.", f"AVGIFTSBELAGT", f"vedkommende skal betale:", f"{pris}", f"kr"])
-            else:
-                writer.writerow([f"Parkering 2 ble opptatt {P2_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P2_bredde} meter lang",])
-              
+            writer.writerow([f"{current_time}", "P2 BLE FORLATT"])
+        if (P1_totaltid.total_seconds()-timefordelete > 5): # Ikke Rapporter hvis stått under et visst antall sekunder.
+            print(f"Parkering 2 var opptatt fra {P2_starttimer.strftime('%Y-%m-%d %H:%M:%S')} UTC og stod der i {tid_format}")
+            with open('rapport.csv', mode='a', newline='') as file:
+                writer = csv.writer(file)
+                if alarm:
+                    writer.writerow([f"Parkering 2 ble opptatt {P2_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P2_bredde} meter lang.", f"AVGIFTSBELAGT", f"vedkommende skal betale:", f"{pris}", f"kr"])
+                else:
+                    writer.writerow([f"Parkering 2 ble opptatt {P2_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P2_bredde} meter lang",])
+    
+    # Rapport ###  P3  ###
     P3_timedifference = current_time - P3_slettes_etter_5_min
     P3_totaltid = current_time - P3_starttimer
     if ((P3_timedifference.total_seconds() >= timefordelete) and not P3["Ledig"]):
@@ -237,16 +250,19 @@ def rapporttid(): # Rapport
         if (P3["Bredde"] > 9.5):
             pris = 300
         else:
-            pris = 250 
-
-        print(f"Parkering 3 var opptatt fra {P3_starttimer.strftime('%Y-%m-%d %H:%M:%S')} UTC og stod der i {tid_format}")
-        with open('rapport.csv', mode='a', newline='') as file:
+            pris = 250
+        with open('boat_data.csv', mode='a', newline='') as file:
             writer = csv.writer(file)
-            if alarm:
-                writer.writerow([f"Parkering 3 ble opptatt {P3_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P3_bredde} meter lang.", f"AVGIFTSBELAGT", f"vedkommende skal betale:", f"{pris}", f"kr"])
-            else:
-                writer.writerow([f"Parkering 3 ble opptatt {P3_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P3_bredde} meter lang",])
-        
+            writer.writerow([f"{current_time}", "P3 BLE FORLATT"])
+        if (P1_totaltid.total_seconds()-timefordelete > 5): # Ikke Rapporter hvis stått under et visst antall sekunder.
+            print(f"Parkering 3 var opptatt fra {P3_starttimer.strftime('%Y-%m-%d %H:%M:%S')} UTC og stod der i {tid_format}")
+            with open('rapport.csv', mode='a', newline='') as file:
+                writer = csv.writer(file)
+                if alarm:
+                    writer.writerow([f"Parkering 3 ble opptatt {P3_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P3_bredde} meter lang.", f"AVGIFTSBELAGT", f"vedkommende skal betale:", f"{pris}", f"kr"])
+                else:
+                    writer.writerow([f"Parkering 3 ble opptatt {P3_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P3_bredde} meter lang",])
+            
 # ----------------------------------------------------------------------------------------------------------------------------- #
 ### --- KODE --- ###
 
