@@ -31,7 +31,7 @@ def send(msg): #funksjon som sender melding via socket kommunikasjon
     client.send(message)
 
 """
-def log_parking_status(detections): # Log
+def log_parking_status(detections): # Logg
     global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, P2_slettes_etter_5_min, P2_starttimer, P3_slettes_etter_5_min, P3_starttimer, P1_sistlogg, P2_sistlogg, P3_sistlogg, state_P1, state_P2, state_P3
 
 
@@ -66,11 +66,11 @@ def log_parking_status(detections): # Log
                 else:
                     print("P-plass 1 har vært opptatt i 2 timer.") # Kan legge til noe mer alarm.
                         
-                # Uansett om den er ny eller ikke, så lagrer vi dataen og skriver til excel.
+                # Uansett om den er ny eller ikke, så lagrer vi dataen og skriver til excel (loggen).
                 timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 P1_sistlogg = datetime.datetime.now()
-                position = "Parkering nr.1"  # Posisjon av båten (x,y)
-                lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
+                position = "Parkering nr.1"
+                lengthpixel = detection.Width
                 length = lengthpixel/52 # gir ca. verdi på P1, ved Full HD 
                 print(f"Lengden er {length}, Width er {lengthpixel}")
                 
@@ -93,16 +93,17 @@ def log_parking_status(detections): # Log
                     P2["Ledig"] = False
                     state_P2 = 'true'
                     print("P2 ble nå opptatt")
-                    boat_count += 1 # En ny båt i parkeringssystemet
-                elif (P2_loggpause.total_seconds() < 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
+                    boat_count += 1
+                elif (P2_loggpause.total_seconds() < 5): # Skal ikke Write til csv dersom mindre enn 5 sekund siden sist
                     break
                 elif (totimertimer.total_seconds() < totimer):
                     print("Oppdaterer P2 aktiv")
                 else:
                     print("P-plass 2 har vært opptatt i 2 timer.") # Kan legge til noe mer alarm.
+
                 timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 P2_sistlogg = datetime.datetime.now()
-                position = "Parkering nr.2"  # Posisjon av båten (x,y)
+                position = "Parkering nr.2"
                 lengthpixel = detection.Width
                 length = lengthpixel/65
                 print(f"Lengden er {length}, Width er {lengthpixel}")
@@ -124,7 +125,7 @@ def log_parking_status(detections): # Log
                     P3["Ledig"] = False 
                     state_P3 = "true"
                     print("P3 ble nå opptatt")
-                    boat_count += 1 # En ny båt i parkeringssystemet
+                    boat_count += 1
                 elif (P3_loggpause.total_seconds() < 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
                     break
                 elif (totimertimer.total_seconds() < totimer):
@@ -135,8 +136,8 @@ def log_parking_status(detections): # Log
                 # Uansett om den er ny eller ikke, så lagrer vi dataen og skriver til excel.
                 timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 P3_sistlogg = datetime.datetime.now()
-                position = "Parkering nr.3"  # Posisjon av båten (x,y)
-                lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
+                position = "Parkering nr.3"
+                lengthpixel = detection.Width
                 length = lengthpixel/43
                 print(f"Lengden er {length}, Width er {lengthpixel}")
                 P1["Bredde"] = length
@@ -155,7 +156,7 @@ def log_parking_status(detections): # Log
 def write_to_csv(data):
     with open('boat_data.csv', mode='a', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow([data["timestamp"], data["position"], data["length"], boat_count]) # Boat count må vi tenke mer på hvordan vi vil ha
+        writer.writerow([data["timestamp"], data["position"], data["length"], boat_count])
 
 #Denne funksjonen sletter parkeringer som har vært inaktive, og lagrer rapporten over hvor lenge den stod.
 def rapporttid(): # Rapport
@@ -302,7 +303,7 @@ redningsleider_tidtaker = None  # Timer for blocking detection (skal ikke gi ala
 
 # Verdiene kan hentes slik: P1["Left"]
 P1, P2, P3 = parking_spots[0], parking_spots[1], parking_spots[2]
-# Timere er enklere å ha som egne variabler.
+# Timere er enklere å jobbe med som egne variabler.
 P1_starttimer = datetime.datetime.now() 
 P2_starttimer = datetime.datetime.now()
 P3_starttimer = datetime.datetime.now()
@@ -312,12 +313,12 @@ P3_slettes_etter_5_min = datetime.datetime.now()
 P1_sistlogg = datetime.datetime.now()
 P2_sistlogg = datetime.datetime.now()
 P3_sistlogg = datetime.datetime.now()
-xtolerance = 70  # Disse toleranseverdiene kan legges i parking_spots og ha unike toleranser for hver P-plass.
+xtolerance = 70  # Disse toleranseverdiene kan legges i parking_spots og ha unike toleranser for hver P-plass dersom ønskelig
 ytolerance = 60
 areatolerance = 5000
 timefordelete = 10 # 5 min er 300.
 totimer = 50 # skal være 7200 (2 timer)
-state_P1 = "false"
+state_P1 = "false" # PLS
 state_P2 = "false"
 state_P3 = "false"
 
