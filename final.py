@@ -6,6 +6,7 @@ import csv
 from jetson_inference import detectNet
 from jetson_utils import videoSource, videoOutput
 os.environ['GST_DEBUG'] = '*:3' # Supresses GStreamer
+os.environ['GST_DEBUG'] = 'sink:3'
 # Dette programmet kjører bildedeteksjonsmodellen og behandler denne dataen. Sender så ut en boolsk verdi til ServerGUI.py.
 # ----------------------------------------------------------------------------------------------------------------------------- #Kan vi fjerne dette? : [gstreamer] gstreamer mysink taglist, video-codec=(string)"H.264\ \(Main\ Profile\)", bitrate=(uint)10014214, minimum-bitrate=(uint)6275040, maximum-bitrate=(uint)16813440;
 
