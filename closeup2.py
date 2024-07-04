@@ -7,6 +7,7 @@ from jetson_utils import videoSource, videoOutput
 
 # Dette programmet kjører bildedeteksjonsmodellen og behandler denne dataen. Sender så ut en boolsk verdi til ServerGUI.py.
 # ----------------------------------------------------------------------------------------------------------------------------- #
+"""
 ### --- FIELDS --- ###
 
 # Definerer variabler og setter opp socket kommunikasjon
@@ -29,7 +30,7 @@ def send(msg): #funksjon som sender melding via socket kommunikasjon
     client.send(send_length)
     client.send(message)
 
-
+"""
 def log_parking_status(detections): # Log
     global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, P2_slettes_etter_5_min, P2_starttimer, P3_slettes_etter_5_min, P3_starttimer, P1_sistlogg, P2_sistlogg, P3_sistlogg, state_P1, state_P2, state_P3
 
@@ -325,7 +326,7 @@ a = input()
 
 if a == 's':
     net = detectNet("ssd-mobilenet-v2", threshold=0.5)
-    source = "Main.mp4" 
+    source = "Ferje.mp4" 
     camera = videoSource(source) 
     display = videoOutput()  # 'my_video.mp4' for file, or sequence of images 'img_%i.jpg'
     
@@ -354,8 +355,8 @@ if a == 's':
 
 
 elif a == 'e':
-    net = detectNet(argv=['--model=models/boat/ssd-mobilenet.onnx', '--labels=models/boat/labels.txt', '--input-blob=input_0', '--output-cvg=scores', '--output-bbox=boxes', '--threshold=0.3'])
-    source = "Main.mp4" 
+    net = detectNet(argv=['--model=models/boat/ssd-mobilenet.onnx', '--labels=models/boat/labels.txt', '--input-blob=input_0', '--output-cvg=scores', '--output-bbox=boxes', '--threshold=0.5'])
+    source = "Ferje.mp4" 
     camera = videoSource(source) 
     display = videoOutput()  # 'my_video.mp4' for file, or sequence of images 'img_%i.jpg'
 
@@ -375,7 +376,7 @@ elif a == 'e':
         #for detection in detections:
             #print(f"TrackID: {detection.TrackID}")
         #send(state_P1)
-        send(state_P2)
+        ###send(state_P2)
         #send(state_P3)
 
         display.Render(img)
