@@ -71,8 +71,9 @@ def log_parking_status(detections): # Log
                 P1_sistlogg = datetime.datetime.now()
                 position = "Parkering nr.1"  # Posisjon av båten (x,y)
                 lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
-                length = lengthpixel/35
-                print(length)
+                length = lengthpixel/52 # gir ca. verdi på P1, ved Full HD 
+                print(f"Lengden er {length}, Width er {lengthpixel}")
+                
                 
                 P1["Bredde"] = length
                 boat_data = {
@@ -102,8 +103,9 @@ def log_parking_status(detections): # Log
                 timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 P2_sistlogg = datetime.datetime.now()
                 position = "Parkering nr.2"  # Posisjon av båten (x,y)
-                lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
-                length = lengthpixel/30 - detection.Bottom/200 # lengthpixel er i x-aksen, som kan være en del større enn bottom (y-aksen). detection.bottom/100 utgjør lite.
+                lengthpixel = detection.Width
+                length = lengthpixel/65
+                print(f"Lengden er {length}, Width er {lengthpixel}")
                 P2["Bredde"] = length
                 boat_data = {
                     "timestamp": timestamp,
@@ -135,7 +137,8 @@ def log_parking_status(detections): # Log
                 P3_sistlogg = datetime.datetime.now()
                 position = "Parkering nr.3"  # Posisjon av båten (x,y)
                 lengthpixel = detection.Width  # Lengde på båten... ikke nøyaktig metode, må endres
-                length = lengthpixel/30 - detection.Bottom/200
+                length = lengthpixel/43
+                print(f"Lengden er {length}, Width er {lengthpixel}")
                 P1["Bredde"] = length
                 boat_data = {
                     "timestamp": timestamp,
@@ -328,7 +331,7 @@ a = input()
 
 if a == 's':
     net = detectNet("ssd-mobilenet-v2", threshold=0.5)
-    source = "Ferje.mp4" 
+    source = "Main.mp4" 
     camera = videoSource(source) 
     display = videoOutput()  # 'my_video.mp4' for file, or sequence of images 'img_%i.jpg'
     
@@ -358,7 +361,7 @@ if a == 's':
 
 elif a == 'e':
     net = detectNet(argv=['--model=models/boat/ssd-mobilenet.onnx', '--labels=models/boat/labels.txt', '--input-blob=input_0', '--output-cvg=scores', '--output-bbox=boxes', '--threshold=0.5'])
-    source = "Ferje.mp4" 
+    source = "Main.mp4" 
     camera = videoSource(source) 
     display = videoOutput()  # 'my_video.mp4' for file, or sequence of images 'img_%i.jpg'
 
