@@ -24,8 +24,12 @@ server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # Adress from TIA Portal - dbCommunication
 db_number = 2
 start_offset = 0
-# Static Bool - Run/Stop Process
+# Static Bool - P1 occupied
 sbP1_detected_bit_offset = 2
+# Static Bool - P2 occupied
+sbP2_detected_bit_offset = 3
+# Static Bool - Illigal parking alarm
+sbIlligalParking_bit_offset = 4
 # Static Bool - Emergency Stop
 #sbEMGStop_bit_offset = 1
 
@@ -64,18 +68,31 @@ def handle_client(conn, addr):
             msg_length = int(msg_length)
             msg = conn.recv(msg_length).decode('utf-8')
             print(f"{msg}")
+             
                 
-            #if msg == "!DISCONNECT":
-                #WriteBool(db_number, start_offset,sbEMGStop_bit_offset, outputOn)
-                #connected = False
-                #print(EMGStatus)
-            if msg == "true":
+            """if msg == "!DISCONECT":
+                WriteBool(db_number, start_offset,sbEMGStop_bit_offset, outputOn)
+                connected = False
+                print(EMGStatus) """
+            if msg == "P1_true":
                 WriteBool(db_number, start_offset,sbP1_detected_bit_offset, outputOn)
                 feedingstatus = outputOn
-            if msg == "false":
+            if msg == "P1_false":
                 WriteBool(db_number, start_offset,sbP1_detected_bit_offset, outputOff)
                 feedingstatus = outputOff
-
+            if msg == "P2_true":
+                WriteBool(db_number, start_offset,sbP2_detected_bit_offset, outputOn)
+                feedingstatus = outputOn
+            if msg == "P2_false":
+                WriteBool(db_number, start_offset,sbP2_detected_bit_offset, outputOff)
+                feedingstatus = outputOff
+            if msg == "DIP_true":
+                WriteBool(db_number, start_offset,sbIlligalParking_bit_offset, outputOn)
+                feedingstatus = outputOn
+            if msg == "DIP_false":
+                WriteBool(db_number, start_offset,sbIlligalParking_bit_offset, outputOff)
+                feedingstatus = outputOff
+	
 # Funksjon for å starte opp server og koble til PLS og klient
 def start_client():
     print(f"[Listening] server is listening on {serverIP}")
