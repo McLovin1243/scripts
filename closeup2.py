@@ -286,15 +286,7 @@ redningsleider_tidtaker = None  # Timer for blocking detection (skal ikke gi ala
 # Verdiene kan hentes slik: P1["Left"]
 P1, P2, P3 = parking_spots[0], parking_spots[1], parking_spots[2]
 # Timere er enklere å jobbe med som egne variabler.
-P1_starttimer = datetime.datetime.now() 
-P2_starttimer = datetime.datetime.now()
-P3_starttimer = datetime.datetime.now()
-P1_slettes_etter_5_min = datetime.datetime.now()
-P2_slettes_etter_5_min = datetime.datetime.now()
-P3_slettes_etter_5_min = datetime.datetime.now()
-P1_sistlogg = datetime.datetime.now()
-P2_sistlogg = datetime.datetime.now()
-P3_sistlogg = datetime.datetime.now()
+P1_starttimer = P2_starttimer = P3_starttimer = P1_slettes_etter_5_min = P2_slettes_etter_5_min = P3_slettes_etter_5_min = P1_sistlogg = P2_sistlogg = P3_sistlogg = datetime.datetime.now() 
 xtolerance = 70  # Disse toleranseverdiene kan legges i parking_spots og ha unike toleranser for hver P-plass dersom ønskelig
 ytolerance = 60
 areatolerance = 5000
