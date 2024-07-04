@@ -7,7 +7,7 @@ from jetson_utils import videoSource, videoOutput
 
 # Dette programmet kjører bildedeteksjonsmodellen og behandler denne dataen. Sender så ut en boolsk verdi til ServerGUI.py.
 # ----------------------------------------------------------------------------------------------------------------------------- #
-"""
+""" PLS
 ### --- FIELDS --- ###
 
 # Definerer variabler og setter opp socket kommunikasjon
@@ -31,6 +31,7 @@ def send(msg): #funksjon som sender melding via socket kommunikasjon
     client.send(message)
 
 """
+
 def log_parking_status(detections): # Logg
     global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, P2_slettes_etter_5_min, P2_starttimer, P3_slettes_etter_5_min, P3_starttimer, P1_sistlogg, P2_sistlogg, P3_sistlogg, state_P1, state_P2, state_P3
 
@@ -40,16 +41,14 @@ def log_parking_status(detections): # Logg
         class_name = net.GetClassDesc(detection.ClassID)
         
 
-        if class_name == "boat" or class_name == "Boat": #Gjør det IKKE dersom den detekterer "person" eller "motorcycle"
+        if class_name.lower() == "boat": #Gjør det IKKE dersom den detekterer "person" eller "motorcycle"
             #Deteksjonsinfo oppdateres hver deteksjon
             boat_bottom = detection.Bottom
             boat_area = detection.Area
             boat_left = detection.Left
-            # Kriteriene for å være på parkeringsplass 1.
-	
-	    # P1
-            if (abs(boat_bottom - P1["Bottom"]) <= ytolerance and abs(boat_left - P1["Left"]) <= xtolerance):
 
+            # Kriteriene for å være på parkeringsplass 1.
+            if (abs(boat_bottom - P1["Bottom"]) <= ytolerance and abs(boat_left - P1["Left"]) <= xtolerance):
                 P1_loggpause = current_time - P1_sistlogg
                 totimertimer = current_time - P1_starttimer
                 P1_slettes_etter_5_min = datetime.datetime.now() # Oppdaterer at P1 er aktiv
@@ -71,16 +70,9 @@ def log_parking_status(detections): # Logg
                 P1_sistlogg = datetime.datetime.now()
                 position = "Parkering nr.1"
                 lengthpixel = detection.Width
-                length = lengthpixel/52 # gir ca. verdi på P1, ved Full HD 
-                print(f"Lengden er {length}, Width er {lengthpixel}")
-                
-                
+                length = lengthpixel/52 # gir ca. verdi på P1, ved Full HD
                 P1["Bredde"] = length
-                boat_data = {
-                    "timestamp": timestamp,
-                    "position": position,
-                    "length": length,
-                }
+                boat_data = {"timestamp": timestamp, "position": position, "length": length}
                 write_to_csv(boat_data)
             
             # P2
@@ -106,13 +98,8 @@ def log_parking_status(detections): # Logg
                 position = "Parkering nr.2"
                 lengthpixel = detection.Width
                 length = lengthpixel/65
-                print(f"Lengden er {length}, Width er {lengthpixel}")
                 P2["Bredde"] = length
-                boat_data = {
-                    "timestamp": timestamp,
-                    "position": position,
-                    "length": length,
-                }
+                boat_data = {"timestamp": timestamp, "position": position, "length": length}
                 write_to_csv(boat_data)
             
              # P3
@@ -139,13 +126,8 @@ def log_parking_status(detections): # Logg
                 position = "Parkering nr.3"
                 lengthpixel = detection.Width
                 length = lengthpixel/43
-                print(f"Lengden er {length}, Width er {lengthpixel}")
-                P1["Bredde"] = length
-                boat_data = {
-                    "timestamp": timestamp,
-                    "position": position,
-                    "length": length,
-                }
+                P3["Bredde"] = length
+                boat_data = {"timestamp": timestamp, "position": position, "length": length}
                 write_to_csv(boat_data)
 
             else: #Utenfor parkering, da trenger vi ikke å bry oss.
@@ -166,7 +148,7 @@ def rapporttid(): # Rapport
     P1_timedifference = current_time - P1_slettes_etter_5_min
     P1_totaltid = current_time - P1_starttimer
 
-    if ((P1_timedifference.total_seconds() >= timefordelete) and P1["Ledig"]==False):
+    if ((P1_timedifference.total_seconds() >= timefordelete) and not P1["Ledig"]):
         P1["Ledig"] = True
         boat_count-= 1
         alarm = False
@@ -199,7 +181,7 @@ def rapporttid(): # Rapport
 
     P2_timedifference = current_time - P2_slettes_etter_5_min
     P2_totaltid = current_time - P2_starttimer
-    if ((P2_timedifference.total_seconds() >= timefordelete) and P2["Ledig"]==False):
+    if ((P2_timedifference.total_seconds() >= timefordelete) and not P2["Ledig"]):
         P2["Ledig"] = True
         boat_count-= 1
         alarm = False
@@ -232,7 +214,7 @@ def rapporttid(): # Rapport
               
     P3_timedifference = current_time - P3_slettes_etter_5_min
     P3_totaltid = current_time - P3_starttimer
-    if ((P3_timedifference.total_seconds() >= timefordelete) and P3["Ledig"]==False):
+    if ((P3_timedifference.total_seconds() >= timefordelete) and not P3["Ledig"]):
         P3["Ledig"] = True
         boat_count-= 1
         alarm = False
