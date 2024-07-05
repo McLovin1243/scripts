@@ -63,7 +63,7 @@ def ReadBool(db_number, start_offset, bit_offset):
 
 # Funksjon for å håndtere klient etter tilkobling
 def handle_client(conn, addr):
-    global detectedBoats, P1_telles, P2_telles, lbBoatsDetected
+    #global detectedBoats, P1_telles, P2_telles, lbBoatsDetected
     print(f"NVIDIA Object detecion software running   {addr}")
     connected = True
     while connected:
@@ -76,13 +76,13 @@ def handle_client(conn, addr):
                 
             if msg == "P1_true":
                 WriteBool(db_number, start_offset,sbP1_detected_bit_offset, outputOn)
-                if (P1_telles):
-                    continue
-                else:
-                    detectedBoats += 1
-                    P1_telles = True
-                    lbBoatsDetected.delete(0,tk.END)
-                    lbBoatsDetected.insert(0, detectedBoats)
+                #if (P1_telles):
+                 #   continue
+                #else:
+                 #   detectedBoats += 1
+                  #  P1_telles = True
+                   # lbBoatsDetected.delete(0,tk.END)
+                    #lbBoatsDetected.insert(0, detectedBoats)
             if msg == "P1_false":
                 WriteBool(db_number, start_offset,sbP1_detected_bit_offset, outputOff)
                 #if (P1_telles):
