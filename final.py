@@ -1,4 +1,3 @@
-import os
 import socket
 import time
 import datetime
@@ -59,7 +58,7 @@ def log_parking_status(detections): # Logg
                     P1_starttimer = current_time # Gjøres kun første gang
                     P1["Ledig"] = False 
                     state_P1 = "P1_true"
-                    print("state_P1 er nå true") #########################
+                    send(state_P1)
                     print("P1 ble nå opptatt")
                     boat_count += 1 # En ny båt i parkeringssystemet
                     with open('boat_data.csv', mode='a', newline='') as file:
@@ -70,11 +69,12 @@ def log_parking_status(detections): # Logg
                 elif (totimertimer.total_seconds() < totimer):
                     print("Oppdaterer P1 aktiv")
                     state_P1 = "P1_true"
-                    print(f"state P1 er nå: {state_P1}")
+                    send(state_P1)
+                    
                 else:
                     print("P-plass 1 har vært opptatt i 2 timer.") # Kan legge til noe mer alarm.
                     state_DIP = "DIP_true"
-                    print(f"DIP_TRUE er nå aktivert: {state_DIP}")###############################
+                    send(state_DIP)
                         
                 # Uansett om den er ny eller ikke, så lagrer vi dataen og skriver til excel (loggen).
                 timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -95,6 +95,7 @@ def log_parking_status(detections): # Logg
                     P2_starttimer = current_time
                     P2["Ledig"] = False
                     state_P2 = 'P2_true'
+                    send(state_P2)
                     print("P2 ble nå opptatt")
                     boat_count += 1
                     with open('boat_data.csv', mode='a', newline='') as file:
@@ -104,9 +105,9 @@ def log_parking_status(detections): # Logg
                     break
                 elif (totimertimer.total_seconds() < totimer):
                     print("Oppdaterer P2 aktiv")
+                    send(state_P2)
                 else:
                     print("P-plass 2 har vært opptatt i 2 timer.") # Kan legge til noe mer alarm.
-                    state_DIP = "DIP_true"
 
                 timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 P2_sistlogg = datetime.datetime.now()
@@ -150,7 +151,6 @@ def log_parking_status(detections): # Logg
             else: #Utenfor parkering, da trenger vi ikke å bry oss.
                 pass
 
-
 # Funksjon for å skrive data til CSV-fil
 def write_to_csv(data):
     with open('boat_data.csv', mode='a', newline='') as file:
@@ -173,6 +173,7 @@ def rapporttid():
         P1_bredde = P1["Bredde"]
         state_P1 = 'P1_false'
         state_DIP = "DIP_false"
+        send(state_DIP)
         
         
         if P1_totaltid.total_seconds() > 7200:
@@ -208,6 +209,7 @@ def rapporttid():
         alarm = False
         P2_bredde = P2["Bredde"]
         state_P2 = 'P2_false'
+        send(state_P2)
         
         # Tidsformat
         if P2_totaltid.total_seconds() > 7200:
@@ -322,6 +324,10 @@ totimer = 50 # skal være 7200 (2 timer)
 state_P1 = "P1_false" # PLS
 state_P2 = "P2_false"
 state_DIP = "DIP_false"
+send(state_DIP)
+send(state_P1)
+send(state_P2)
+
 
 
 print('********************* VELG BILDEDETEKSJONSMODELL *********************')
@@ -379,12 +385,6 @@ elif a == 'e':
 
         rapporttid()
 
-        # Print detection information
-        #for detection in detections:
-            #print(f"TrackID: {detection.TrackID}")
-        send(state_P1)
-        send(state_P2)
-        send(state_DIP)
 
         display.Render(img)
         display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
