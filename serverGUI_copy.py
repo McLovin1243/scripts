@@ -60,7 +60,7 @@ def ReadBool(db_number, start_offset, bit_offset):
 
 # Funksjon for å håndtere klient etter tilkobling
 def handle_client(conn, addr):
-    global detectedBoats, lbBoatsDetected
+    global detectedBoats, lbBoatsDetected, feedingstatus
     print(f"NVIDIA Object detecion software running   {addr}")
     connected = True
     while connected:
@@ -119,6 +119,8 @@ def start_client():
 
 class App:
     def __init__(self, root):
+        global lbBoatsDetected
+        
         # Setting title
         root.title("Server-oversikt")
         # Setting window size
