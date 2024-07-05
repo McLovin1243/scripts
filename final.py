@@ -5,6 +5,10 @@ import csv
 from jetson_inference import detectNet
 from jetson_utils import videoSource, videoOutput
 
+
+# #net = detectNet(argv=['--model=models/dashcamnet/dashcamnet_resnet18.etlt', '--labels=models/dashcamnet/labels.txt', '--input-blob=input_0', '--output-cvg=scores', '--output-bbox=boxes', '--threshold=0.5'])
+
+
 # Dette programmet kjører bildedeteksjonsmodellen og behandler denne dataen. Sender så ut en boolsk verdi til ServerGUI.py.
 # ----------------------------------------------------------------------------------------------------------------------------- #Kan vi fjerne dette? : [gstreamer] gstreamer mysink taglist, video-codec=(string)"H.264\ \(Main\ Profile\)", bitrate=(uint)10014214, minimum-bitrate=(uint)6275040, maximum-bitrate=(uint)16813440;
 """
