@@ -11,7 +11,7 @@ from jetson_utils import videoSource, videoOutput
 
 # PLS
 ### --- FIELDS --- ###
-
+"""
 # Definerer variabler og setter opp socket kommunikasjon
 HEADER = 64
 port =5151
@@ -31,7 +31,7 @@ def send(msg): #funksjon som sender melding via socket kommunikasjon
     send_length += b' '*(HEADER-len(send_length))
     client.send(send_length)
     client.send(message)
-
+"""
 
 
 def log_parking_status(detections): # Logg
@@ -58,7 +58,7 @@ def log_parking_status(detections): # Logg
                     P1_starttimer = current_time # Gjøres kun første gang
                     P1["Ledig"] = False 
                     state_P1 = "P1_true"
-                    send(state_P1)
+                    #send(state_P1)
                     print("P1 ble nå opptatt")
                     boat_count += 1 # En ny båt i parkeringssystemet
                     with open('boat_data.csv', mode='a', newline='') as file:
@@ -69,12 +69,12 @@ def log_parking_status(detections): # Logg
                 elif (totimertimer.total_seconds() < totimer):
                     print("Oppdaterer P1 aktiv")
                     state_P1 = "P1_true"
-                    send(state_P1)
+                    #send(state_P1)
                     
                 else:
                     print("P-plass 1 har vært opptatt i 2 timer.") # Kan legge til noe mer alarm.
                     state_DIP = "DIP_true"
-                    send(state_DIP)
+                    #send(state_DIP)
                         
                 # Uansett om den er ny eller ikke, så lagrer vi dataen og skriver til excel (loggen).
                 timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -95,7 +95,7 @@ def log_parking_status(detections): # Logg
                     P2_starttimer = current_time
                     P2["Ledig"] = False
                     state_P2 = 'P2_true'
-                    send(state_P2)
+                    #send(state_P2)
                     print("P2 ble nå opptatt")
                     boat_count += 1
                     with open('boat_data.csv', mode='a', newline='') as file:
@@ -105,7 +105,7 @@ def log_parking_status(detections): # Logg
                     break
                 elif (totimertimer.total_seconds() < totimer):
                     print("Oppdaterer P2 aktiv")
-                    send(state_P2)
+                    #send(state_P2)
                 else:
                     print("P-plass 2 har vært opptatt i 2 timer.") # Kan legge til noe mer alarm.
 
@@ -173,7 +173,7 @@ def rapporttid():
         P1_bredde = P1["Bredde"]
         state_P1 = 'P1_false'
         state_DIP = "DIP_false"
-        send(state_DIP)
+        #send(state_DIP)
         
         
         if P1_totaltid.total_seconds() > 7200:
@@ -209,7 +209,7 @@ def rapporttid():
         alarm = False
         P2_bredde = P2["Bredde"]
         state_P2 = 'P2_false'
-        send(state_P2)
+        #send(state_P2)
         
         # Tidsformat
         if P2_totaltid.total_seconds() > 7200:
@@ -324,9 +324,9 @@ totimer = 50 # skal være 7200 (2 timer)
 state_P1 = "P1_false" # PLS
 state_P2 = "P2_false"
 state_DIP = "DIP_false"
-send(state_DIP)
-send(state_P1)
-send(state_P2)
+#send(state_DIP)
+#send(state_P1)
+#send(state_P2)
 
 
 
