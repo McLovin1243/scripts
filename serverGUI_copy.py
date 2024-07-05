@@ -60,7 +60,7 @@ def ReadBool(db_number, start_offset, bit_offset):
 
 # Funksjon for å håndtere klient etter tilkobling
 def handle_client(conn, addr):
-    global detectedBoats, lbBoatsDetected, feedingstatus
+    #global detectedBoats, lbBoatsDetected, feedingstatus
     print(f"NVIDIA Object detecion software running   {addr}")
     connected = True
     while connected:
@@ -71,40 +71,24 @@ def handle_client(conn, addr):
             print(f"{msg}")
              
                 
-            """if msg == "!DISCONECT":
-                WriteBool(db_number, start_offset,sbEMGStop_bit_offset, outputOn)
-                connected = False
-                print(EMGStatus) """
             if msg == "P1_true":
                 WriteBool(db_number, start_offset,sbP1_detected_bit_offset, outputOn)
-                feedingstatus = outputOn
-                detectedBoats += 1
-                lbBoatsDetected.delete(0,tk.END)
-                lbBoatsDetected.insert(0,detectedBoats)
+                #detectedBoats += 1
+                #lbBoatsDetected.delete(0,tk.END)
+                #lbBoatsDetected.insert(0,detectedBoats)
             if msg == "P1_false":
                 WriteBool(db_number, start_offset,sbP1_detected_bit_offset, outputOff)
-                feedingstatus = outputOff
-                detectedBoats -= 1
-                lbBoatsDetected.delete(0,tk.END)
-                lbBoatsDetected.insert(0,detectedBoats)
+                #detectedBoats -= 1
+                #lbBoatsDetected.delete(0,tk.END)
+                #lbBoatsDetected.insert(0,detectedBoats)
             if msg == "P2_true":
                 WriteBool(db_number, start_offset,sbP2_detected_bit_offset, outputOn)
-                feedingstatus = outputOn
-                detectedBoats += 1
-                lbBoatsDetected.delete(0,tk.END)
-                lbBoatsDetected.insert(0,detectedBoats)
             if msg == "P2_false":
                 WriteBool(db_number, start_offset,sbP2_detected_bit_offset, outputOff)
-                feedingstatus = outputOff
-                detectedBoats -= 1
-                lbBoatsDetected.delete(0,tk.END)
-                lbBoatsDetected.insert(0,detectedBoats)
             if msg == "DIP_true":
                 WriteBool(db_number, start_offset,sbIlligalParking_bit_offset, outputOn)
-                feedingstatus = outputOn
             if msg == "DIP_false":
                 WriteBool(db_number, start_offset,sbIlligalParking_bit_offset, outputOff)
-                feedingstatus = outputOff
 	
 # Funksjon for å starte opp server og koble til PLS og klient
 def start_client():
