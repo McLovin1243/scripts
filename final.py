@@ -5,12 +5,11 @@ import datetime
 import csv
 from jetson_inference import detectNet
 from jetson_utils import videoSource, videoOutput
-os.environ['GST_DEBUG'] = '*:3' # Supresses GStreamer
-os.environ['GST_DEBUG'] = 'sink:3'
+
 # Dette programmet kjører bildedeteksjonsmodellen og behandler denne dataen. Sender så ut en boolsk verdi til ServerGUI.py.
 # ----------------------------------------------------------------------------------------------------------------------------- #Kan vi fjerne dette? : [gstreamer] gstreamer mysink taglist, video-codec=(string)"H.264\ \(Main\ Profile\)", bitrate=(uint)10014214, minimum-bitrate=(uint)6275040, maximum-bitrate=(uint)16813440;
 
-"""
+
 # PLS
 ### --- FIELDS --- ###
 
@@ -33,7 +32,7 @@ def send(msg): #funksjon som sender melding via socket kommunikasjon
     send_length += b' '*(HEADER-len(send_length))
     client.send(send_length)
     client.send(message)
-"""
+
 
 
 def log_parking_status(detections): # Logg
@@ -60,6 +59,7 @@ def log_parking_status(detections): # Logg
                     P1_starttimer = current_time # Gjøres kun første gang
                     P1["Ledig"] = False 
                     state_P1 = "P1_true"
+                    print("state_P1 er nå true") #########################
                     print("P1 ble nå opptatt")
                     boat_count += 1 # En ny båt i parkeringssystemet
                     with open('boat_data.csv', mode='a', newline='') as file:
@@ -69,9 +69,12 @@ def log_parking_status(detections): # Logg
                     break
                 elif (totimertimer.total_seconds() < totimer):
                     print("Oppdaterer P1 aktiv")
+                    state_P1 = "P1_true"
+                    print(f"state P1 er nå: {state_P1}")
                 else:
                     print("P-plass 1 har vært opptatt i 2 timer.") # Kan legge til noe mer alarm.
                     state_DIP = "DIP_true"
+                    print(f"DIP_TRUE er nå aktivert: {state_DIP}")###############################
                         
                 # Uansett om den er ny eller ikke, så lagrer vi dataen og skriver til excel (loggen).
                 timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -379,9 +382,9 @@ elif a == 'e':
         # Print detection information
         #for detection in detections:
             #print(f"TrackID: {detection.TrackID}")
-        #send(state_P1)
-        #send(state_P2)
-        #send(state_DIP)
+        send(state_P1)
+        send(state_P2)
+        send(state_DIP)
 
         display.Render(img)
         display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
