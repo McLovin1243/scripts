@@ -63,7 +63,7 @@ def ReadBool(db_number, start_offset, bit_offset):
 
 # Funksjon for å håndtere klient etter tilkobling
 def handle_client(conn, addr):
-    global detectedBoats, P1_telles, P2_telles
+    global detectedBoats, P1_telles, P2_telles, lbBoatsDetected
     print(f"NVIDIA Object detecion software running   {addr}")
     connected = True
     while connected:
@@ -81,31 +81,32 @@ def handle_client(conn, addr):
                 else:
                     detectedBoats += 1
                     P1_telles = True
-                    update_gui()
+                    lbBoatsDetected.delete(0,tk.END)
+                    lbBoatsDetected.insert(0, detectedBoats)
             if msg == "P1_false":
                 WriteBool(db_number, start_offset,sbP1_detected_bit_offset, outputOff)
-                if (P1_telles):
-                    detectedBoats -= 1
-                    P1_telles = False
-                    update_gui()
-                else:
-                    continue
+                #if (P1_telles):
+                    #detectedBoats -= 1
+                    #P1_telles = False
+                    #update_gui()
+                #else:
+                    #continue
             if msg == "P2_true":
                 WriteBool(db_number, start_offset,sbP2_detected_bit_offset, outputOn)
-                if (P2_telles):
-                    continue
-                else:
-                    detectedBoats += 1
-                    P2_telles = True
-                    update_gui()
+                #if (P2_telles):
+                    #continue
+                #else:
+                    #detectedBoats += 1
+                    #P2_telles = True
+                    #update_gui()
             if msg == "P2_false":
                 WriteBool(db_number, start_offset,sbP2_detected_bit_offset, outputOff)
-                if (P2_telles):
-                    detectedBoats -= 1
-                    P2_telles = False
-                    update_gui()
-                else:
-                    continue
+                #if (P2_telles):
+                 #   detectedBoats -= 1
+                  #  P2_telles = False
+                   # update_gui()
+                #else:
+                 #   continue
             if msg == "DIP_true":
                 WriteBool(db_number, start_offset,sbIlligalParking_bit_offset, outputOn)
             if msg == "DIP_false":
@@ -120,10 +121,6 @@ def start_client():
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
 
-# Funksjon for antall båter
-def update_gui():
-    lbBoatsDetected.delete(0,tk.END)        
-    lbBoatsDetected.insert(0, detectedBoats)
 
 ### --- GUI KODE --- ###
 
