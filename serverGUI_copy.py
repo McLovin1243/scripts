@@ -36,7 +36,7 @@ sbIlligalParking_bit_offset = 4
 outputOn = 1
 outputOff = 0
 
-detectedPellets = 0
+detectedBoats = 0
 feedingstatus = 0
 EMGStatus = 0
 
@@ -195,27 +195,27 @@ class App:
         lblServer["bd"] = 1  # Adjust the border width as needed
         lblServer["relief"] = tk.SOLID  # Solid border     
 
-        # Label - Pellets detected
-        labelPelletsDetected=tk.Label(root)
+        # Label - Boats detected
+        labelBoatsDetected=tk.Label(root)
         ft = tkFont.Font(family='Arial',size=10)
-        labelPelletsDetected["font"] = ft
-        labelPelletsDetected["fg"] = "#333333"
-        labelPelletsDetected["justify"] = "center"
-        labelPelletsDetected["text"] = "Pellets detected"
-        labelPelletsDetected.place(x=37,y=320,width=100,height=25)
-        labelPelletsDetected["bd"] = 1  # Adjust the border width as needed
-        labelPelletsDetected["relief"] = tk.SOLID  # Solid border 
+        labelBoatsDetected["font"] = ft
+        labelBoatsDetected["fg"] = "#333333"
+        labelBoatsDetected["justify"] = "center"
+        labelBoatsDetected["text"] = "Boats detected"
+        labelBoatsDetected.place(x=37,y=320,width=100,height=25)
+        labelBoatsDetected["bd"] = 1  # Adjust the border width as needed
+        labelBoatsDetected["relief"] = tk.SOLID  # Solid border 
 
-        # Label - Pellets detected input
-        lbPelletsDetected=tk.Listbox(root)
+        # Label - Boats detected input
+        lbBoatsDetected=tk.Listbox(root)
         ft = tkFont.Font(family='Arial',size=10)
-        lbPelletsDetected["font"] = ft
-        lbPelletsDetected["fg"] = "#333333"
-        lbPelletsDetected["justify"] = "center"
-        lbPelletsDetected.place(x=37,y=350,width=100,height=25)
-        lbPelletsDetected["bd"] = 1  # Adjust the border width as needed
-        lbPelletsDetected["relief"] = tk.SOLID  # Solid border 
-        lbPelletsDetected.insert(0, detectedPellets)
+        lbBoatsDetected["font"] = ft
+        lbBoatsDetected["fg"] = "#333333"
+        lbBoatsDetected["justify"] = "center"
+        lbBoatsDetected.place(x=37,y=350,width=100,height=25)
+        lbBoatsDetected["bd"] = 1  # Adjust the border width as needed
+        lbBoatsDetected["relief"] = tk.SOLID  # Solid border 
+        lbBoatsDetected.insert(0, detectedBoats)
 
         ### --- ENTRIES --- ###
 
