@@ -7,7 +7,98 @@ from jetson_utils import videoSource, videoOutput
 
 # Dette programmet kjører bildedeteksjonsmodellen og behandler denne dataen. Sender så ut en boolsk verdi til ServerGUI.py.
 # ----------------------------------------------------------------------------------------------------------------------------- #Kan vi fjerne dette? : [gstreamer] gstreamer mysink taglist, video-codec=(string)"H.264\ \(Main\ Profile\)", bitrate=(uint)10014214, minimum-bitrate=(uint)6275040, maximum-bitrate=(uint)16813440;
+"""
+How to run TAO DASHCAM
 
+# mkdir -p $HOME/dashcamnet && \wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/dashcamnet/versions/pruned_v1.0/files/resnet18_dashcamnet_pruned.etlt \
+-O $HOME/dashcamnet/resnet18_dashcamnet_pruned.etlt && \
+wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/dashcamnet/versions/pruned_v1.0/files/dashcamnet_int8.txt \
+-O $HOME/dashcamnet/dashcamnet_int8.txt
+mkdir -p $HOME/vehiclemakenet && \
+wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/vehiclemakenet/versions/pruned_v1.0/files/resnet18_vehiclemakenet_pruned.etlt \
+-O $HOME/vehiclemakenet/resnet18_vehiclemakenet_pruned.etlt && \
+wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/vehiclemakenet/versions/pruned_v1.0/files/vehiclemakenet_int8.txt \
+-O $HOME/vehiclemakenet/vehiclemakenet_int8.txt
+mkdir -p $HOME/vehicletypenet && \
+wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/vehicletypenet/versions/pruned_v1.0/files/resnet18_vehicletypenet_pruned.etlt \
+-O $HOME/vehicletypenet/resnet18_vehicletypenet_pruned.etlt && \
+wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/vehicletypenet/versions/pruned_v1.0/files/vehicletypenet_int8.txt \
+-O $HOME/vehicletypenet/vehicletypenet_int8.txt
+
+## Run Application
+
+xhost +
+sudo docker run --gpus all -it --rm -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY -v $HOME:/opt/nvidia/deepstream/deepstream-5.1/samples/models/tlt_pretrained_models \
+-w /opt/nvidia/deepstream/deepstream-5.1/samples/configs/tlt_pretrained_models nvcr.io/nvidia/deepstream:5.1-21.02-samples \
+deepstream-app -c deepstream_app_source1_dashcamnet_vehiclemakenet_vehicletypenet.txt
+
+Install deepstream on your local host and run the deepstream-app.
+
+Download and install DeepStream SDK. The installation instructions for DeepStream are provided in DeepStream development guide. The config files for the purpose-built models are located in:
+
+/opt/nvidia/deepstream/deepstream-5.1/samples/configs/tlt_pretrained_models
+/opt/nvidia/deepstream is the default DeepStream installation directory. This path will be different if you are installing in a different directory.
+
+You will need 2 config files and 1 label file. These files are provided in the tlt_pretrained_models directory.
+
+deepstream_app_source1_dashcamnet_vehiclemakenet_vehicletypenet.txt - Main config file for DeepStream app
+config_infer_primary_dashcamnet.txt - File to configure inference settings
+labels_dashcamnet.txt - Label file with 3 classes
+Note: The deepstream_app_source1_dashcamnet_vehiclemakenet_vehicletypenet.txt configures 3 models: DashCamNet as primary detector, and VehicleMakeNet and VehicleTypeNet as secondary classifiers. The classification models are typically used after initial object detection. To disable the secondary classifiers, set the enable flag under secondar_gie* to 0
+
+[secondary-gie0]
+enable=0
+...
+
+[secondary-gie1]
+enable=0
+Key Parameters in config_infer_primary_dashcamnet.txt
+
+tlt-model-key
+tlt-encoded-model
+labelfile-path
+int8-calib-file
+input-dims
+num-detected-classes
+Run deepstream-app:
+
+deepstream-app -c deepstream_app_source1_dashcamnet_vehiclemakenet_vehicletypenet.txt
+Documentation to deploy with DeepStream is provided in "Deploying to DeepStream" chapter of TAO User Guide.
+
+
+######  GPT:
+# Download DashCamNet model
+mkdir -p $HOME/dashcamnet && \
+wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/dashcamnet/versions/pruned_v1.0/files/resnet18_dashcamnet_pruned.etlt \
+-O $HOME/dashcamnet/resnet18_dashcamnet_pruned.etlt && \
+wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/dashcamnet/versions/pruned_v1.0/files/dashcamnet_int8.txt \
+-O $HOME/dashcamnet/dashcamnet_int8.txt
+
+# Download VehicleMakeNet model
+mkdir -p $HOME/vehiclemakenet && \
+wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/vehiclemakenet/versions/pruned_v1.0/files/resnet18_vehiclemakenet_pruned.etlt \
+-O $HOME/vehiclemakenet/resnet18_vehiclemakenet_pruned.etlt && \
+wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/vehiclemakenet/versions/pruned_v1.0/files/vehiclemakenet_int8.txt \
+-O $HOME/vehiclemakenet/vehiclemakenet_int8.txt
+
+# Download VehicleTypeNet model
+mkdir -p $HOME/vehicletypenet && \
+wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/vehicletypenet/versions/pruned_v1.0/files/resnet18_vehicletypenet_pruned.etlt \
+-O $HOME/vehicletypenet/resnet18_vehicletypenet_pruned.etlt && \
+wget https://api.ngc.nvidia.com/v2/models/nvidia/tao/vehicletypenet/versions/pruned_v1.0/files/vehicletypenet_int8.txt \
+-O $HOME/vehicletypenet/vehicletypenet_int8.txt
+
+# Run DeepStream application
+xhost +
+sudo docker run --gpus all -it --rm \
+-v /tmp/.X11-unix:/tmp/.X11-unix \
+-e DISPLAY=$DISPLAY \
+-v $HOME:/opt/nvidia/deepstream/deepstream-5.1/samples/models/tlt_pretrained_models \
+-w /opt/nvidia/deepstream/deepstream-5.1/samples/configs/tlt_pretrained_models \
+nvcr.io/nvidia/deepstream:5.1-21.02-samples \
+deepstream-app -c deepstream_app_source1_dashcamnet_vehiclemakenet_vehicletypenet.txt
+
+"""
 
 # PLS
 ### --- FIELDS --- ###
