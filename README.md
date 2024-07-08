@@ -5,8 +5,8 @@ Prosjektet er basert på dusty-nv sin guide for å iverksette objektdeteksjon vh
 
 **Struktur**
 
-    'serverGUI_copy.py': Skript for å starte server
-    'final.py': script for å runne video med bildedeteksjon
+    serverGUI_copy.py: script for å starte server
+    final.py: script for å runne video med bildedeteksjon
 
 **Forutsetninger for å kjøre programmet:**
 
