@@ -64,7 +64,7 @@ def log_parking_status(detections): # Logg
                     boat_count += 1 # En ny båt i parkeringssystemet
                     with open('boat_data.csv', mode='a', newline='') as file:
                         writer = csv.writer(file)
-                        writer.writerow([f"{current_time}", "P1 ANKOMST"]) 
+                        writer.writerow([f"{current_time.strftime('%Y-%m-%d %H:%M:%S')}", "P1 ANKOMST"]) 
                 elif (P1_loggpause.total_seconds() < 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
                     break
                 elif (totimertimer.total_seconds() < totimer):
@@ -101,7 +101,7 @@ def log_parking_status(detections): # Logg
                     boat_count += 1
                     with open('boat_data.csv', mode='a', newline='') as file:
                         writer = csv.writer(file)
-                        writer.writerow([f"{current_time}", "P2 ANKOMST"]) 
+                        writer.writerow([f"{current_time.strftime('%Y-%m-%d %H:%M:%S')}", "P2 ANKOMST"]) 
                 elif (P2_loggpause.total_seconds() < 5): # Skal ikke Write til csv dersom mindre enn 5 sekund siden sist
                     break
                 elif (totimertimer.total_seconds() < totimer):
@@ -131,7 +131,7 @@ def log_parking_status(detections): # Logg
                     boat_count += 1
                     with open('boat_data.csv', mode='a', newline='') as file:
                         writer = csv.writer(file)
-                        writer.writerow([f"{current_time}", "P3 ANKOMST"]) 
+                        writer.writerow([f"{current_time.strftime('%Y-%m-%d %H:%M:%S')}", "P3 ANKOMST"]) 
                 elif (P3_loggpause.total_seconds() < 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
                     break
                 elif (totimertimer.total_seconds() < totimer):
@@ -191,7 +191,7 @@ def rapporttid():
             pris = 250 
         with open('boat_data.csv', mode='a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([f"{current_time}", "P1 AVREISE"])
+            writer.writerow([f"{current_time.strftime('%Y-%m-%d %H:%M:%S')}", "P1 AVREISE"])
         if (P1_totaltid.total_seconds()-timefordelete > 5): # Ikke Rapporter hvis stått under et visst antall sekunder.
             print(f"Parkering 1 var opptatt fra {P1_starttimer.strftime('%Y-%m-%d %H:%M:%S')} UTC og stod der i {tid_format}")
             with open('rapport.csv', mode='a', newline='') as file:
@@ -229,7 +229,7 @@ def rapporttid():
             pris = 250 
         with open('boat_data.csv', mode='a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([f"{current_time}", "P2 AVREISE"])
+            writer.writerow([f"{current_time.strftime('%Y-%m-%d %H:%M:%S')}", "P2 AVREISE"])
         if (P2_totaltid.total_seconds()-timefordelete > 5): # Ikke Rapporter hvis stått under et visst antall sekunder.
             print(f"Parkering 2 var opptatt fra {P2_starttimer.strftime('%Y-%m-%d %H:%M:%S')} UTC og stod der i {tid_format}")
             with open('rapport.csv', mode='a', newline='') as file:
@@ -265,7 +265,7 @@ def rapporttid():
             pris = 250 
         with open('boat_data.csv', mode='a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([f"{current_time}", "P3 AVREISE"])
+            writer.writerow([f"{current_time.strftime('%Y-%m-%d %H:%M:%S')}", "P3 AVREISE"])
         if (P3_totaltid.total_seconds()-timefordelete > 5): # Ikke Rapporter hvis stått under et visst antall sekunder.
             print(f"Parkering 3 var opptatt fra {P3_starttimer.strftime('%Y-%m-%d %H:%M:%S')} UTC og stod der i {tid_format}")
             with open('rapport.csv', mode='a', newline='') as file:
