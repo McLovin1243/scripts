@@ -19,6 +19,7 @@ Prosjektet er basert på dusty-nv sin guide for å iverksette objektdeteksjon ve
 ## **Kjøring av program**
 
 Merk hvilken mappe scriptene legges i. Begge programmene skal kjøres samtidig.
+
 Terminal 1. Start GUI for serveren:
 
     cd "mappenavn"
