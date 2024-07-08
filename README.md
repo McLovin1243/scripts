@@ -16,15 +16,19 @@ Prosjektet er basert på dusty-nv sin guide for å iverksette objektdeteksjon ve
 - PLS-kode er ikke vedlagt.
 
 
-## **Bruk**
+## **Kjøring av program**
 
 Merk hvilken mappe scriptene legges i. Begge programmene skal kjøres samtidig.
 Terminal 1. Start GUI for serveren:
 
+    cd "mappenavn"
     python3 serverGUI_copy.py
 
 Terminal 2. Kjør bilde- og objektgjenkjenningsskriptet:
 
+    cd jetson-inference
+    // her kjører vi docker
+    cd "mappenavn"
     python3 final.py
 
 ## **Drøfting**
