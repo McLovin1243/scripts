@@ -20,9 +20,11 @@ Prosjektet er basert på dusty-nv sin guide for å iverksette objektdeteksjon vh
 
 Merk hvilken mappe scriptene legges i. Begge programmene skal kjøres samtidig.
 Terminal 1. Start GUI for serveren:
+
     python3 serverGUI_copy.py
 
 Terminal 2. Kjør bilde- og objektgjenkjenningsskriptet:
+
     python3 final.py
 
 **Drøfting**
