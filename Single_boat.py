@@ -35,7 +35,7 @@ def send(msg): #funksjon som sender melding via socket kommunikasjon
 
 
 
-def log_parking_status(detections): # Logg
+def log_parking_status_2(detections): # Logg
     global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, P2_slettes_etter_5_min, P2_starttimer, P3_slettes_etter_5_min, P3_starttimer, P1_sistlogg, P2_sistlogg, P3_sistlogg, state_P1, state_P2, state_P3, state_DIP
 
 
@@ -87,70 +87,6 @@ def log_parking_status(detections): # Logg
                 boat_data = {"timestamp": timestamp, "position": position, "length": length}
                 write_to_csv(boat_data)
             
-            # Logg ###  P2  ###
-            elif (abs(boat_bottom - P2["Bottom"]) <= ytolerance and abs(boat_left - P2["Left"]) <= xtolerance and abs(boat_area-P2["Area"]<areatolerance)):
-                P2_loggpause = current_time - P2_sistlogg
-                totimertimer = current_time - P2_starttimer
-                P2_slettes_etter_5_min = current_time # Oppdaterer at P2 er aktiv
-                if P2["Ledig"]: # Hvis P2 er ledig (true)
-                    P2_starttimer = current_time
-                    P2["Ledig"] = False
-                    state_P2 = 'P2_true'
-                    send(state_P2)
-                    print("P2 ble nå opptatt")
-                    boat_count += 1
-                    with open('boat_data.csv', mode='a', newline='') as file:
-                        writer = csv.writer(file)
-                        writer.writerow([f"{current_time}", "P2 ANKOMST"]) 
-                elif (P2_loggpause.total_seconds() < 5): # Skal ikke Write til csv dersom mindre enn 5 sekund siden sist
-                    break
-                elif (totimertimer.total_seconds() < totimer):
-                    print("Oppdaterer P2 aktiv")
-                    send(state_P2)
-                else:
-                    print("P-plass 2 har vært opptatt i 2 timer.") # Kan legge til noe mer alarm.
-
-                timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                P2_sistlogg = datetime.datetime.now()
-                position = "Parkering nr.2"
-                lengthpixel = detection.Width
-                length = lengthpixel/65
-                P2["Bredde"] = length
-                boat_data = {"timestamp": timestamp, "position": position, "length": length}
-                write_to_csv(boat_data)
-            
-             # Logg ###  P3  ###
-            elif (abs(boat_bottom - P3["Bottom"]) <= ytolerance and abs(boat_left - P3["Left"]) <= xtolerance):
-                P3_loggpause = current_time - P3_sistlogg
-                totimertimer = current_time - P3_starttimer
-                P3_slettes_etter_5_min = datetime.datetime.now() # Oppdaterer at P3 er aktiv
-                if P3["Ledig"]: #Hvis P3 er ledig (true)
-                    P3_starttimer = current_time #Gjøres kun første gang
-                    P3["Ledig"] = False 
-                    print("P3 ble nå opptatt")
-                    boat_count += 1
-                    with open('boat_data.csv', mode='a', newline='') as file:
-                        writer = csv.writer(file)
-                        writer.writerow([f"{current_time}", "P3 ANKOMST"]) 
-                elif (P3_loggpause.total_seconds() < 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
-                    break
-                elif (totimertimer.total_seconds() < totimer):
-                    print("Oppdaterer P3 aktiv")
-                else:
-                    print("P-plass 3 har vært opptatt i 2 timer.") # Kan legge til noe mer alarm.
-                
-                # Uansett om den er ny eller ikke, så lagrer vi dataen og skriver til excel.
-                timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                P3_sistlogg = datetime.datetime.now()
-                position = "Parkering nr.3"
-                lengthpixel = detection.Width
-                length = lengthpixel/43
-                P3["Bredde"] = length
-                boat_data = {"timestamp": timestamp, "position": position, "length": length}
-                write_to_csv(boat_data)
-
-            else: #Utenfor parkering, da trenger vi ikke å bry oss.
-                pass
 
 # Funksjon for å skrive data til CSV-fil
 def write_to_csv(data):
@@ -160,7 +96,7 @@ def write_to_csv(data):
 
 #Denne funksjonen sletter parkeringer som har vært inaktive, og lagrer rapporten over hvor lenge den stod.
 def rapporttid():
-    global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, P2_slettes_etter_5_min, P2_starttimer, current_time, state_P1, state_P2, state_P3, state_DIP  #Tror global i functions er nødvendig
+    global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, current_time, state_P1  #Tror global i functions er nødvendig
     
     current_time = datetime.datetime.now()
     P1_timedifference = current_time - P1_slettes_etter_5_min
@@ -173,8 +109,6 @@ def rapporttid():
         alarm = False
         P1_bredde = P1["Bredde"]
         state_P1 = 'P1_false'
-        state_DIP = "DIP_false"
-        send(state_DIP)
         
         
         if P1_totaltid.total_seconds() > 7200:
@@ -201,79 +135,6 @@ def rapporttid():
             else:
                 writer.writerow([f"Parkering 1 ble opptatt {P1_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P1_bredde} meter lang",])
 
-    # RAPPORT ###  P2  ###
-    P2_timedifference = current_time - P2_slettes_etter_5_min
-    P2_totaltid = current_time - P2_starttimer
-    if ((P2_timedifference.total_seconds() >= timefordelete) and not P2["Ledig"]):
-        P2["Ledig"] = True
-        boat_count-= 1
-        alarm = False
-        P2_bredde = P2["Bredde"]
-        state_P2 = 'P2_false'
-        send(state_P2)
-        
-        # Tidsformat
-        if P2_totaltid.total_seconds() > 7200:
-            tid_format = f"{(P2_totaltid.total_seconds()-timefordelete)/3600:.2f} timer"
-            alarm = True
-        elif P2_totaltid.total_seconds() > 60:
-            tid_format = f"{(P2_totaltid.total_seconds()-timefordelete)/60:.2f} minutter"
-        else:
-            tid_format = f"{(P2_totaltid.total_seconds()-timefordelete):.2f} sekunder"
-
-	
-        # Bredde og pris
-        if (P2["Bredde"] > 9.5):
-            pris = 300
-        else:
-            pris = 250 
-        with open('boat_data.csv', mode='a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow([f"{current_time}", "P2 AVREISE"])
-        if (P2_totaltid.total_seconds()-timefordelete > 5): # Ikke Rapporter hvis stått under et visst antall sekunder.
-            print(f"Parkering 2 var opptatt fra {P2_starttimer.strftime('%Y-%m-%d %H:%M:%S')} UTC og stod der i {tid_format}")
-            with open('rapport.csv', mode='a', newline='') as file:
-                writer = csv.writer(file, delimiter = ',')
-                if alarm:
-                    writer.writerow([f"Parkering 2 ble opptatt {P2_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P2_bredde} meter lang.", f"AVGIFTSBELAGT", f"vedkommende skal betale:", f"{pris}", f"kr"])
-                else:
-                    writer.writerow([f"Parkering 2 ble opptatt {P2_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P2_bredde} meter lang"])
-
-    # Rapport ###  P3  ###
-    P3_timedifference = current_time - P3_slettes_etter_5_min
-    P3_totaltid = current_time - P3_starttimer
-    if ((P3_timedifference.total_seconds() >= timefordelete) and not P3["Ledig"]):
-        P3["Ledig"] = True
-        boat_count-= 1
-        alarm = False
-        P3_bredde = P3["Bredde"]
-        
-        # Tidsformat
-        if P3_totaltid.total_seconds() > 7200:
-            tid_format = f"{(P3_totaltid.total_seconds()-timefordelete)/3600:.2f} timer"
-            alarm = True
-        elif P3_totaltid.total_seconds() > 60:
-            tid_format = f"{(P3_totaltid.total_seconds()-timefordelete)/60:.2f} minutter"
-        else:
-            tid_format = f"{(P3_totaltid.total_seconds()-timefordelete):.2f} sekunder"
-
-	
-        # Bredde og pris
-        if (P3["Bredde"] > 9.5):
-            pris = 300
-        else:
-            pris = 250 
-        with open('boat_data.csv', mode='a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow([f"{current_time}", "P3 AVREISE"])
-        if (P3_totaltid.total_seconds()-timefordelete > 5): # Ikke Rapporter hvis stått under et visst antall sekunder.
-            print(f"Parkering 3 var opptatt fra {P3_starttimer.strftime('%Y-%m-%d %H:%M:%S')} UTC og stod der i {tid_format}")
-            with open('rapport.csv', mode='a', newline='') as file:
-                writer = csv.writer(file, delimiter = ',')
-            if alarm:
-                writer.writerow([f"Parkering 3 ble opptatt {P3_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P3_bredde} meter lang.", f"AVGIFTSBELAGT", f"vedkommende skal betale:", f"{pris}", f"kr"])
-            else:
-                writer.writerow([f"Parkering 3 ble opptatt {P3_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P3_bredde} meter lang",])
 
 # ----------------------------------------------------------------------------------------------------------------------------- #
 ### --- KODE --- ###
@@ -305,8 +166,6 @@ boat_count = 0
 # Definisjon av parkeringsplasser (MÅ VITE PIKSLENES KOORDINATER)
 parking_spots = [
     {"Id": (1), "Left": (45), "Right": (1080), "Bottom": (604), "Top": None, "Area": (296000), "Ledig": (True), "Bredde": 0, },
-    {"Id": (2), "Left": (1150), "Right": (1445), "Bottom": (772), "Top": None, "Area": (100000), "Ledig": (True), "Bredde": 0, },
-    {"Id": (3), "Left": (1305), "Right": (1870), "Bottom": (623), "Top": None, "Area": (170000), "Ledig": (True), "Bredde": 0, },
     # Legg til flere parkeringsplasser etter behov
 ]
 
@@ -314,20 +173,16 @@ redningsleider_piksler = [(1240, 129)] # Vi har bare en som et eksempel.
 redningsleider_tidtaker = None  # Timer for blocking detection (skal ikke gi alarm med en gang)
 
 # Verdiene kan hentes slik: P1["Left"]
-P1, P2, P3 = parking_spots[0], parking_spots[1], parking_spots[2]
+P1 = parking_spots[0]
 # Timere er enklere å jobbe med som egne variabler.
-P1_starttimer = P2_starttimer = P3_starttimer = P1_slettes_etter_5_min = P2_slettes_etter_5_min = P3_slettes_etter_5_min = P1_sistlogg = P2_sistlogg = P3_sistlogg = datetime.datetime.now() 
+P1_starttimer = P1_sistlogg = datetime.datetime.now() 
 xtolerance = 70  # Disse toleranseverdiene kan legges i parking_spots og ha unike toleranser for hver P-plass dersom ønskelig
 ytolerance = 60
 areatolerance = 5000
 timefordelete = 10 # 5 min er 300.
 totimer = 50 # skal være 7200 (2 timer)
 state_P1 = "P1_false" # PLS
-state_P2 = "P2_false"
-state_DIP = "DIP_false"
-send(state_DIP)
 send(state_P1)
-send(state_P2)
 
 
 
@@ -351,7 +206,7 @@ if a == 's':
             continue
 
         detections = net.Detect(img)
-        log_parking_status(detections)
+        log_parking_status_2(detections)
 
         """
         # Print detection information.
@@ -382,7 +237,7 @@ elif a == 'e':
 
         detections = net.Detect(img)
         
-        log_parking_status(detections)     
+        log_parking_status_2(detections)     
 
         rapporttid()
 
