@@ -34,4 +34,4 @@ Terminal 2. Kjør bilde- og objektgjenkjenningsskriptet:
 
 ## **Drøfting**
 
-Vi benyttet 26000 bilder i vår egentrente modell. Bildedeteksjonene fungerer foreløpig ikke bra nok. Dersom en båt legger inn til kai, vil den ofte miste båten ettersom baugen forsvinner. Ved seilbåter inkluderes ofte seilene. De store deteksjonene kan gjøre de vanskelig å jobbe med.
+Vi benyttet 26000 bilder i vår egentrente modell. Bildedeteksjonene fungerer foreløpig ikke bra nok. Dersom en båt legger inn til kai, vil den ofte miste båten ettersom baugen forsvinner. Ved seilbåter inkluderes ofte seilene. De store deteksjonene kan være vanskelig å jobbe med.
