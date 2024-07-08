@@ -10,18 +10,19 @@ Prosjektet er basert på dusty-nv sin guide for å iverksette objektdeteksjon vh
 
 **Forutsetninger for å kjøre programmet:**
 
-    Bildegjenkjenningen er kunstig intelligens som kun kan kjøres på Nvidia.
-    Installer nødvendig programvare: jetson-inference, jetson-utils, python-snap7, tkinter
-    Parkeringsplasser til båtene skal legges inn på forhånd i 'final.py'
-    PLS-kode er ikke vedlagt.
+- Bildegjenkjenningen er kunstig intelligens som kun kan kjøres på Nvidia.
+- Installer nødvendig programvare: jetson-inference, jetson-utils, python-snap7, tkinter
+- Parkeringsplasser til båtene skal legges inn på forhånd i 'final.py'
+- PLS-kode er ikke vedlagt.
 
 
 **Bruk**
 
-Start GUI for serveren:
+Merk hvilken mappe scriptene legges i. Begge programmene skal kjøres samtidig.
+Terminal 1. Start GUI for serveren:
     python3 serverGUI_copy.py
 
-Kjør bilde- og objektgjenkjenningsskriptet i en annen terminal:
+Terminal 2. Kjør bilde- og objektgjenkjenningsskriptet:
     python3 final.py
 
 **Drøfting**
