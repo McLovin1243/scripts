@@ -335,60 +335,64 @@ print('********************* VELG BILDEDETEKSJONSMODELL *********************')
 print('           SKRIV INN s FOR STANDARDMODELL OG e FOR EGEN MODELL')
 
 
+running = False
+while (not running):
+    a = input()
 
-a = input()
-
-if a == 's':
-    net = detectNet("ssd-mobilenet-v2", threshold=0.5)
-    source = "Main.mp4" 
-    camera = videoSource(source) 
-    display = videoOutput()  # 'my_video.mp4' for file, or sequence of images 'img_%i.jpg'
-    
-    while display.IsStreaming():
-        current_time = datetime.datetime.now()
-        img = camera.Capture()
-        if img is None:
-            continue
-
-        detections = net.Detect(img)
-        log_parking_status(detections)
-
-        """
-        # Print detection information.
-        for detection in detections:
-      	    print(f"ClassID: {detection.ClassID}, Confidence: {detection.Confidence}, BBox:{detection.Bottom} {detection.Area} {detection.Left}")
-	    """
-	
-        display.Render(img)
-        display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
+    if a == 's':
+        running = True
+        net = detectNet("ssd-mobilenet-v2", threshold=0.5)
+        source = "Main.mp4" 
+        camera = videoSource(source) 
+        display = videoOutput()  # 'my_video.mp4' for file, or sequence of images 'img_%i.jpg'
         
-        current_time = datetime.datetime.now()
-        # Må sette P1 til True etter 5 min inaktiv. slik at vi skriver ut rapport og nye kan komme.
+        while display.IsStreaming():
+            current_time = datetime.datetime.now()
+            img = camera.Capture()
+            if img is None:
+                continue
+
+            detections = net.Detect(img)
+            log_parking_status(detections)
+
+            """
+            # Print detection information.
+            for detection in detections:
+                print(f"ClassID: {detection.ClassID}, Confidence: {detection.Confidence}, BBox:{detection.Bottom} {detection.Area} {detection.Left}")
+            """
         
-        rapporttid()
+            display.Render(img)
+            display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
+            
+            current_time = datetime.datetime.now()
+            # Må sette P1 til True etter 5 min inaktiv. slik at vi skriver ut rapport og nye kan komme.
+            
+            rapporttid()
 
 
-elif a == 'e':
-    net = detectNet(argv=['--model=models/boat/ssd-mobilenet.onnx', '--labels=models/boat/labels.txt', '--input-blob=input_0', '--output-cvg=scores', '--output-bbox=boxes', '--threshold=0.5'])
-    source = "Main.mp4" 
-    camera = videoSource(source) 
-    display = videoOutput()  # 'my_video.mp4' for file, or sequence of images 'img_%i.jpg'
 
-    
-    while display.IsStreaming():
-        img = camera.Capture()
-        if img is None:
-            continue
+    elif a == 'e':
+        running = True
+        net = detectNet(argv=['--model=models/boat/ssd-mobilenet.onnx', '--labels=models/boat/labels.txt', '--input-blob=input_0', '--output-cvg=scores', '--output-bbox=boxes', '--threshold=0.5'])
+        source = "Main.mp4" 
+        camera = videoSource(source) 
+        display = videoOutput()  # 'my_video.mp4' for file, or sequence of images 'img_%i.jpg'
 
-        detections = net.Detect(img)
         
-        log_parking_status(detections)     
+        while display.IsStreaming():
+            img = camera.Capture()
+            if img is None:
+                continue
 
-        rapporttid()
+            detections = net.Detect(img)
+            
+            log_parking_status(detections)     
+
+            rapporttid()
 
 
-        display.Render(img)
-        display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
-        
-else:
-    print("Ugyldig valg. Vennligst velg 's' for standardmodell eller 'e' for egen modell.")
+            display.Render(img)
+            display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
+            
+    else:
+        print("Ugyldig valg. Vennligst velg 's' for standardmodell eller 'e' for egen modell.")
