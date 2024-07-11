@@ -20,7 +20,37 @@ def draw_rounded_rectangle(canvas, x1, y1, x2, y2, radius, **kwargs):
         x1, y1,
         x1 + radius, y1
     ]
-    canvas.create_polygon(points, smooth=True, **kwargs)
+    return canvas.create_polygon(points, smooth=True, **kwargs)
+
+
+def P1_timer(usikkerhvajegskalbrukeinputtil):
+    print("Tidspunkt: ")
+
+def P2_timer(hmm):
+    print("Tidspunkt: ")
+
+def P1_ankomst():
+    canvas.itemconfig(guiP1, fill='yellow', outline="yellow")
+    button1.config(bg='yellow', activebackground='yellow')
+def P2_ankomst():
+    canvas.itemconfig(guiP2, fill='yellow',outline="yellow")
+    button2.config(bg='yellow', activebackground='yellow')
+
+def betalt():
+    canvas.itemconfig(guiP1, fill='#2EC729', outline="#2EC729")
+    button1.config(bg='#2EC729', activebackground='#2EC729')
+    canvas.itemconfig(guiP2, fill='#2EC729',outline="#2EC729")
+    button2.config(bg='#2EC729', activebackground='#2EC729')
+
+def P1_alarm():
+    canvas.itemconfig(guiP1,fill='red',outline='red')
+    button1.config(bg='red',activebackground='red')
+
+def P2_alarm():
+    canvas.itemconfig(guiP2,fill='red',outline='red')
+    button2.config(bg='red',activebackground='red')
+
+
 
 # Create the main window
 root = tk.Tk()
@@ -59,7 +89,7 @@ draw_rounded_rectangle(canvas, 1000, 330, 1500, 480, 60, fill='#D4EAFF', outline
 
 # Nedre P-plasser
 draw_rounded_rectangle(canvas, 230, 610, 335, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=bredde)
-draw_rounded_rectangle(canvas, 360, 610, 465, 830, 65, fill='#2EC729', outline='#2EC729', width=bredde)
+draw_rounded_rectangle(canvas, 360, 610, 465, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=bredde)
 draw_rounded_rectangle(canvas, 500, 610, 605, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=bredde)
 draw_rounded_rectangle(canvas, 630, 610, 735, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=bredde)
 draw_rounded_rectangle(canvas, 770, 610, 875, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=bredde)
@@ -70,24 +100,10 @@ draw_rounded_rectangle(canvas, 1310, 610, 1415, 830, 65, fill='#D4EAFF', outline
 draw_rounded_rectangle(canvas, 1440, 610, 1545, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=bredde)
 
 # Create and place the buttons
-button1 = tk.Button(canvas, text="", bg='#D4EAFF', activebackground='#D0E5FA', bd=0, command=lambda: function("input"))
+button1 = tk.Button(canvas, text="", bg='#D4EAFF', activebackground='#D0E5FA', bd=0, command=lambda: P1_timer("hei"))
 button1_window = canvas.create_window(340, 340, anchor='nw', window=button1, width=480, height=130)
-button2 = tk.Button(canvas, text="", bg='#D4EAFF', activebackground='#D0E5FA', bd=0, command=lambda: function("input"))
+button2 = tk.Button(canvas, text="", bg='#D4EAFF', activebackground='#D0E5FA', bd=0, command=lambda: P2_timer("noe"))
 button2_window = canvas.create_window(1050, 620, anchor='nw', window=button2, width=85, height=200)
-
-
-def function(verdi1):
-    print(verdi1)
-    ankomstP1()
-    ankomstP2()
-
-def ankomstP1():
-    canvas.itemconfig(guiP1, fill='yellow')
-    button1.config(bg='yellow')
-def ankomstP2():
-    canvas.itemconfig(guiP2, fill='yellow')
-    button2.config(bg='yellow')
-
 
 
 # Start the Tkinter main loop
