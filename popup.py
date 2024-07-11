@@ -66,8 +66,9 @@ canvas.pack()
 
 
 # Draw main components
-draw_rounded_rectangle(canvas, 780, 50, 1150, 165, 20, fill='gray12', outline='gray22', width=2)
-label = tk.Label(root, text="OVERSIKT", bg='gray12', fg='azure', font=("Calibri", 52)).place(x=820, y=60)
+draw_rounded_rectangle(canvas, 510, 50, 1390, 165, 20, fill='gray12', outline='gray22', width=2)
+label = tk.Label(root, text="Haugesund Gjestekai Oversikt", bg='gray12', fg='azure', font=("Calibri", 52))
+canvas.create_window(530, 60, anchor='nw', window=label)
 hav =draw_rounded_rectangle(canvas, 99, 200, 1819, 980, 20, fill='DeepSkyBlue2', outline='gray22', width=25)
 
 image = Image.open("ocean.jpg")
@@ -115,36 +116,29 @@ rect11 = draw_boat_rectangle(canvas, 1310, 610, 1415, 850, 56, fill='white', out
 """
 
 
-#boat1= canvas.create_oval(230, 330, 680, 480, fill='#C9B9A2', outline='#C9B9A2', width=2)
-#boat2= canvas.create_oval(800, 330, 1200, 480, fill='#C9B9A2', outline='#C9B9A2', width=2)
-boat3 = canvas.create_oval(260, 375, 600, 480, fill='#C9B9A2', outline='#C9B9A2', width=2)
-boat3 = canvas.create_oval(600, 375, 940, 480, fill='#C9B9A2', outline='#C9B9A2', width=2)
-boat3 = canvas.create_oval(940, 375, 1280, 480, fill='#C9B9A2', outline='#C9B9A2', width=2)
-boat3 = canvas.create_oval(1280, 375, 1620, 480, fill='#C9B9A2', outline='#C9B9A2', width=2)
+boat1= canvas.create_oval(280, 330, 780, 480, fill='', outline='', width=2) #P1
+boat2= canvas.create_oval(1020, 330, 1520, 480, fill='', outline='', width=2)
 
-
-#boat3 = canvas.create_oval(230, 610, 335, 850, fill='#C9B9A2', outline='#C9B9A2', width=2)
-
-boat3 = canvas.create_oval(230, 610, 335, 950, fill='#C9B9A2', outline='#C9B9A2', width=2)
-canvas.create_oval(360, 610, 465, 950, fill='#C9B9A2', outline='#C9B9A2', width=2)
-canvas.create_oval(500, 610, 605, 950, fill='#C9B9A2', outline='#C9B9A2', width=2)
-canvas.create_oval(630, 610, 735, 950, fill='#C9B9A2', outline='#C9B9A2', width=2)
-canvas.create_oval(770, 610, 875, 950, fill='#C9B9A2', outline='#C9B9A2', width=2)
-canvas.create_oval(900, 610, 1005, 950, fill='#C9B9A2', outline='#C9B9A2', width=2)
-canvas.create_oval(1040, 610, 1145, 950, fill='#C9B9A2', outline='#C9B9A2', width=2)
-canvas.create_oval(1170, 610, 1275, 950, fill='#C9B9A2', outline='#C9B9A2', width=2)
-canvas.create_oval(1310, 610, 1415, 950, fill='#C9B9A2', outline='#C9B9A2', width=2)
-canvas.create_oval(1440, 610, 1545, 950, fill='#C9B9A2', outline='#C9B9A2', width=2)
+boat3 = canvas.create_oval(230, 610, 335, 850, fill='', outline='', width=2)
+boat4 = canvas.create_oval(360, 610, 465, 850, fill='', outline='', width=2)
+boat5 = canvas.create_oval(500, 610, 605, 850, fill='', outline='', width=2)
+boat6 = canvas.create_oval(630, 610, 735, 850, fill='', outline='', width=2)
+boat7 = canvas.create_oval(770, 610, 875, 850, fill='', outline='', width=2)
+boat8 = canvas.create_oval(900, 610, 1005, 850, fill='', outline='', width=2)
+boat9 = canvas.create_oval(1040, 610, 1145, 850, fill='', outline='', width=2) #P2
+boat10 = canvas.create_oval(1170, 610, 1275, 850, fill='', outline='', width=2)
+boat11 = canvas.create_oval(1310, 610, 1415, 850, fill='', outline='', width=2)
+boat12 = canvas.create_oval(1440, 610, 1545, 850, fill='', outline='', width=2)
 
 # Create and place the buttons
-button1 = tk.Button(canvas, text="", bg="white", activebackground="gray98", bd=0, command=lambda: display_time("10:00"))
-button1_window = canvas.create_window(340, 340, anchor='nw', window=button1, width=380, height=130)
+#button1 = tk.Button(canvas, text="", bg=None, activebackground=None, bd=0, highlightthickness=0, command=lambda: display_time("10:00"))
+#button1_window = canvas.create_window(340, 340, anchor='nw', window=button1, width=380, height=130)
 
-button2 = tk.Button(canvas, text="", bg="white", activebackground="gray98", bd=0, command=lambda: display_time("11:30"))
-button2_window = canvas.create_window(1010, 340, anchor='nw', window=button2, width=380, height=130)
+#button2 = tk.Button(canvas, text="", bg="white", activebackground="gray98", bd=0, command=lambda: display_time("11:30"))
+#button2_window = canvas.create_window(1010, 340, anchor='nw', window=button2, width=380, height=130)
 
-button3 = tk.Button(canvas, text="", bg="white", activebackground="gray98", bd=0, command=lambda: display_time("13:15"))
-button3_window = canvas.create_window(1050, 620, anchor='nw', window=button3, width=85, height=150)
+#button3 = tk.Button(canvas, text="", bg="white", activebackground="gray98", bd=0, command=lambda: display_time("13:15"))
+#button3_window = canvas.create_window(1050, 620, anchor='nw', window=button3, width=85, height=150)
 
 
 
@@ -153,12 +147,18 @@ time_label = tk.Label(canvas, text="", font=("Calibri", 20), bg="light gray")
 time_label_window = canvas.create_window(120, 140, anchor='nw', window=time_label)
 
 # Function to display time amount
-def display_time(time_amount):
-    time_label.config(text=f"Tidsperioden stått er: {time_amount}")
-    test = input()
-    if test=='a':
-        button3.config(bg="green2", activebackground="green3")
-        canvas.itemconfig(rect9, fill='green2', outline='green2')
+def signal():
+    test1 = input()
+    if test1=="a":
+        canvas.itemconfig(boat9, fill='green2', outline='green2')
+        button9 = tk.Button(canvas, text="", bg="green2", activebackground='lime green', bd=0)
+        button9_window = canvas.create_window(1053, 656, anchor='nw', window=button9, width=81, height=150)
+    test2 = input()
+    if test2 == "a":
+        canvas.itemconfig(boat9, fill='red', outline='red')
+        button9.config(bg='red', activebackground='red2')
+
+signal()
 
 # Start the Tkinter main loop
 root.mainloop()
