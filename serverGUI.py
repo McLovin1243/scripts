@@ -1,393 +1,333 @@
-import socket
+import snap7
 import time
-import datetime
-import csv
-from jetson_inference import detectNet
-from jetson_utils import videoSource, videoOutput
+import sys
+import socket
+import tkinter as tk
+import tkinter.font as tkFont
+import threading
 
-# Dette programmet kjører bildedeteksjonsmodellen og behandler denne dataen. Sender så ut en boolsk verdi til ServerGUI.py.
-# ----------------------------------------------------------------------------------------------------------------------------- #Kan vi fjerne dette? : [gstreamer] gstreamer mysink taglist, video-codec=(string)"H.264\ \(Main\ Profile\)", bitrate=(uint)10014214, minimum-bitrate=(uint)6275040, maximum-bitrate=(uint)16813440;
-
-
-# PLS
+# Dette programmet kommuniserer med både Client.py inne i dockeren, samtidig som den sender boolsk verdi ut til PLS.
+# ----------------------------------------------------------------------------------------------------------------------------- #
 ### --- FIELDS --- ###
 
-# Definerer variabler og setter opp socket kommunikasjon
-HEADER = 64
-port =5151
-FORMAT = 'utf-8'
-SERVER =  '192.168.0.3'
-ADDR = (SERVER,port)
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(ADDR)
+# PLC
+plcIP = '192.168.0.1'
+rack = 0
+slot = 1
+
+# Server
+serverIP = "192.168.0.3"
+plc = snap7.client.Client()
+port = 5151 # PORT NVIDIA jetson
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Adress from TIA Portal - dbCommunication
+db_number = 2
+start_offset = 0
+# Static Bool - Run/Stop Process
+sbRunProcess_bit_offset = 0
+# Static Bool - Emergency Stop
+sbEMGStop_bit_offset = 1
+
+outputOn = 1
+outputOff = 0
+
+detectedPellets = 0
+feedingstatus = 0
+EMGStatus = 0
 
 # ----------------------------------------------------------------------------------------------------------------------------- #
+
 ### --- FUNCTIONS --- ###
 
-def send(msg): #funksjon som sender melding via socket kommunikasjon
-    message = msg.encode(FORMAT)
-    msg_length = len(message)
-    send_length =str(msg_length).encode(FORMAT)
-    send_length += b' '*(HEADER-len(send_length))
-    client.send(send_length)
-    client.send(message)
+# Funksjon for å skrive ut boolsk verdi til PLS
+def WriteBool(db_number, start_offset, bit_offset, value):
+    reading = plc.db_read(db_number, start_offset,1 )
+    snap7.util.set_bool(reading, 0, bit_offset, value)
+    plc.db_write(db_number, start_offset, reading)
+    return None
 
+# Funksjon for å lese ut boolsk verdi fra PLS
+def ReadBool(db_number, start_offset, bit_offset):
+    reading =  plc.db_read(db_number, start_offset, 1)
+    a = snap7.util.get_bool(reading, 0, bit_offset)
+    print('DB Number:' + str(db_number) + ' Bit: ' + str(start_offset) + '.' + str(bit_offset) + ' Value: ' + str(a))
+    return a
 
-
-def log_parking_status(detections): # Logg
-    global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, P2_slettes_etter_5_min, P2_starttimer, P3_slettes_etter_5_min, P3_starttimer, P1_sistlogg, P2_sistlogg, P3_sistlogg, state_P1, state_P2, state_P3, state_DIP
-
-
-    current_time = datetime.datetime.now()
-    for detection in detections:
-        class_name = net.GetClassDesc(detection.ClassID)
-        
-
-        if class_name.lower() == "boat": #Gjør det IKKE dersom den detekterer "person" eller "motorcycle"
-            #Deteksjonsinfo oppdateres hver deteksjon
-            boat_bottom = detection.Bottom
-            boat_area = detection.Area
-            boat_left = detection.Left
-
-            # Logg ###  P1  ###
-            if (abs(boat_bottom - P1["Bottom"]) <= ytolerance and abs(boat_left - P1["Left"]) <= xtolerance):
-                P1_loggpause = current_time - P1_sistlogg
-                totimertimer = current_time - P1_starttimer
-                P1_slettes_etter_5_min = datetime.datetime.now() # Oppdaterer at P1 er aktiv
-                if P1["Ledig"]: #Hvis P1 er ledig (true)
-                    P1_starttimer = current_time # Gjøres kun første gang
-                    P1["Ledig"] = False 
-                    state_P1 = "P1_true"
-                    send(state_P1)
-                    print("P1 ble nå opptatt")
-                    boat_count += 1 # En ny båt i parkeringssystemet
-                    with open('boat_data.csv', mode='a', newline='') as file:
-                        writer = csv.writer(file)
-                        writer.writerow([f"{current_time}", "P1 ANKOMST"]) 
-                elif (P1_loggpause.total_seconds() < 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
-                    break
-                elif (totimertimer.total_seconds() < totimer):
-                    print("Oppdaterer P1 aktiv")
-                    state_P1 = "P1_true"
-                    send(state_P1)
-                    
-                else:
-                    print("P-plass 1 har vært opptatt i 2 timer.") # Kan legge til noe mer alarm.
-                    state_DIP = "DIP_true"
-                    send(state_DIP)
-                        
-                # Uansett om den er ny eller ikke, så lagrer vi dataen og skriver til excel (loggen).
-                timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                P1_sistlogg = datetime.datetime.now()
-                position = "Parkering nr.1"
-                lengthpixel = detection.Width
-                length = lengthpixel/52 # gir ca. verdi på P1, ved Full HD
-                P1["Bredde"] = length
-                boat_data = {"timestamp": timestamp, "position": position, "length": length}
-                write_to_csv(boat_data)
-            
-            # Logg ###  P2  ###
-            elif (abs(boat_bottom - P2["Bottom"]) <= ytolerance and abs(boat_left - P2["Left"]) <= xtolerance and abs(boat_area-P2["Area"]<areatolerance)):
-                P2_loggpause = current_time - P2_sistlogg
-                totimertimer = current_time - P2_starttimer
-                P2_slettes_etter_5_min = current_time # Oppdaterer at P2 er aktiv
-                if P2["Ledig"]: # Hvis P2 er ledig (true)
-                    P2_starttimer = current_time
-                    P2["Ledig"] = False
-                    state_P2 = 'P2_true'
-                    send(state_P2)
-                    print("P2 ble nå opptatt")
-                    boat_count += 1
-                    with open('boat_data.csv', mode='a', newline='') as file:
-                        writer = csv.writer(file)
-                        writer.writerow([f"{current_time}", "P2 ANKOMST"]) 
-                elif (P2_loggpause.total_seconds() < 5): # Skal ikke Write til csv dersom mindre enn 5 sekund siden sist
-                    break
-                elif (totimertimer.total_seconds() < totimer):
-                    print("Oppdaterer P2 aktiv")
-                    send(state_P2)
-                else:
-                    print("P-plass 2 har vært opptatt i 2 timer.") # Kan legge til noe mer alarm.
-
-                timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                P2_sistlogg = datetime.datetime.now()
-                position = "Parkering nr.2"
-                lengthpixel = detection.Width
-                length = lengthpixel/65
-                P2["Bredde"] = length
-                boat_data = {"timestamp": timestamp, "position": position, "length": length}
-                write_to_csv(boat_data)
-            
-             # Logg ###  P3  ###
-            elif (abs(boat_bottom - P3["Bottom"]) <= ytolerance and abs(boat_left - P3["Left"]) <= xtolerance):
-                P3_loggpause = current_time - P3_sistlogg
-                totimertimer = current_time - P3_starttimer
-                P3_slettes_etter_5_min = datetime.datetime.now() # Oppdaterer at P3 er aktiv
-                if P3["Ledig"]: #Hvis P3 er ledig (true)
-                    P3_starttimer = current_time #Gjøres kun første gang
-                    P3["Ledig"] = False 
-                    print("P3 ble nå opptatt")
-                    boat_count += 1
-                    with open('boat_data.csv', mode='a', newline='') as file:
-                        writer = csv.writer(file)
-                        writer.writerow([f"{current_time}", "P3 ANKOMST"]) 
-                elif (P3_loggpause.total_seconds() < 5): # Skal ikke Write til csv hvis mindre enn 5 sekund siden sist
-                    break
-                elif (totimertimer.total_seconds() < totimer):
-                    print("Oppdaterer P3 aktiv")
-                else:
-                    print("P-plass 3 har vært opptatt i 2 timer.") # Kan legge til noe mer alarm.
+# Funksjon for å håndtere klient etter tilkobling
+def handle_client(conn, addr):
+    print(f"NVIDIA Object detecion software running   {addr}")
+    connected = True
+    while connected:
+        msg_length=conn.recv(64).decode('utf-8')
+        if msg_length:
+            msg_length = int(msg_length)
+            msg = conn.recv(msg_length).decode('utf-8')
+            print(f"{msg}")
                 
-                # Uansett om den er ny eller ikke, så lagrer vi dataen og skriver til excel.
-                timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                P3_sistlogg = datetime.datetime.now()
-                position = "Parkering nr.3"
-                lengthpixel = detection.Width
-                length = lengthpixel/43
-                P3["Bredde"] = length
-                boat_data = {"timestamp": timestamp, "position": position, "length": length}
-                write_to_csv(boat_data)
+            if msg == "!DISCONNECT":
+                WriteBool(db_number, start_offset,sbEMGStop_bit_offset, outputOn)
+                connected = False
+                print(EMGStatus)
+            if msg == "true":
+                WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOn)
+                feedingstatus = outputOn
+            if msg == "false":
+                WriteBool(db_number, start_offset,sbRunProcess_bit_offset, outputOff)
+                feedingstatus = outputOff
 
-            else: #Utenfor parkering, da trenger vi ikke å bry oss.
-                pass
+# Funksjon for å starte opp server og koble til PLS og klient
+def start_client():
+    print(f"[Listening] server is listening on {serverIP}")
+    server.listen()
+    while True:
+        conn, addr = server.accept()
+        thread = threading.Thread(target=handle_client, args=(conn, addr))
+        thread.start()
 
-# Funksjon for å skrive data til CSV-fil
-def write_to_csv(data):
-    with open('boat_data.csv', mode='a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow([data["timestamp"], data["position"], data["length"], boat_count])
+### --- GUI KODE --- ###
 
-#Denne funksjonen sletter parkeringer som har vært inaktive, og lagrer rapporten over hvor lenge den stod.
-def rapporttid():
-    global parking_spots, boat_count, P1_slettes_etter_5_min, P1_starttimer, P2_slettes_etter_5_min, P2_starttimer, current_time, state_P1, state_P2, state_P3, state_DIP  #Tror global i functions er nødvendig
-    
-    current_time = datetime.datetime.now()
-    P1_timedifference = current_time - P1_slettes_etter_5_min
-    P1_totaltid = current_time - P1_starttimer
-    
-    # RAPPORT ###  P1  ###
-    if ((P1_timedifference.total_seconds() >= timefordelete) and not P1["Ledig"]):
-        P1["Ledig"] = True
-        boat_count-= 1
-        alarm = False
-        P1_bredde = P1["Bredde"]
-        state_P1 = 'P1_false'
-        state_DIP = "DIP_false"
-        send(state_DIP)
-        
-        
-        if P1_totaltid.total_seconds() > 7200:
-            tid_format = f"{(P1_totaltid.total_seconds()-timefordelete)/3600:.2f} timer"
-            alarm = True
-        elif P1_totaltid.total_seconds() > 60:
-            tid_format = f"{(P1_totaltid.total_seconds()-timefordelete)/60:.2f} minutter"
-        else:
-            tid_format = f"{(P1_totaltid.total_seconds()-timefordelete):.2f} sekunder"
-        # Bredde og pris
-        if (P1["Bredde"] > 9.5):
-            pris = 300
-        else:
-            pris = 250 
-        with open('boat_data.csv', mode='a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow([f"{current_time}", "P1 AVREISE"])
-        if (P1_totaltid.total_seconds()-timefordelete > 5): # Ikke Rapporter hvis stått under et visst antall sekunder.
-            print(f"Parkering 1 var opptatt fra {P1_starttimer.strftime('%Y-%m-%d %H:%M:%S')} UTC og stod der i {tid_format}")
-            with open('rapport.csv', mode='a', newline='') as file:
-                writer = csv.writer(file, delimiter = ',')
-            if alarm:
-                writer.writerow([f"Parkering 1 ble opptatt {P1_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P1_bredde} meter lang.", f"AVGIFTSBELAGT", f"vedkommende skal betale:", f"{pris}", f"kr"])
-            else:
-                writer.writerow([f"Parkering 1 ble opptatt {P1_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P1_bredde} meter lang",])
+class App:
+    def __init__(self, root):
+        # Setting title
+        root.title("Server-oversikt")
+        # Setting window size
+        width=600
+        height=400
+        screenwidth = root.winfo_screenwidth()
+        screenheight = root.winfo_screenheight()
+        alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
+        root.geometry(alignstr)
+        root.resizable(width=False, height=False)
 
-    # RAPPORT ###  P2  ###
-    P2_timedifference = current_time - P2_slettes_etter_5_min
-    P2_totaltid = current_time - P2_starttimer
-    if ((P2_timedifference.total_seconds() >= timefordelete) and not P2["Ledig"]):
-        P2["Ledig"] = True
-        boat_count-= 1
-        alarm = False
-        P2_bredde = P2["Bredde"]
-        state_P2 = 'P2_false'
-        send(state_P2)
-        
-        # Tidsformat
-        if P2_totaltid.total_seconds() > 7200:
-            tid_format = f"{(P2_totaltid.total_seconds()-timefordelete)/3600:.2f} timer"
-            alarm = True
-        elif P2_totaltid.total_seconds() > 60:
-            tid_format = f"{(P2_totaltid.total_seconds()-timefordelete)/60:.2f} minutter"
-        else:
-            tid_format = f"{(P2_totaltid.total_seconds()-timefordelete):.2f} sekunder"
+        ### --- LABELS --- ###
 
-	
-        # Bredde og pris
-        if (P2["Bredde"] > 9.5):
-            pris = 300
-        else:
-            pris = 250 
-        with open('boat_data.csv', mode='a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow([f"{current_time}", "P2 AVREISE"])
-        if (P2_totaltid.total_seconds()-timefordelete > 5): # Ikke Rapporter hvis stått under et visst antall sekunder.
-            print(f"Parkering 2 var opptatt fra {P2_starttimer.strftime('%Y-%m-%d %H:%M:%S')} UTC og stod der i {tid_format}")
-            with open('rapport.csv', mode='a', newline='') as file:
-                writer = csv.writer(file, delimiter = ',')
-                if alarm:
-                    writer.writerow([f"Parkering 2 ble opptatt {P2_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P2_bredde} meter lang.", f"AVGIFTSBELAGT", f"vedkommende skal betale:", f"{pris}", f"kr"])
-                else:
-                    writer.writerow([f"Parkering 2 ble opptatt {P2_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P2_bredde} meter lang"])
+        # Label - TITLE SERVER
+        lblServerTitle=tk.Label(root)
+        ft = tkFont.Font(family='Arial',size=38)
+        lblServerTitle["font"] = ft
+        lblServerTitle["fg"] = "#333333"
+        lblServerTitle["justify"] = "center"
+        lblServerTitle["text"] = "Server"
+        lblServerTitle.place(relx=0.5, y=30, anchor=tk.CENTER)
 
-    # Rapport ###  P3  ###
-    P3_timedifference = current_time - P3_slettes_etter_5_min
-    P3_totaltid = current_time - P3_starttimer
-    if ((P3_timedifference.total_seconds() >= timefordelete) and not P3["Ledig"]):
-        P3["Ledig"] = True
-        boat_count-= 1
-        alarm = False
-        P3_bredde = P3["Bredde"]
-        
-        # Tidsformat
-        if P3_totaltid.total_seconds() > 7200:
-            tid_format = f"{(P3_totaltid.total_seconds()-timefordelete)/3600:.2f} timer"
-            alarm = True
-        elif P3_totaltid.total_seconds() > 60:
-            tid_format = f"{(P3_totaltid.total_seconds()-timefordelete)/60:.2f} minutter"
-        else:
-            tid_format = f"{(P3_totaltid.total_seconds()-timefordelete):.2f} sekunder"
+        # Label - IP PLC
+        lblPLCIP=tk.Label(root)
+        ft = tkFont.Font(family='Arial',size=10)
+        lblPLCIP["font"] = ft
+        lblPLCIP["fg"] = "#333333"
+        lblPLCIP["justify"] = "center"
+        lblPLCIP["text"] = "IP"
+        lblPLCIP.place(x=50,y=105,width=70,height=25)
 
-	
-        # Bredde og pris
-        if (P3["Bredde"] > 9.5):
-            pris = 300
-        else:
-            pris = 250 
-        with open('boat_data.csv', mode='a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow([f"{current_time}", "P3 AVREISE"])
-        if (P3_totaltid.total_seconds()-timefordelete > 5): # Ikke Rapporter hvis stått under et visst antall sekunder.
-            print(f"Parkering 3 var opptatt fra {P3_starttimer.strftime('%Y-%m-%d %H:%M:%S')} UTC og stod der i {tid_format}")
-            with open('rapport.csv', mode='a', newline='') as file:
-                writer = csv.writer(file, delimiter = ',')
-            if alarm:
-                writer.writerow([f"Parkering 3 ble opptatt {P3_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P3_bredde} meter lang.", f"AVGIFTSBELAGT", f"vedkommende skal betale:", f"{pris}", f"kr"])
-            else:
-                writer.writerow([f"Parkering 3 ble opptatt {P3_starttimer.strftime('%Y-%m-%d %H:%M:%S')}UTC og stod der i {tid_format}", f"Båten er {P3_bredde} meter lang",])
+        # Label - PLC Rack
+        lblPLCRack=tk.Label(root)
+        ft = tkFont.Font(family='Arial',size=10)
+        lblPLCRack["font"] = ft
+        lblPLCRack["fg"] = "#333333"
+        lblPLCRack["justify"] = "center"
+        lblPLCRack["text"] = "Rack"
+        lblPLCRack.place(x=50,y=170,width=70,height=25)
 
-# ----------------------------------------------------------------------------------------------------------------------------- #
-### --- KODE --- ###
+        # Label - PLC Slot
+        lblPLCSlot=tk.Label(root)
+        ft = tkFont.Font(family='Arial',size=10)
+        lblPLCSlot["font"] = ft
+        lblPLCSlot["fg"] = "#333333"
+        lblPLCSlot["justify"] = "center"
+        lblPLCSlot["text"] = "Slot"
+        lblPLCSlot.place(x=50,y=230,width=70,height=25)
 
-# Oppretter CSV-fil og skriver headeren hvis den ikke allerede finnes
-try:
-    with open('boat_data.csv', mode='x', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(["Tidspunkt", "Parkeringsplass", "Bredde", "Antall båter nå"])
-except FileExistsError:
-    # Filen eksisterer allerede, Du kan vurdere å ha ingenting gjøres
-    with open('boat_data.csv', mode='a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(["Tidspunkt", "Parkeringsplass", "Bredde", "Antall båter nå"])
+        # Label - IP Server
+        lblIPServer=tk.Label(root)
+        ft = tkFont.Font(family='Arial',size=10)
+        lblIPServer["font"] = ft
+        lblIPServer["fg"] = "#333333"
+        lblIPServer["justify"] = "center"
+        lblIPServer["text"] = "IP"
+        lblIPServer.place(x=170,y=105,width=70,height=25)
 
-try:
-    with open('rapport.csv', mode='x', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(["Rapport over båter som har forlatt kaien.\n"])
-except FileExistsError:
-    # Filen eksisterer allerede, Du kan vurdere å ha ingenting gjøres
-    pass
+        # Label - Port Server
+        lblServerPort=tk.Label(root)
+        ft = tkFont.Font(family='Arial',size=10)
+        lblServerPort["font"] = ft
+        lblServerPort["fg"] = "#333333"
+        lblServerPort["justify"] = "center"
+        lblServerPort["text"] = "Port"
+        lblServerPort.place(x=170,y=170,width=70,height=25)
 
-   
-        
-        
-	## VARIABLER ##
-boat_count = 0
-# Definisjon av parkeringsplasser (MÅ VITE PIKSLENES KOORDINATER)
-parking_spots = [
-    {"Id": (1), "Left": (45), "Right": (1080), "Bottom": (604), "Top": None, "Area": (296000), "Ledig": (True), "Bredde": 0, },
-    {"Id": (2), "Left": (1150), "Right": (1445), "Bottom": (772), "Top": None, "Area": (100000), "Ledig": (True), "Bredde": 0, },
-    {"Id": (3), "Left": (1305), "Right": (1870), "Bottom": (623), "Top": None, "Area": (170000), "Ledig": (True), "Bredde": 0, },
-    # Legg til flere parkeringsplasser etter behov
-]
+        # Label - PLC
+        lblPLC=tk.Label(root)
+        ft = tkFont.Font(family='Arial',size=10)
+        lblPLC["font"] = ft
+        lblPLC["fg"] = "#333333"
+        lblPLC["justify"] = "center"
+        lblPLC["text"] = "PLC"
+        lblPLC.place(x=50,y=80,width=70,height=25)
+        lblPLC["bd"] = 1  # Adjust the border width as needed
+        lblPLC["relief"] = tk.SOLID  # Solid border
 
-redningsleider_piksler = [(1240, 129)] # Vi har bare en som et eksempel.
-redningsleider_tidtaker = None  # Timer for blocking detection (skal ikke gi alarm med en gang)
+        # Label - Server
+        lblServer=tk.Label(root)
+        ft = tkFont.Font(family='Arial',size=10)
+        lblServer["font"] = ft
+        lblServer["fg"] = "#333333"
+        lblServer["justify"] = "center"
+        lblServer["text"] = "Server"
+        lblServer.place(x=170,y=80,width=70,height=25)
+        lblServer["bd"] = 1  # Adjust the border width as needed
+        lblServer["relief"] = tk.SOLID  # Solid border     
 
-# Verdiene kan hentes slik: P1["Left"]
-P1, P2, P3 = parking_spots[0], parking_spots[1], parking_spots[2]
-# Timere er enklere å jobbe med som egne variabler.
-P1_starttimer = P2_starttimer = P3_starttimer = P1_slettes_etter_5_min = P2_slettes_etter_5_min = P3_slettes_etter_5_min = P1_sistlogg = P2_sistlogg = P3_sistlogg = datetime.datetime.now() 
-xtolerance = 70  # Disse toleranseverdiene kan legges i parking_spots og ha unike toleranser for hver P-plass dersom ønskelig
-ytolerance = 60
-areatolerance = 5000
-timefordelete = 10 # 5 min er 300.
-totimer = 50 # skal være 7200 (2 timer)
-state_P1 = "P1_false" # PLS
-state_P2 = "P2_false"
-state_DIP = "DIP_false"
-send(state_DIP)
-send(state_P1)
-send(state_P2)
+        # Label - Pellets detected
+        labelPelletsDetected=tk.Label(root)
+        ft = tkFont.Font(family='Arial',size=10)
+        labelPelletsDetected["font"] = ft
+        labelPelletsDetected["fg"] = "#333333"
+        labelPelletsDetected["justify"] = "center"
+        labelPelletsDetected["text"] = "Pellets detected"
+        labelPelletsDetected.place(x=37,y=320,width=100,height=25)
+        labelPelletsDetected["bd"] = 1  # Adjust the border width as needed
+        labelPelletsDetected["relief"] = tk.SOLID  # Solid border 
 
+        # Label - Pellets detected input
+        lbPelletsDetected=tk.Listbox(root)
+        ft = tkFont.Font(family='Arial',size=10)
+        lbPelletsDetected["font"] = ft
+        lbPelletsDetected["fg"] = "#333333"
+        lbPelletsDetected["justify"] = "center"
+        lbPelletsDetected.place(x=37,y=350,width=100,height=25)
+        lbPelletsDetected["bd"] = 1  # Adjust the border width as needed
+        lbPelletsDetected["relief"] = tk.SOLID  # Solid border 
+        lbPelletsDetected.insert(0, detectedPellets)
 
+        ### --- ENTRIES --- ###
 
-print('********************* VELG BILDEDETEKSJONSMODELL *********************')
-print('           SKRIV INN s FOR STANDARDMODELL OG e FOR EGEN MODELL')
+        # Entry - IP PLC
+        entryPLCIP=tk.Entry(root)
+        entryPLCIP["borderwidth"] = "1px"
+        ft = tkFont.Font(family='Arial',size=10)
+        entryPLCIP["font"] = ft
+        entryPLCIP["fg"] = "#333333"
+        entryPLCIP["justify"] = "center"
+        entryPLCIP["text"] = ""
+        entryPLCIP.place(x=30,y=130,width=112,height=30)
+        entryPLCIP.insert(0,plcIP)
+        def update_plcIP(event):
+            global plcIP
+            plcIP = entryPLCIP.get()
+        entryPLCIP.bind("<KeyRelease>", update_plcIP)
 
+        # Entry - Rack
+        entryRack=tk.Entry(root)
+        entryRack["borderwidth"] = "1px"
+        ft = tkFont.Font(family='Arial',size=10)
+        entryRack["font"] = ft
+        entryRack["fg"] = "#333333"
+        entryRack["justify"] = "center"
+        entryRack["text"] = ""
+        entryRack.place(x=30,y=190,width=112,height=30)
+        entryRack.insert(0,rack)
+        def update_rack(event):
+            global rack
+            rack = entryRack.get()
+        entryRack.bind("<KeyRelease>", update_rack)
 
+        # Entry - Slot
+        entrySlot=tk.Entry(root)
+        entrySlot["borderwidth"] = "1px"
+        ft = tkFont.Font(family='Arial',size=10)
+        entrySlot["font"] = ft
+        entrySlot["fg"] = "#333333"
+        entrySlot["justify"] = "center"
+        entrySlot["text"] = ""
+        entrySlot.place(x=30,y=250,width=112,height=30)
+        entrySlot.insert(0,slot)
+        def update_slot(event):
+            global slot
+            slot = entrySlot.get()
+        entrySlot.bind("<KeyRelease>", update_slot)
 
-a = input()
+        # Entry - Server IP
+        entryServerIP=tk.Entry(root)
+        entryServerIP["borderwidth"] = "1px"
+        ft = tkFont.Font(family='Arial',size=10)
+        entryServerIP["font"] = ft
+        entryServerIP["fg"] = "#333333"
+        entryServerIP["justify"] = "center"
+        entryServerIP["text"] = ""
+        entryServerIP.place(x=150,y=130,width=113,height=30)
+        entryServerIP.insert(0,serverIP)
+        def update_serverIP(event):
+            global serverIP
+            serverIP = entryServerIP.get()
+        entryServerIP.bind("<KeyRelease>", update_serverIP)
 
-if a == 's':
-    net = detectNet("ssd-mobilenet-v2", threshold=0.5)
-    source = "Main.mp4" 
-    camera = videoSource(source) 
-    display = videoOutput()  # 'my_video.mp4' for file, or sequence of images 'img_%i.jpg'
-    
-    while display.IsStreaming():
-        current_time = datetime.datetime.now()
-        img = camera.Capture()
-        if img is None:
-            continue
+        # Entry - Server Port
+        entryServerPort=tk.Entry(root)
+        entryServerPort["borderwidth"] = "1px"
+        ft = tkFont.Font(family='Arial',size=10)
+        entryServerPort["font"] = ft
+        entryServerPort["fg"] = "#333333"
+        entryServerPort["justify"] = "center"
+        entryServerPort["text"] = ""
+        entryServerPort.place(x=150,y=190,width=111,height=30)
+        entryServerPort.insert(0,port)
+        def update_port(event):
+            global port
+            port = entryServerPort.get()
+        entryServerPort.bind("<KeyRelease>", update_port)
 
-        detections = net.Detect(img)
-        log_parking_status(detections)
+        ### --- BUTTONS --- ###
 
-        """
-        # Print detection information.
-        for detection in detections:
-      	    print(f"ClassID: {detection.ClassID}, Confidence: {detection.Confidence}, BBox:{detection.Bottom} {detection.Area} {detection.Left}")
-	    """
-	
-        display.Render(img)
-        display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
-        
-        current_time = datetime.datetime.now()
-        # Må sette P1 til True etter 5 min inaktiv. slik at vi skriver ut rapport og nye kan komme.
-        
-        rapporttid()
+        # Button - Start server
+        btnStartServer=tk.Button(root)
+        btnStartServer["bg"] = "#f0f0f0"
+        ft = tkFont.Font(family='Arial',size=10)
+        btnStartServer["font"] = ft
+        btnStartServer["fg"] = "#000000"
+        btnStartServer["justify"] = "left"
+        btnStartServer["text"] = "Start server"
+        btnStartServer.place(relx=0.95, rely=0.85, anchor=tk.SE)
+        btnStartServer["command"] = self.btnStartServer
 
+        # Button - Exit server
+        btnAvslutt=tk.Button(root)
+        btnAvslutt["bg"] = "#f0f0f0"
+        ft = tkFont.Font(family='Arial',size=10)
+        btnAvslutt["font"] = ft
+        btnAvslutt["fg"] = "#000000"
+        btnAvslutt["justify"] = "left"
+        btnAvslutt["text"] = "Avslutt server"
+        btnAvslutt.place(relx=0.95, rely=0.95, anchor=tk.SE)
+        btnAvslutt["command"] = self.btnAvslutt
 
-elif a == 'e':
-    net = detectNet(argv=['--model=models/boat/ssd-mobilenet.onnx', '--labels=models/boat/labels.txt', '--input-blob=input_0', '--output-cvg=scores', '--output-bbox=boxes', '--threshold=0.5'])
-    source = "Main.mp4" 
-    camera = videoSource(source) 
-    display = videoOutput()  # 'my_video.mp4' for file, or sequence of images 'img_%i.jpg'
+    # FUNCTION START SERVER
+    def btnStartServer(self):
+        global server_running
+        print(f"PLC IP: {plcIP}")
+        print(f"RACK: {rack}")
+        print(f"SLOT: {slot}")
+        print(f"SERVER IP: {serverIP}")
+        print(f"SERVER PORT: {port}")
+        print("----------------------------------------------------")
 
-    
-    while display.IsStreaming():
-        img = camera.Capture()
-        if img is None:
-            continue
+        # Creating PLC connection
+        plc.connect(plcIP, rack, slot)
+        plcStatus = plc.get_cpu_state()
+        print(plcStatus)
 
-        detections = net.Detect(img)
-        
-        log_parking_status(detections)     
+        # Starting up server
+        ADDR = (serverIP,port)
+        server.bind(ADDR)
+        print("Server started")
+        print(f"PLC IP:{plcIP}")
+        start_client()
+          
+    # FUNCTION EXIT APPLICATION
+    def btnAvslutt(self):
+         sys.exit()
 
-        rapporttid()
-
-
-        display.Render(img)
-        display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
-        
-else:
-    print("Ugyldig valg. Vennligst velg 's' for standardmodell eller 'e' for egen modell.")
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = App(root)
+    root.mainloop()
