@@ -24,7 +24,7 @@ def draw_rounded_rectangle(canvas, x1, y1, x2, y2, radius, **kwargs):
 
 # Create the main window
 root = tk.Tk()
-root.title("Båtdeteksjon")
+root.title("Haugesund Gjestebrygge")
 
 
 # Create a canvas with full HD size (1920x1080)
@@ -54,7 +54,7 @@ draw_rounded_rectangle(canvas, 1555, 500, 1655, 968, 15, fill='gray76', outline=
 draw_rounded_rectangle(canvas, 1554, 501, 1560, 599, 0, fill='gray76', outline='gray76', width=0)
 
 # Rektangler for øvre store p-plasser
-draw_rounded_rectangle(canvas, 330, 330, 830, 480, 60, fill='#D4EAFF', outline='#D4EAFF', width=3)
+guiP1 = draw_rounded_rectangle(canvas, 330, 330, 830, 480, 60, fill='#D4EAFF', outline='#D4EAFF', width=3)
 draw_rounded_rectangle(canvas, 1000, 330, 1500, 480, 60, fill='#D4EAFF', outline='#D4EAFF', width=3)
 
 # Nedre P-plasser
@@ -64,7 +64,7 @@ draw_rounded_rectangle(canvas, 500, 610, 605, 830, 65, fill='#D4EAFF', outline='
 draw_rounded_rectangle(canvas, 630, 610, 735, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=bredde)
 draw_rounded_rectangle(canvas, 770, 610, 875, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=bredde)
 draw_rounded_rectangle(canvas, 900, 610, 1005, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=bredde)
-draw_rounded_rectangle(canvas, 1040, 610, 1145, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=bredde)
+guiP2 = draw_rounded_rectangle(canvas, 1040, 610, 1145, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=bredde)
 draw_rounded_rectangle(canvas, 1170, 610, 1275, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=bredde)
 draw_rounded_rectangle(canvas, 1310, 610, 1415, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=bredde)
 draw_rounded_rectangle(canvas, 1440, 610, 1545, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=bredde)
@@ -73,13 +73,20 @@ draw_rounded_rectangle(canvas, 1440, 610, 1545, 830, 65, fill='#D4EAFF', outline
 button1 = tk.Button(canvas, text="", bg='#D4EAFF', activebackground='#D0E5FA', bd=0, command=lambda: function("input"))
 button1_window = canvas.create_window(340, 340, anchor='nw', window=button1, width=480, height=130)
 button2 = tk.Button(canvas, text="", bg='#D4EAFF', activebackground='#D0E5FA', bd=0, command=lambda: function("input"))
-button2_window = canvas.create_window(1010, 340, anchor='nw', window=button2, width=480, height=130)
-button3 = tk.Button(canvas, text="", bg='#D4EAFF', activebackground='#D0E5FA', bd=0, command=lambda: function("input"))
-button3_window = canvas.create_window(1050, 620, anchor='nw', window=button3, width=85, height=200)
+button2_window = canvas.create_window(1050, 620, anchor='nw', window=button2, width=85, height=200)
 
 
 def function(verdi1):
     print(verdi1)
+    ankomstP1()
+    ankomstP2()
+
+def ankomstP1():
+    canvas.itemconfig(guiP1, fill='yellow')
+    button1.config(bg='yellow')
+def ankomstP2():
+    canvas.itemconfig(guiP2, fill='yellow')
+    button2.config(bg='yellow')
 
 
 
