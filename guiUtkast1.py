@@ -1,4 +1,5 @@
 import tkinter as tk
+import datetime
 
 
 # Function to draw a rounded rectangle
@@ -22,7 +23,8 @@ def draw_rounded_rectangle(canvas, x1, y1, x2, y2, radius, **kwargs):
 
 
 def P1_timer(usikkerhvajegskalbrukeinputtil):
-    print("Tidspunkt: ")
+    current_time = datetime.datetime.now()
+    print(f"Tidspunkt: {current_time}")
 
 def P2_timer(hmm):
     print("Tidspunkt: ")
@@ -64,8 +66,7 @@ draw_rounded_rectangle(canvas, 619, 50, 1300, 155, 20, fill='gray12', outline='g
 label = tk.Label(root, text="Haugesund Gjestebrygge", bg='gray12', fg='azure', font=("Calibri", 46))
 canvas.create_window(643, 60, anchor='nw', window=label)
 
-# Draw a rounded rectangle for 'hav'
-draw_rounded_rectangle(canvas, 99, 200, 1819, 980, 20, fill='#9ACBFF', outline='gray22', width=25)
+hav = draw_rounded_rectangle(canvas, 99, 200, 1819, 980, 20, fill='#9ACBFF', outline='gray22', width=25)
 
 
 
@@ -103,6 +104,8 @@ button1_window = canvas.create_window(340, 340, anchor='nw', window=button1, wid
 button2 = tk.Button(canvas, text="", bg='#D4EAFF', activebackground='#D0E5FA', bd=0, command=lambda: P2_timer("noe"))
 button2_window = canvas.create_window(1050, 620, anchor='nw', window=button2, width=85, height=200)
 
+tidslabel = tk.Label(canvas, text="Tids", bg='light gray',fg='gray12', font='400')
+canvas.create_window(130,230, anchor='sw', window=tidslabel)
 
 # Start the Tkinter main loop
 root.mainloop()
