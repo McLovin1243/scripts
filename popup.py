@@ -269,7 +269,7 @@ class App:
         labelPelletsDetected["font"] = ft
         labelPelletsDetected["fg"] = "#333333"
         labelPelletsDetected["justify"] = "center"
-        labelPelletsDetected["text"] = "Pellets detected"
+        labelPelletsDetected["text"] = "Boats detected"
         labelPelletsDetected.place(x=37,y=320,width=100,height=25)
         labelPelletsDetected["bd"] = 1  # Adjust the border width as needed
         labelPelletsDetected["relief"] = tk.SOLID  # Solid border 
