@@ -334,6 +334,7 @@ def server_gui(queue):
         def btnAvslutt(self):
             sys.exit()
 
+	root.mainloop()
 
 
 
