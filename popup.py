@@ -10,27 +10,6 @@ from queue import Queue
 
 queue = Queue()
 
-"""
-def server_gui(queue):
-    root = tk.Tk()
-    canvas = tk.Canvas(root, width=920, height=580, bg='light grey')
-    canvas.pack()
-        
-
-    def P1_ankomst():
-        queue.put("P1_gul")
-
-    def P2_ankomst():
-        queue.put("P2_gul")
-
-
-
-    testbutton = tk.Button(canvas, text="Buttonaktivatefunction", bg='black', activebackground='red', bd=0, command=P2_ankomst)
-    canvas.create_window(250, 220, anchor='nw', window=testbutton, width=225, height=200)
-
-    root.mainloop()
-"""
-
 def secondary_gui(queue):
     root = tk.Tk()
     root.title("Haugesund Gjestebrygge")
@@ -59,15 +38,15 @@ def secondary_gui(queue):
     def P2_timer():
         tidslabel.config(text='Parkert i 5 minutter')
         
-    #Processing queue
-    while not queue.empty():
-        message = queue.get()
-        if message == "P1_gul":
-            canvas.itemconfig(guiP1, fill='yellow', outline="yellow")
-            button1.config(bg='yellow', activebackground='yellow')
-        elif message == "P2_gul":
-            canvas.itemconfig(guiP2, fill='yellow', outline="yellow")
-            button2.config(bg='yellow', activebackground='yellow')    
+    def process_queue():
+        while not queue.empty():
+            message = queue.get()
+            if message == "P1_gul":
+                canvas.itemconfig(guiP1, fill='yellow', outline="yellow")
+                button1.config(bg='yellow', activebackground='yellow')
+            elif message == "P2_gul":
+                canvas.itemconfig(guiP2, fill='yellow', outline="yellow")
+                button2.config(bg='yellow', activebackground='yellow')    
 
 
         root.after(100, process_queue)  # Check the queue periodically
@@ -112,9 +91,10 @@ def secondary_gui(queue):
 
     # Create and place the buttons
     button1 = tk.Button(canvas, text="", bg='#D4EAFF', activebackground='#D0E5FA', bd=0, command=lambda: P1_timer())
-    canvas.create_window(340, 340, anchor='nw', window=button1, width=480, height=130)
+    button1_window = canvas.create_window(340, 340, anchor='nw', window=button1, width=480, height=130)
     button2 = tk.Button(canvas, text="", bg='#D4EAFF', activebackground='#D0E5FA', bd=0, command=lambda: P2_timer())
-    canvas.create_window(1050, 620, anchor='nw', window=button2, width=85, height=200)
+    button2_window = canvas.create_window(1050, 620, anchor='nw', window=button2, width=85, height=200)
+
 
     tidslabel = tk.Label(canvas, text="", bg='light gray', fg='gray12', font=('Calibri', 32))
     canvas.create_window(110, 188, anchor='sw', window=tidslabel)
@@ -215,13 +195,6 @@ class App:
         lblServerTitle["justify"] = "center"
         lblServerTitle["text"] = "Server"
         lblServerTitle.place(relx=0.5, y=30, anchor=tk.CENTER)
-        # Add your GUI elements here for the advanced server GUI
-        # Example:
-        self.label = tk.Label(root, text="Advanced Server GUI")
-        self.label.pack()
-
-        self.btnSend = tk.Button(root, text="Send Message", command=self.send_message)
-        self.btnSend.pack()
 
         # Label - IP PLC
         lblPLCIP=tk.Label(root)
