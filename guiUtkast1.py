@@ -22,12 +22,11 @@ def draw_rounded_rectangle(canvas, x1, y1, x2, y2, radius, **kwargs):
     return canvas.create_polygon(points, smooth=True, **kwargs)
 
 
-def P1_timer(usikkerhvajegskalbrukeinputtil):
-    current_time = datetime.datetime.now()
-    print(f"Tidspunkt: {current_time}")
+def P1_timer(): ### KAN VÆRE VI MÅ HA GLOBAL
+    tidslabel.config(text='Parkert i 2 minutter')
 
-def P2_timer(hmm):
-    print("Tidspunkt: ")
+def P2_timer():
+    tidslabel.config(text='Parkert i 5 minutter')
 
 def P1_ankomst():
     canvas.itemconfig(guiP1, fill='yellow', outline="yellow")
@@ -99,13 +98,13 @@ draw_rounded_rectangle(canvas, 1310, 610, 1415, 830, 65, fill='#D4EAFF', outline
 draw_rounded_rectangle(canvas, 1440, 610, 1545, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=0)
 
 # Create and place the buttons
-button1 = tk.Button(canvas, text="", bg='#D4EAFF', activebackground='#D0E5FA', bd=0, command=lambda: P1_timer("hei"))
+button1 = tk.Button(canvas, text="", bg='#D4EAFF', activebackground='#D0E5FA', bd=0, command=lambda: P1_timer())
 button1_window = canvas.create_window(340, 340, anchor='nw', window=button1, width=480, height=130)
-button2 = tk.Button(canvas, text="", bg='#D4EAFF', activebackground='#D0E5FA', bd=0, command=lambda: P2_timer("noe"))
+button2 = tk.Button(canvas, text="", bg='#D4EAFF', activebackground='#D0E5FA', bd=0, command=lambda: P2_timer())
 button2_window = canvas.create_window(1050, 620, anchor='nw', window=button2, width=85, height=200)
 
-tidslabel = tk.Label(canvas, text="Tids", bg='light gray',fg='gray12', font='400')
-canvas.create_window(130,230, anchor='sw', window=tidslabel)
+tidslabel = tk.Label(canvas, text="", bg='light gray',fg='gray12', font=('Calibri',32))
+canvas.create_window(110,188, anchor='sw', window=tidslabel)
 
 # Start the Tkinter main loop
 root.mainloop()
