@@ -14,7 +14,7 @@ Prosjektet er basert på dusty-nv sin guide for å iverksette objektdeteksjon ve
 - Bildegjenkjenningen er kunstig intelligens som kun kan kjøres på Nvidia.
 - Installer nødvendig programvare: jetson-inference, jetson-utils, python-snap7, tkinter
 - Parkeringsplasser til båtene skal legges inn på forhånd i 'final.py'
-- PLS-kode er ikke vedlagt.
+- PLS-kode er ikke vedlagt. Den må lages.
 
 
 ## **Kjøring av program**
