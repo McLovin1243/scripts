@@ -1,4 +1,5 @@
 # **Båtdeteksjon med Kunstig Intelligens**
+Vi benytter bacheloren til videre utforskning av KI gjennom et prosjekt som omhandler båtdeteksjon.
 
 Dette prosjektet bruker NVIDIA Jetson Orin Nano til å kjøre en KI-modell trent opp til å kjenne igjen båter. Man kan bruke et standardbibliotek (ssd-mobilenet-v2 fra detectNet), eller så kan man trene opp en egen modell. Jetson Orin Nano sender signaler via Ethernet til en PC, som igjen sender signaler til en PLS for lysstyring (TIA-portal, SCL). Målet vårt har vært å overvåke båter som legger til kai, logge dem, og rapportere hvor lenge de har vært fortøyd.
 Prosjektet er basert på dusty-nv sin guide for å iverksette objektdeteksjon ved hjelp av detectNet: https://github.com/dusty-nv/jetson-inference
