@@ -158,8 +158,12 @@ sbP1_detected_bit_offset = 2
 sbP9_detected_bit_offset = 3
 # Static Bool - Illigal parking alarm
 sbIlligalParking_bit_offset = 4
+# Static Bool - Pay registered
+sbPay_registered_bit_offset = 5
 # Static Bool - Emergency Stop
 #sbEMGStop_bit_offset = 1
+
+P1_tidstart = datetime.datetime.now()
 
 outputOn = 1
 outputOff = 0
@@ -179,7 +183,7 @@ def WriteBool(db_number, start_offset, bit_offset, value):
 def ReadBool(db_number, start_offset, bit_offset):
     reading =  plc.db_read(db_number, start_offset, 1)
     a = snap7.util.get_bool(reading, 0, bit_offset)
-    print('DB Number:' + str(db_number) + ' Bit: ' + str(start_offset) + '.' + str(bit_offset) + ' Value: ' + str(a))
+    #print('DB Number:' + str(db_number) + ' Bit: ' + str(start_offset) + '.' + str(bit_offset) + ' Value: ' + str(a))
     return a
 
 def handle_client(conn, addr):
@@ -233,16 +237,22 @@ def handle_client(conn, addr):
                     queue.put("P9_empty")
                 else:
                     pass
-            if msg == "DIP_true":
+            a = ReadBool(db_number, start_offset,sbPay_registered_bit_offset)
+            if a == True:
+                DIP_true = False
+                queue.put("P1_green")
+            elif msg == "DIP_true":
                 WriteBool(db_number, start_offset,sbIlligalParking_bit_offset, outputOn)
                 if DIP_true == False:
-                    DIP_true == True
+                    DIP_true = True
                     queue.put("DIP_true")
             if msg == "DIP_false":
                 WriteBool(db_number, start_offset,sbIlligalParking_bit_offset, outputOff)
                 if DIP_true == True:
                     DIP_true = False
                     queue.put("DIP_false")
+            
+
 
 # Funksjon for å starte opp server og koble til PLS og klient
 def start_client():
