@@ -1,5 +1,5 @@
 import snap7
-import time
+import datetime
 import sys
 import socket
 import tkinter as tk
@@ -8,12 +8,26 @@ import threading
 from threading import Thread
 from queue import Queue
 
+
+
 queue = Queue()
 
-def secondary_gui(queue):
+def boatGUI(queue):
+    global P1_tidstart, P9_tidstart
+
     root = tk.Tk()
     root.title("Haugesund Gjestebrygge")
-
+    
+    def toggle_fullscreen(event=None):
+        root.attributes("-fullscreen", True)
+    
+    def end_fullscreen(event=None):
+        root.attributes("-fullscreen", False)
+    
+    root.bind("<F11>", toggle_fullscreen)
+    root.bind("<Escape>", end_fullscreen)
+    
+    
     def draw_rounded_rectangle(canvas, x1, y1, x2, y2, radius, **kwargs):
         points = [
             x1 + radius, y1,
@@ -33,21 +47,41 @@ def secondary_gui(queue):
         return canvas.create_polygon(points, smooth=True, **kwargs)
 
     def P1_timer():
-        tidslabel.config(text='Parkert i 2 minutter')
+        global P1_tidstart
+        current_time = datetime.datetime.now()
+        P1_parked = current_time - P1_tidstart
+        P1_totaltid = ((P1_parked.total_seconds())/60)
+        tidslabel.config(text=f"{P1_totaltid:.2f} minutter")
 
-    def P2_timer():
-        tidslabel.config(text='Parkert i 5 minutter')
+
+
+
+    def P9_timer():
+        tidslabel.config(text='Parkert i y minutter')
         
     def process_queue():
+        global P1_tidstart
         while not queue.empty():
             message = queue.get()
             if message == "P1_green":
-                canvas.itemconfig(guiP1, fill='green', outline="green")
-                button1.config(bg='green', activebackground='green')
-            elif message == "P2_green":
-                canvas.itemconfig(guiP2, fill='green', outline="green")
-                button2.config(bg='green', activebackground='green')    
-
+                P1_tidstart = datetime.datetime.now()
+                canvas.itemconfig(guiP1, fill='#52F237', outline="#52F237")
+                button1.config(bg='#52F237', activebackground='#53F538', highlightbackground='#52F237')
+            elif message == "P9_green":
+                canvas.itemconfig(guiP9, fill='#52F237', outline="#52F237")
+                button2.config(bg='#52F237', activebackground='#53F538', highlightbackground='#52F237')
+            elif message == "P1_empty":
+                canvas.itemconfig(guiP1, fill='#D4EAFF', outline= '#D4EAFF')
+                button1.config(bg='#D4EAFF', activebackground='#D4EAFF', highlightbackground='#D4EAFF', highlightcolor='#D4EAFF')
+            elif message == "P9_empty":
+                canvas.itemconfig(guiP9, fill='#D4EAFF', outline= '#D4EAFF')
+                button2.config(bg='#D4EAFF', activebackground='#D4EAFF', highlightbackground='#D4EAFF', highlightcolor='#D4EAFF')
+            elif message == "DIP_true":
+                canvas.itemconfig(guiP1, fill='#FC3E3E', outline="#FC3E3E")
+                button1.config(bg='#FC3E3E', activebackground='#F74747', highlightbackground='#FC3E3E', highlightcolor='#FC3E3E')
+            elif message == "DIP_false":
+                canvas.itemconfig(guiP1, fill='#D4EAFF', outline="#D4EAFF")
+                button1.config(bg='#D4EAFF', activebackground='#D4EAFF', highlightbackground='#D4EAFF', highlightcolor='#D4EAFF')
 
         root.after(100, process_queue)  # Check the queue periodically
 
@@ -61,7 +95,7 @@ def secondary_gui(queue):
 
     hav = draw_rounded_rectangle(canvas, 99, 200, 1819, 980, 20, fill='#9ACBFF', outline='gray22', width=25)
 
-    # Utstikkere
+    # Utstikkere  
     draw_rounded_rectangle(canvas, 205, 595, 220, 750, 10, fill='gray46', outline='gray12', width=0)
     draw_rounded_rectangle(canvas, 475, 595, 490, 750, 10, fill='gray46', outline='gray12', width=0)
     draw_rounded_rectangle(canvas, 745, 595, 760, 750, 10, fill='gray46', outline='gray12', width=0)
@@ -84,7 +118,7 @@ def secondary_gui(queue):
     draw_rounded_rectangle(canvas, 630, 610, 735, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=0)
     draw_rounded_rectangle(canvas, 770, 610, 875, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=0)
     draw_rounded_rectangle(canvas, 900, 610, 1005, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=0)
-    guiP2 = draw_rounded_rectangle(canvas, 1040, 610, 1145, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=0)
+    guiP9 = draw_rounded_rectangle(canvas, 1040, 610, 1145, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=0)
     draw_rounded_rectangle(canvas, 1170, 610, 1275, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=0)
     draw_rounded_rectangle(canvas, 1310, 610, 1415, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=0)
     draw_rounded_rectangle(canvas, 1440, 610, 1545, 830, 65, fill='#D4EAFF', outline='#D4EAFF', width=0)
@@ -92,7 +126,7 @@ def secondary_gui(queue):
     # Create and place the buttons
     button1 = tk.Button(canvas, text="", bg='#D4EAFF', highlightcolor='#D4EAFF', highlightbackground='#D4EAFF', activebackground='#D0E5FA', bd=0, command=lambda: P1_timer())
     button1_window = canvas.create_window(340, 340, anchor='nw', window=button1, width=480, height=130)
-    button2 = tk.Button(canvas, text="", bg='#D4EAFF', highlightcolor='#D4EAFF', highlightbackground='#D4EAFF', activebackground='#D0E5FA', bd=0, command=lambda: P2_timer())
+    button2 = tk.Button(canvas, text="", bg='#D4EAFF', highlightcolor='#D4EAFF', highlightbackground='#D4EAFF', activebackground='#D0E5FA', bd=0, command=lambda: P9_timer())
     button2_window = canvas.create_window(1050, 620, anchor='nw', window=button2, width=85, height=200)
 
 
@@ -120,8 +154,8 @@ db_number = 2
 start_offset = 0
 # Static Bool - P1 occupied
 sbP1_detected_bit_offset = 2
-# Static Bool - P2 occupied
-sbP2_detected_bit_offset = 3
+# Static Bool - P9 occupied
+sbP9_detected_bit_offset = 3
 # Static Bool - Illigal parking alarm
 sbIlligalParking_bit_offset = 4
 # Static Bool - Emergency Stop
@@ -149,8 +183,13 @@ def ReadBool(db_number, start_offset, bit_offset):
     return a
 
 def handle_client(conn, addr):
-    global queue  # Ensure you're accessing the global queue object
-    P1_firsttime = True
+    global queue
+    P1_firsttime=True
+    P1_empty=True
+    P9_firsttime=True
+    P9_empty = True
+    DIP_true = False
+    
     
     print(f"Client connected: {addr}")
     connected = True
@@ -164,22 +203,46 @@ def handle_client(conn, addr):
                 
             if msg == "P1_true":
                 WriteBool(db_number, start_offset,sbP1_detected_bit_offset, outputOn)
-                
                 if P1_firsttime == True:
                     P1_firsttime = False
+                    P1_empty = False
                     queue.put("P1_green")
                 else:
                     pass
             if msg == "P1_false":
                 WriteBool(db_number, start_offset,sbP1_detected_bit_offset, outputOff)
-            if msg == "P2_true":
-                WriteBool(db_number, start_offset,sbP2_detected_bit_offset, outputOn)
-            if msg == "P2_false":
-                WriteBool(db_number, start_offset,sbP2_detected_bit_offset, outputOff)
+                if P1_empty==False:
+                    P1_empty = True
+                    P1_firsttime = True
+                    queue.put("P1_empty")
+                else:
+                    pass
+            if msg == "P9_true":
+                WriteBool(db_number, start_offset,sbP9_detected_bit_offset, outputOn)
+                if P9_firsttime == True:
+                    P9_firsttime = False
+                    P9_empty = False
+                    queue.put("P9_green")
+                else:
+                    pass
+            if msg == "P9_false":
+                WriteBool(db_number, start_offset,sbP9_detected_bit_offset, outputOff)
+                if P9_empty==False:
+                    P9_empty = True
+                    P9_firsttime = True
+                    queue.put("P9_empty")
+                else:
+                    pass
             if msg == "DIP_true":
                 WriteBool(db_number, start_offset,sbIlligalParking_bit_offset, outputOn)
+                if DIP_true == False:
+                    DIP_true == True
+                    queue.put("DIP_true")
             if msg == "DIP_false":
                 WriteBool(db_number, start_offset,sbIlligalParking_bit_offset, outputOff)
+                if DIP_true == True:
+                    DIP_true = False
+                    queue.put("DIP_false")
 
 # Funksjon for å starte opp server og koble til PLS og klient
 def start_client():
@@ -442,8 +505,8 @@ class App:
 if __name__ == "__main__":
     queue = Queue()
 
-    # Thread for server_gui (secondary_gui function)
-    server_thread = Thread(target=secondary_gui, args=(queue,))
+    # Thread for server_gui (boatGUI function)
+    server_thread = Thread(target=boatGUI, args=(queue,))
     server_thread.start()
 
     # Thread for advanced server GUI (App class)
