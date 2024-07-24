@@ -1,1 +1,21 @@
+Boat client er hovedprogrammet som sender og mottar kommunikasjon med PLS. Scriptet kjører video med deteksjonsmodell, logger og rapporterer.
 
+**Functions**
+Merk at vi trenger å bruke global variabler slik at vi kan endre dem i funksjoner.
+*send(msg):*
+Sender meldinger til
+
+*log_parking_status(detections):*
+Funksjonen mottar informasjon fra en liste ved navn "detections", produsert av deteksjonsmodellen. Vi henter attributes fra list ved hjelp av detection.Bottom, detection.Width osv. Den må gå innom hver detection i detections slik at den skjekker hver deteksjon i hvert bilde. Hver gang en detection er inforbi en definert parkeringsplass, må vi enten registrere første gang den ankom, eller registrere at den er aktiv slik at den ikke forsvinner. Første gang sender vi signal til PLS ved hjelp av state_P1 at Parkeringen er ankommet. Vi logger på slutten av deteksjonen med mindre det er mindre enn 5 sekunder siden sist. Denne koden for P1 skal repeteres for alle Parkeringsplasser en skal ha kontroll på. Vi arbeidet bare med 2 om gangen (P1 og P9).
+
+*write_to_csv(data):*
+Funksjonen blir kalt på hver gang vi har en deteksjon på en definert parkeringsplass inne i log_parking_status(). Denne skriver bare generell logg med tidspunkt, parkeringsplass, lengde på båten og antall båter som er aktive.
+
+*rapporttid():*
+Dersom det er 10 minutt (timefordelete) siden en viss parkering er detektert, så skal den slettes og rapporteres med hvor lenge den stod.
+
+**Variabler**
+Her defineres parkeringsplassene. Finn ut pikslene fra kameravinkelen som skal brukes, det er fullt mulig å bruke Matlab. Toleranseverdiene gjør at deteksjonen ikke må være perfekt inne i parkeringsboksen som er definert.
+
+**Running**
+Inne i "detectNet()" legger man inn hvilken modell som skal brukes. Og "source" er videoen som skal scannes av modellen.
