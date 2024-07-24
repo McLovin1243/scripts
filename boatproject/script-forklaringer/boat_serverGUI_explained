@@ -1,1 +1,19 @@
+boat_serverGUI.py står for å starte en server for å aktivere kommunikasjon mellom hovedprogrammet og PLS. Den kjører også en GUI som viser oss status på kaien.
 
+boatGUI(queue):
+Visuell oversikt av kaien. Den tegner kaien og endrer fargeverdier avhengig av den mottatte verdien i "queue".
+
+WriteBool(db_number, start_offset, bit_offset, value):
+Skriver boolsk verdi til PLS ved hjelp av snap7.
+
+ReadBool(db_number, start_offset, bit_offset):
+Henter verdi fra PLS. Brukes for å finne ut når bryter er vridd.
+
+handle_client(conn, addr):
+Melding skjekkes hele tiden og signalet håndteres inne her.
+
+start_client:
+Oppstart av server slik at vi er klar for å kommunisere mellom enhetene.
+
+class App:
+GUI til serveren.
