@@ -6,32 +6,33 @@ Prosjektet er basert på dusty-nv sin guide for å iverksette objektdeteksjon ve
 
 ## **Struktur**
 
-    serverGUI_copy.py: script for å starte server
-    final.py: script for å runne video med bildedeteksjon
+    JustServerGUI.py: script for å kun starte server
+    boat_serverGUI.py: script for å starte server og oversikt over brygge
+    boat_client.py: script for å kjøre video med bildedeteksjon
 
 ## **Forutsetninger for å kjøre programmet:**
 
 - Bildegjenkjenningen er kunstig intelligens som kun kan kjøres på Nvidia.
 - Installer nødvendig programvare: jetson-inference, jetson-utils, python-snap7, tkinter
-- Parkeringsplasser til båtene skal legges inn på forhånd i 'final.py'
-- PLS-kode er ikke vedlagt. Den må lages.
+- Parkeringsplasser til båtene skal legges inn på forhånd i 'boat_serverGUI.py'
+- PLS-kode for lysstyring er ikke vedlagt. Den må lages.
 
 
 ## **Kjøring av program**
 
 Merk hvilken mappe scriptene legges i. Begge programmene skal kjøres samtidig.
 
-Terminal 1. Start GUI for serveren:
+Terminal 1. Start GUI for serveren og oversikt:
 
     cd "mappenavn"
-    python3 serverGUI_copy.py
+    python3 boat_serverGUI.py
 
 Terminal 2. Kjør bilde- og objektgjenkjenningsskriptet:
 
     cd jetson-inference
     // her kjører vi docker
     cd "mappenavn"
-    python3 final.py
+    python3 boat_client.py
 
 ## **Drøfting**
 
